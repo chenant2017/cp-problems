@@ -18,15 +18,17 @@ def bin_search(min, max, times, M, C):
 
 def possible(times, max_time, M, C):
   buses_filled = 0
-  bus = []
-  pos = -1
-  while pos < len(times) - 1:
-    pos += 1
-    if (len(bus) > 0 and times[pos] - bus[0] > max_time) or len(bus) == C:
+  bus_start = times[0]
+  bus_cows = 0
+  pos = 0
+  while pos < len(times):
+    if (bus_cows > 0 and times[pos] - bus_start > max_time) or bus_cows == C:
       #print(bus)
-      bus = []
+      bus_start = times[pos]
+      bus_cows = 0
       buses_filled += 1 
-    bus.append(times[pos])
+    bus_cows += 1
+    pos += 1
   buses_filled += 1
   if buses_filled > M:
     return False
