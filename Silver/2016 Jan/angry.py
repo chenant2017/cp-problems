@@ -10,7 +10,7 @@ def bin_search_R(min, max, K, hays):
 def check(K, R, hays):
   pos = min(hays)
   cows_left = K
-  while pos < max(hays):
+  while pos <= max(hays):
     if pos in hays:
       pos += 2 * R + 1
       cows_left -= 1
