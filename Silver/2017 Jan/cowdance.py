@@ -1,8 +1,13 @@
+import heapq as hp
+
 def get_T(durs, K):
   curr_max = max(durs)
+  interval = durs[:K].copy()
+  hp.heapify(interval)
   for i in range(K, len(durs)):
-    min_prev = min(durs[(i - K) : i])
+    min_prev = hp.heappop(interval)
     durs[i] += min_prev
+    hp.heappush(interval, durs[i])
     if durs[i] > curr_max:
       curr_max = durs[i]
   return curr_max
