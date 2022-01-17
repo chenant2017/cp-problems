@@ -8,22 +8,16 @@ def bin_search_R(min, max, K, hays):
   return max
 
 def check(K, R, hays):
-  pos = hays[0]
   pointer = 0
   cows_left = K
 
-  while pos <= hays[-1]:
-    pos += 2 * R + 1
+  while hays[pointer] <= hays[-1]:
+    next_pos = hays[pointer] + 2 * R + 1
     cows_left -= 1
-    found = False
-    for h in range(pointer, len(hays)):
-      if hays[h] >= pos:
-        pointer = h
-        found = True
-        break
-    if not found:
+    while pointer < len(hays) and hays[pointer] < next_pos:
+      pointer += 1
+    if pointer == len(hays):
       break
-    pos = hays[pointer]
     
   if cows_left < 0:
     return False
