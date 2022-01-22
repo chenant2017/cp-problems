@@ -7,12 +7,17 @@ def Run(input, output):
 
     best = 0
 
-    for diff in range(N - 1, 0, -1):
-      for i in range(N - diff):
-        if cum_sums[i + diff] == cum_sums[i]:
-          best = diff
-          fout.write("{}\n".format(best))
-          return
+    for rem in range(7):
+      first = -1
+      last = -1
+      for i in range(len(cum_sums)):
+        if cum_sums[i] == rem:
+          if first < 0:
+            first = i
+          else:
+            last = i
+        if last - first > best:
+          best = last - first
     fout.write("{}\n".format(best))
      
 Run("div7.in", "div7.out")
