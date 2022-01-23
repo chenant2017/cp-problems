@@ -1,28 +1,22 @@
 def test_D(D, grass, N):
-  pos = grass[0][0]
-  length = grass[-1][-1]
+  pos = -1
   cows_placed = 0
-  interval = 0
-
-  while pos <= length:
-    distance = grass[interval][1] - pos
-    new_cows = distance // D + 1
-    cows_placed += new_cows
+  
+  for interval in grass:
+    if pos > interval[1]:
+      continue
+    if pos < interval[0]:
+      pos = interval[0]
+    cows_placed += 1
     if cows_placed >= N:
       return True
-    pos += D * new_cows
-
-    interval = bin_search_interval(interval, grass, pos)
-
-    if interval == len(grass):
-      break
-
-    if pos < grass[interval][0]:
-      pos = grass[interval][0]
-    
-  if cows_placed < N:
-    return False
-  return True
+    while pos + D <= interval[1]:
+      pos += D
+      cows_placed += 1
+      if cows_placed >= N:
+        return True
+    pos += D
+  return False
 
 def bin_search(min_space, max_space, grass, N):
   best = min_space
