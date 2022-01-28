@@ -1,16 +1,14 @@
-def iter_dfs(start, adj, k):
-  ans = 0
-  stack = [start]
-  visited = set()
-  while len(stack) > 0:
-    curr = stack.pop(0)
-    visited.add(curr)
+def bfs(start, adj, k, N):
+  ans = -1
+  queue = [(-1, start)]
+  while queue:
+    parent, curr = queue.pop(0)
     ans += 1
-    for i in adj[curr]:
-      next, r = i
-      if r >= k and next not in visited:
-        stack.append(next)
+    for next, r in adj[curr].items():
+      if next != parent and r >= k:
+        queue.append((curr, next))
   return ans
+
 
 def Run(input, output):
   with open(input, 'r') as fin, open(output, "w") as fout:
@@ -19,19 +17,19 @@ def Run(input, output):
     for i in range(N - 1):
       p, q, r = (int(i) for i in fin.readline().split())
 
-      if p in adj.keys():
-        adj[p].add((q, r))
+      if p in adj:
+        adj[p][q] = r
       else:
-        adj[p] = {(q, r)}
+        adj[p] = {q: r}
 
-      if q in adj.keys():
-        adj[q].add((p, r))
+      if q in adj:
+        adj[q][p] = r
       else:
-        adj[q] = {(p, r)}
+        adj[q] = {p: r}
 
     for i in range(Q):
       k, v = (int(i) for i in fin.readline().split())
-      ans = iter_dfs(v, adj, k) - 1
+      ans = bfs(v, adj, k, N)
       fout.write("{}\n".format(ans))
-
+      
 Run("mootube.in", "mootube.out")
