@@ -1,10 +1,15 @@
-def dfs(start, parent, adj, k):
-  ans = 1
-  for i in adj[start]:
-    node, r = i
-    if r < k or node == parent:
-      continue
-    ans += dfs(node, start, adj, k)
+def iter_dfs(start, adj, k):
+  ans = 0
+  stack = [start]
+  visited = set()
+  while len(stack) > 0:
+    curr = stack.pop(0)
+    visited.add(curr)
+    ans += 1
+    for i in adj[curr]:
+      next, r = i
+      if r >= k and next not in visited:
+        stack.append(next)
   return ans
 
 def Run(input, output):
@@ -26,7 +31,7 @@ def Run(input, output):
 
     for i in range(Q):
       k, v = (int(i) for i in fin.readline().split())
-      ans = dfs(v, -1, adj, k) - 1
+      ans = iter_dfs(v, adj, k) - 1
       fout.write("{}\n".format(ans))
 
 Run("mootube.in", "mootube.out")
