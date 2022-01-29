@@ -1,5 +1,4 @@
 def flood_fill(start, adj):
-  print("NEW START", start)
   visited = set()
   reached = 0
   queue = [start]
@@ -7,7 +6,6 @@ def flood_fill(start, adj):
     curr = queue.pop(0)
     visited.add(curr)
     reached += 1
-    print("reached", curr)
     for i in adj[curr]:
       if i not in visited:
         queue.append(i)
@@ -21,7 +19,7 @@ def Run(input, output):
   with open(input, 'r') as fin, open(output, "w") as fout:
     N = int(fin.readline())
     cows = []
-    adj = defaultdict(lambda: set())
+    adj = defaultdict(set)
 
     for i in range(N):
       x, y, p = (int(j) for j in fin.readline().split())
@@ -38,8 +36,6 @@ def Run(input, output):
           adj[point1].add(point2)
         if p2 >= dist:
           adj[point2].add(point1)
-    
-    print(adj)
     
     ans = 1
 
