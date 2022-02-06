@@ -1,5 +1,4 @@
 import sys
-from collections import defaultdict
 
 def find_rects(matrix, points, p1, p2):
   #print("***", points[p1], points[p2])
@@ -47,13 +46,11 @@ def Run(input, output):
       x, y = (int(i) for i in fin.readline().split())
       points.append([x, y])
     
-    points_x = sorted(points)
-    points_y = sorted(points, key=lambda x: x[1])
+    points = list((i, y) for i, (x, y) in enumerate(sorted(points)))
+    points = list((x, i) for i, (x, y) in enumerate(sorted(points, key=lambda x: x[1])))
 
-    for i in points:
-      i[0] = points_x.index(i)
-      i[1] = points_y.index(i)
-      matrix[i[0]][i[1]] = 1
+    for x, y in points:
+      matrix[x][y] = 1
 
     make_prefix(matrix)
 
@@ -65,6 +62,7 @@ def Run(input, output):
         total += rects
         
     fout.write("{}\n".format(total))
+
 
 
 Run(sys.stdin, sys.stdout)
