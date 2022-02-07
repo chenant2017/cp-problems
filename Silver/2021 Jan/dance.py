@@ -8,7 +8,8 @@ def traverse(cycle, reaches):
     cycle_reaches = set()
     while curr not in visited:
       visited.add(curr)
-      cycle_reaches = cycle_reaches.union(reaches[curr])
+      #cycle_reaches = cycle_reaches.union(reaches[curr])
+      cycle_reaches |= reaches[curr]
       cycle_.append(curr)
       curr = cycle[curr]
     cycle_ans = len(cycle_reaches)
