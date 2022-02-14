@@ -2,6 +2,7 @@ import sys
 import io
 import os
 
+
 def Run(input, output):
   
   readline = io.BytesIO(
@@ -19,33 +20,45 @@ def Run(input, output):
   for i in range(N):
     x, y = (int(j) for j in readline().split())
     if (x, y) not in cows:
-      add_cow(cows, x, y)
-      for j in ((x,y), (x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
-        if j in cows and len(cows[j]) == 1:
-          floodfill(cows, j)
+      for j in add_cow(cows, x, y):
+        floodfill(cows, j)
     output.write("{}\n".format(len(cows) - (i + 1)))
 
 def floodfill(cows, point):
   queue = [point]
   while queue: 
     curr = queue.pop()
-    if len(cows[curr]) != 1:
+    if cows[curr] != 1:
       continue
-    x2, y2 = list(cows[curr])[0]
-
-    if (x2, y2) not in cows:
-      add_cow(cows, x2, y2)
-  
-    for i in ((x2, y2), (x2 - 1, y2), (x2 + 1, y2), (x2, y2 - 1), (x2, y2 + 1)):
-      if i in cows and len(cows[i]) == 1:
-        queue.append(i)
+    x, y = curr
+    for i in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+      if i not in cows:
+        for j in add_cow(cows, i[0], i[1]):
+          queue.append(j)
+        break
 
 def add_cow(cows, x, y):
-  cows[(x, y)] = {(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)}
-  for i in list(cows[(x, y)]):
+  to_flood = []
+  count = 0
+  for i in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
     if i in cows:
-      cows[(x, y)].remove(i)
-      cows[i].remove((x, y))
+      cows[i] -= 1
+      if cows[i] == 1:
+        to_flood.append(i)
+    else:
+      count += 1
+  if count == 1:
+    to_flood.append((x, y))
+  cows[(x, y)] = count
+  return to_flood
 
-      
-Run(0, sys.stdout)
+def RunFileWrapper(input, output):
+  fin = os.open(input, os.O_RDONLY)
+  with open(output, 'w') as fout:
+    Run(fin, fout)
+  os.close(fin)
+
+def RunIO():
+  Run(0, sys.stdout)
+
+RunIO()
