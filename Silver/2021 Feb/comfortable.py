@@ -1,7 +1,7 @@
 import sys
 import io
 import os
-
+from collections import deque
 
 def Run(input, output):
   
@@ -25,7 +25,7 @@ def Run(input, output):
     output.write("{}\n".format(len(cows) - (i + 1)))
 
 def floodfill(cows, point):
-  queue = [point]
+  queue = deque([point])
   while queue: 
     curr = queue.pop()
     if cows[curr] != 1:
