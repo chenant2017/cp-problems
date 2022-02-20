@@ -1,7 +1,4 @@
 import sys
-import io
-import os
-from collections import defaultdict
 
 def Run(input, output):
   with input as fin, output as fout:
@@ -15,58 +12,59 @@ def Run(input, output):
           start = (i, j)
       fin.read(1)
     boards = set()
-    dfs(maze, [["." for _ in range(3)] for __ in range(3)], set(), start, boards)
+    dfs(maze, [["." for _ in range(3)] for __ in range(3)], set(), start, boards, 0)
     fout.write("{}\n".format(len(boards)))
 
-def dfs(maze, board, visited, start, boards):
+def dfs(maze, board, visited, start, boards, encoded):
   i, j = start
-  visited.add((i, j, encode(board)))
-
+  visited.add((i, j, encoded))
+  a = 0
   if maze[i][j] != "..." and maze[i][j] != "BBB":
     letter, k, l = maze[i][j]
     k = int(k) - 1
     l = int(l) - 1
     if board[k][l] == ".":
       board[k][l] = letter
-      if won(board):
-        boards.add(encode(board))
+      if letter == "O":
+        a = 3 ** (k * 3 + l)
+      else:
+        a = 2 * 3 ** (k * 3 + l)
+      encoded += a
+      if won(board, k, l):
+        boards.add(encoded)
         board[k][l] = "."
+        encoded -= a
         return 
       for a, b in [(i - 1, j), (i, j + 1), (i + 1, j), (i, j - 1)]:
-        if (a, b, encode(board)) not in visited and maze[a][b] != "###":
-          dfs(maze, board, visited, (a, b), boards)
+        if (a, b, encoded) not in visited and maze[a][b] != "###":
+          dfs(maze, board, visited, (a, b), boards, encoded)
       board[k][l] = "."
+      encoded -= a
       return 
   for a, b in [(i - 1, j), (i, j + 1), (i + 1, j), (i, j - 1)]:
-    if (a, b, encode(board)) not in visited and maze[a][b] != "###":
-      dfs(maze, board, visited, (a, b), boards)
+    if (a, b, encoded) not in visited and maze[a][b] != "###":
+      dfs(maze, board, visited, (a, b), boards, encoded)
   return 
 
-def won(board):
-  for i in range(3):
-    if board[i] == ["M", "O", "O"] or board[i] == ["O", "O", "M"]:
-      return True
-  for i in range(3):
-    col = [board[j][i] for j in range(3)]
-    if col == ["M", "O", "O"] or col == ["O", "O", "M"]:
-      return True
-  diag1 = [board[0][0], board[1][1], board[2][2]] 
-  diag2 = [board[2][0], board[1][1], board[0][2]]
-  for i in (diag1, diag2):
-    if i == ["M", "O", "O"] or i == ["O", "O", "M"]:
-      return True
-  return False
+def won(board, i, j):
+  moo = ["M", "O", "O"]
+  oom = ["O", "O", "M"]
 
-def encode(board):
-  total = 0
-  power = 8
-  for i in range(3):
-    for j in range(3):
-      if board[i][j] == "O":
-        total += 3**power
-      elif board[i][j] == "M":
-        total += 2 * 3**power
-      power -= 1
-  return total
+  if board[i] == moo or board[i] == oom:
+    return True
+  col = [board[0][j], board[1][j], board[2][j]]
+  if col == moo or col == oom:
+    return True
+
+  if (i != 1 and j != 1) or (i == 1 and j == 1):
+    if i == j:
+      diag = [board[0][0], board[1][1], board[2][2]]
+      if diag == moo or diag == oom:
+        return True
+    if i != j or (i == 1 and j ==1):
+      diag = [board[0][2], board[1][1], board[2][0]]
+      if diag == moo or diag == oom:
+        return True
+  return False
 
 Run(sys.stdin, sys.stdout)
