@@ -15,10 +15,9 @@ def Run(input, output):
   citations = [int(i) for i in readline().split()]
   citations = sorted(citations, reverse=True)
   
-  h = bin_search(1, citations[0] + K*L, K, L, citations)
+  h = bin_search(1, citations[0] + K*L + 1, K, L, citations)
 
   output.write("{}\n".format(h))
-
 
 def bin_search(min_h, max_h, K, L, citations):
   while max_h - min_h > 1:
@@ -41,6 +40,5 @@ def check(h, K, L, citations):
     if valid >= h and cited <= K*L:
       return True
   return False
-
 
 Run(0, sys.stdout)
