@@ -71,6 +71,7 @@ def get_cost(paths, visited, N):
     min_cost = cost
     if min_cost <= 1:
       return min_cost
+
   for p in paths2:
     diff1 = get_diff(p, path1)
     diffN = get_diff(p, pathN)
@@ -86,6 +87,9 @@ def get_diff(path1, path2):
   min_diff = 2*10**5
   i = 0
   j = 0
+
+  if len(path1) < len(path2):
+    path1, path2 = path2, path1
 
   while i < len(path1) and j < len(path2):
     diff = abs(path2[j] - path1[i])
