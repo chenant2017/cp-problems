@@ -1,30 +1,37 @@
+from collections import deque
 import sys
-
-
-
 
 def Run(input, output):
   with input as fin, output as fout:
     N = int(fin.readline())
     cows = [int(i) for i in fin.readline().split()]
-    ans = 2 * (N - 1)
 
-    maxes = [None] * N
-    max = 0
-    for i in range(N - 1, -1, -1):
-      if cows[i] > max:
-        max = cows[i]
-      maxes[i] = max
+    sum = 0
 
-    for i in range(N - 1):
-      max_val = cows[i + 1]
-      for j in range(i + 2, N):
-        if max_val > cows[i] or max_val > maxes[j]:
-          break
-        if max_val < cows[j]:
-          ans += j - i + 1
-          max_val = cows[j]
-    fout.write("{}\n".format(ans))
+    sum += get_sum(cows)
+    sum += get_sum(cows[::-1]) 
+
+    fout.write("{}\n".format(sum))
+
+
+def get_sum(cows):
+  N = len(cows)
+  sum = 0
+  mono_stack = deque([])
+  for i in range(N):
+    if len(mono_stack) == 0:
+      mono_stack.append(i)
+    else:
+      while mono_stack and cows[i] > cows[mono_stack[-1]]:
+        mono_stack.pop()
+      if mono_stack:
+        sum += i - mono_stack[-1] + 1
+        #print(i - mono_stack[-1] + 1, i, mono_stack[-1])
+      mono_stack.append(i)
+  return sum
 
 Run(sys.stdin, sys.stdout)
-    
+
+
+
+
