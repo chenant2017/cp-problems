@@ -34,9 +34,9 @@ def dfs(start, choices, indices, took, taken_by):
       if dfs(j, choices, indices, took, taken_by) != j:
         #print("returned", j, taken_by)
         return j
-      else: #backtrack
-        taken_by[j] = 0
-        took[start] = 0
+      '''else: #backtrack
+        taken_by[j] = j
+        took[j] = j'''
   #print("returned", start, taken_by)
   return start
   
