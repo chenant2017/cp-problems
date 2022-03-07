@@ -1,39 +1,38 @@
+import os
+import io
 import sys
-from collections import deque
+from collections import deque, defaultdict
 
-def Run(input, output):
-  with input as fin, output as fout:
-    N, M = (int(i) for i in fin.readline().split()) #cows, cereals
-    cereals = {}
-    cows = [None]
-    for i in range(1, N + 1):
-      a, b = (int(j) for j in fin.readline().split())
-      cows.append((a, b))
-      if a in cereals:
-        cereals[a].add(i)
-      else:
-        cereals[a] = {i}
-      if b in cereals:
-        cereals[b].add(i)
-      else:
-        cereals[b] = {i}
-    
-    final_filled = 0
-    final_path = deque([])
-    visited = set()
+def Run(fin, fout):
+  readline = io.BytesIO(
+    os.read(
+      fin, 
+      os.fstat(fin).st_size
+    )
+  ).readline
 
-    queue = deque([])
+  N, M = (int(i) for i in readline().split()) #cows, cereals
+  cereals = defaultdict(set)
+  cows = [None if i == 0 else tuple(int(j) for j in readline().split()) for i in range(0, N + 1)]
+  for i, (a, b) in enumerate(cows[1:], 1):
+    cereals[a].add(i)
+    cereals[b].add(i)
+  
+  final_filled = 0
+  final_path = deque([])
+  visited = set()
 
-    for i in range(1, N + 1):
-      if i not in visited:
-        start = get_start(cows, i, cereals, M)
-        queue.append(start)
-        final_filled = dfs(cows, start, cereals, M, visited, final_filled, final_path, queue)
+  queue = deque([])
 
-    fout.write("{}\n".format(N - final_filled))
-    for i in final_path:
-      fout.write("{}\n".format(i))
-      
+  for i in range(1, N + 1):
+    if i not in visited:
+      start = get_start(cows, i, cereals, M)
+      queue.append(start)
+      final_filled = dfs(cows, start, cereals, M, visited, final_filled, final_path, queue)
+
+  fout.write("{}\n".format(N - final_filled))
+  for i in final_path:
+    fout.write("{}\n".format(i))
 
 def dfs(cows, start, cereals, M, visited, filled, path, queue): #start is the cow int
   N = len(cows) - 1
@@ -88,5 +87,4 @@ def get_start(cows, start, cereals, M):
         queue.append(i)
   return start
 
-Run(sys.stdin, sys.stdout)
-
+Run(0, sys.stdout)
