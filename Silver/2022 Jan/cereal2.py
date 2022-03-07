@@ -1,4 +1,5 @@
 import sys
+from collections import deque
 
 def Run(input, output):
   with input as fin, output as fout:
@@ -18,28 +19,25 @@ def Run(input, output):
         cereals[b] = {i}
     
     final_filled = 0
-    final_path = []
+    final_path = deque([])
     visited = set()
+
+    queue = deque([])
+
     for i in range(1, N + 1):
       if i not in visited:
         start = get_start(cows, i, cereals, M)
-        filled, path = dfs(cows, start, cereals, M, visited)
-        final_filled += filled
-        final_path += path
+        queue.append(start)
+        final_filled = dfs(cows, start, cereals, M, visited, final_filled, final_path, queue)
 
     fout.write("{}\n".format(N - final_filled))
     for i in final_path:
       fout.write("{}\n".format(i))
       
- 
-from collections import deque
 
-def dfs(cows, start, cereals, M, visited): #start is the cow int
+def dfs(cows, start, cereals, M, visited, filled, path, queue): #start is the cow int
   N = len(cows) - 1
-  path = []
   taken = [False] * (M + 1)
-  queue = deque([start])
-  filled = 0
 
   while queue:
     curr = queue.pop()
@@ -64,8 +62,7 @@ def dfs(cows, start, cereals, M, visited): #start is the cow int
       for i in cereals[first]:
         if i not in visited:
           queue.append(i)
-
-  return filled, path
+  return filled
 
 def get_start(cows, start, cereals, M):
   N = len(cows) - 1
@@ -92,6 +89,4 @@ def get_start(cows, start, cereals, M):
   return start
 
 Run(sys.stdin, sys.stdout)
-
-
 
