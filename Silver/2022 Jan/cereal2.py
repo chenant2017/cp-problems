@@ -23,20 +23,20 @@ def Run(fin, fout):
   visited = set()
 
   queue = deque([])
+  taken = set()
 
   for i in range(1, N + 1):
     if i not in visited:
       start = get_start(cows, i, cereals, M)
       queue.append(start)
-      final_filled = dfs(cows, start, cereals, M, visited, final_filled, final_path, queue)
+      final_filled = dfs(cows, start, cereals, M, visited, final_filled, final_path, queue, taken)
 
   fout.write("{}\n".format(N - final_filled))
   for i in final_path:
     fout.write("{}\n".format(i))
 
-def dfs(cows, start, cereals, M, visited, filled, path, queue): #start is the cow int
+def dfs(cows, start, cereals, M, visited, filled, path, queue, taken): #start is the cow int
   N = len(cows) - 1
-  taken = [False] * (M + 1)
 
   while queue:
     curr = queue.pop()
@@ -46,17 +46,16 @@ def dfs(cows, start, cereals, M, visited, filled, path, queue): #start is the co
     path.append(curr)
     first, second = cows[curr]
 
-    if taken[first]:
-      if not taken[second]:
-        taken[second] = True
-        filled += 1
-        for i in cereals[second]:
-          if i not in visited:
-            queue.append(i)
-      else:
-        continue
+    if first in taken and second in taken:
+      continue
+    if first in taken:
+      taken.add(second)
+      filled += 1
+      for i in cereals[second]:
+        if i not in visited:
+          queue.append(i)
     else:
-      taken[first] = True
+      taken.add(first)
       filled += 1
       for i in cereals[first]:
         if i not in visited:
@@ -67,7 +66,7 @@ def get_start(cows, start, cereals, M):
   N = len(cows) - 1
   queue = deque([start])
   visited = set()
-  taken = [False] * (M + 1)
+  taken = set()
 
   while queue:
     curr = queue.pop()
@@ -76,15 +75,15 @@ def get_start(cows, start, cereals, M):
     visited.add(curr)
     first, second = cows[curr]
 
-    if taken[first] and taken[second]:
+    if first in taken and second in taken:
       return curr
     else:
-      taken[first] = True
-      taken[second] = True
+      taken.add(first)
+      taken.add(second)
 
     for i in cereals[first] | cereals[second]:
       if i not in visited:
         queue.append(i)
   return start
-
+  
 Run(0, sys.stdout)
