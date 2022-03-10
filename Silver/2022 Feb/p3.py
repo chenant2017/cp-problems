@@ -1,55 +1,53 @@
-import sys 
-import heapq
+from collections import defaultdict, deque
+import sys
 
-def Run(fin, fout):
-  T = int(fin.readline())
-  for t in range(T):
-    #print()
-    #print("t", t)
-    M, N, K = (int(i) for i in fin.readline().split())
-    f = [int(i) for i in fin.readline().split()]
-    if check(f, M, K):
-      fout.write("YES\n")
-    else:
-      fout.write("NO\n")
-
-def check(f, M, K):
-  mail = [0] * (M + 1)
-  curr = 0
-  a = 1
-  b = K + 1
-  #min_mail = {M}
-
-  for i in range(len(f)):
-    #print(f[i], "curr", curr, mail, range(a, b))
-    if curr < K:
-      if f[i] not in range(a, b):
-        mail[f[i]] += 1
-        curr += 1
-        #min_mail.add(f[i])
-    else:
-      if K + b <= M:
-        a = b
-        b = K + b
+def Run(fin_, fout_):
+  with fin_ as fin, fout_ as fout:
+    T = int(fin.readline())
+    for t in range(T):
+      M, N, K = (int(i) for i in fin.readline().split())
+      line = fin.readline().split()
+      last_occur = [None] * (M + 1)
+      emails = [None] * (N)
+      for i in range(N):
+        j = int(line[i])
+        emails[i] = j
+        last_occur[j] = i
+      ans = check(emails, last_occur, M, K)
+      if ans:
+        fout.write("YES\n")
       else:
-        a = M + 1 - K
-        b = M + 1
-      for j in range(a, b):
-        if mail[j] > 0:
-          curr -= mail[j]
-          mail[j] = 0
-          #min_mail.remove(j)
-      if f[i] not in range(a, b):
-        mail[f[i]] += 1
-        curr += 1 
-        #min_mail.add(f[i])
+        fout.write("NO\n")
+    
+
+def check(emails, last_occur, M, K):
+  window = deque([])
+  skipped = deque([]) 
+  pos = 0
+
+  for f_start in range(1, M - K + 2):
+    while pos <= last_occur[f_start]:
+      if f_start <= emails[pos] <= f_start + K - 1:
+        pos += 1
+        continue
+      if len(window) < K:
+        window.append(emails[pos])
+      else:
+        skipped.appendleft(window.popleft())
+        window.append(emails[pos])
+      pos += 1
   
-  #min_mail_ = min(min_mail)
-  for i in range(M - K, M + 1):
-    if i > M:
-      break
-    curr -= mail[i]
+  f_start = M - K + 1
   
-  return True if curr == 0 else False
+  window2 = deque([])
+  window.reverse()
+  for i in window + skipped:
+    if f_start <= i <= f_start + K - 1:
+      continue
+    if len(window) < K:
+      window2.append(i)
+    else:
+      return False
+  return True
 
 Run(sys.stdin, sys.stdout)
