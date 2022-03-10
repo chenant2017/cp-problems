@@ -26,16 +26,17 @@ def check(emails, last_occur, M, K):
   pos = 0
 
   for f_start in range(1, M - K + 2):
-    while pos <= last_occur[f_start]:
-      if f_start <= emails[pos] <= f_start + K - 1:
+    if last_occur[f_start] is not None:
+      while pos <= last_occur[f_start]:
+        if f_start <= emails[pos] <= f_start + K - 1:
+          pos += 1
+          continue
+        if len(window) < K:
+          window.append(emails[pos])
+        else:
+          skipped.appendleft(window.popleft())
+          window.append(emails[pos])
         pos += 1
-        continue
-      if len(window) < K:
-        window.append(emails[pos])
-      else:
-        skipped.appendleft(window.popleft())
-        window.append(emails[pos])
-      pos += 1
   
   f_start = M - K + 1
   
