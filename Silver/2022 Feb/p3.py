@@ -1,6 +1,5 @@
 from collections import defaultdict, deque
 import sys
-
 def Run(fin_, fout_):
   with fin_ as fin, fout_ as fout:
     T = int(fin.readline())
@@ -19,12 +18,10 @@ def Run(fin_, fout_):
       else:
         fout.write("NO\n")
     
-
 def check(emails, last_occur, M, K):
   window = deque([])
   skipped = deque([]) 
   pos = 0
-
   for f_start in range(1, M - K + 2):
     if last_occur[f_start] is not None:
       while pos <= last_occur[f_start]:
@@ -40,15 +37,11 @@ def check(emails, last_occur, M, K):
   
   f_start = M - K + 1
   
-  window2 = deque([])
   window.reverse()
   for i in window + skipped:
     if f_start <= i <= f_start + K - 1:
       continue
-    if len(window) < K:
-      window2.append(i)
-    else:
+    if len(window) >= K:
       return False
   return True
-
 Run(sys.stdin, sys.stdout)
