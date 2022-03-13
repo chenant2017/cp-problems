@@ -20,33 +20,34 @@ def Run(input, output):
     x, y = (int(j) for j in readline().split())
     not_adj[x].add(y)
     not_adj[y].add(x)
-  
-  visited = set()
+
+  not_visited = set(range(1, N + 1))
   count = 0
   sizes = []
 
-  for i in range(1, N + 1):
-    if i not in visited:
-      component = set()
-      dfs(not_adj, i, N, visited, component)
-      count += 1
-      sizes.append(len(component))
+  while not_visited:
+    len1 = len(not_visited)
+    dfs(not_adj, N, not_visited)
+    len2 = len(not_visited)
+    count += 1
+    sizes.append(len1 - len2)
   
   output.write("{}\n".format(count))
   for i in sorted(sizes):
     output.write("{} ".format(i))
   output.write("\n")
 
-def dfs(not_adj, start, N, visited, component):
+def dfs(not_adj, N, not_visited):
+  start = not_visited.pop()
   queue = deque([start])
   while queue:
     curr = queue.pop()
-    if curr in visited:
-      continue
-    component.add(curr)
-    visited.add(curr)
-    for i in range(1, N + 1):
-      if i not in visited and i not in not_adj[curr]:
+    if curr != start:
+      if curr not in not_visited:
+        continue
+      not_visited.remove(curr)
+    for i in not_visited:
+      if i not in not_adj[curr]:
         queue.append(i)
 
 Run(0, sys.stdout)
