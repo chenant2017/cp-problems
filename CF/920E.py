@@ -3,6 +3,7 @@ import io
 import os
 from collections import defaultdict, deque
 
+
 def Run(input, output):
   
   readline = io.BytesIO(
@@ -13,11 +14,11 @@ def Run(input, output):
     ).readline
   ## input using readline()
   ## output using fout.write()
-  N, M = (int(i) for i in readline().split())
-  not_adj = defaultdict(set)
+  N, M = map(int, readline().split())
+  not_adj = [set() for _ in range(N + 1)]
   
   for i in range(M):
-    x, y = (int(j) for j in readline().split())
+    x, y = map(int, readline().split())
     not_adj[x].add(y)
     not_adj[y].add(x)
 
@@ -33,21 +34,21 @@ def Run(input, output):
     sizes.append(len1 - len2)
   
   output.write("{}\n".format(count))
-  for i in sorted(sizes):
-    output.write("{} ".format(i))
+  output.write(" ".join(map(str, sorted(sizes))))
   output.write("\n")
 
 def dfs(not_adj, N, not_visited):
-  start = not_visited.pop()
+  for start in not_visited:
+    break
   queue = deque([start])
   while queue:
     curr = queue.pop()
-    if curr != start:
-      if curr not in not_visited:
-        continue
-      not_visited.remove(curr)
-    for i in not_visited:
-      if i not in not_adj[curr]:
-        queue.append(i)
+    if curr not in not_visited:
+      continue
+    not_visited.remove(curr)
+    queue.extend(not_visited - not_adj[curr])
 
-Run(0, sys.stdout)
+def RunIO():
+  Run(0, sys.stdout)
+
+RunIO()
