@@ -1,8 +1,7 @@
-
 import sys
 import io
 import os
-from collections import defaultdict
+from collections import defaultdict, deque
 
 def Run(input, output):
   
@@ -25,39 +24,42 @@ def Run(input, output):
   lit[1][1] = True
 
   visited = set()
-  total_lit = 1
 
-  total_lit += flood_fill(lit, visited, switches, 1,1)
+  total_lit = flood_fill(lit, visited, switches, 1,1)
   
   output.write("{}\n".format(total_lit))
 
 def flood_fill(lit, visited, switches, x, y):
-  lit_chng = 0
+  lit_chng = 1
+  queue = deque([(x, y)])
 
-  if (x, y) in visited:
-    return lit_chng
-
-  visited.add((x, y))
-  for x_adj, y_adj in switches[(x, y)]:
-    if not lit[x_adj][y_adj]:
-      lit[x_adj][y_adj] = True
-      lit_chng += 1
-      for x_, y_ in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
-        if (x_adj + x_, y_adj + y_) in visited:
-          lit_chng += flood_fill(lit, visited, switches, x_adj, y_adj)
-
-  for x_, y_ in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
-    if x_ == y_ and x_ == 0:
-      continue
-    x_adj = x + x_
-    y_adj = y + y_
-    if x_adj  == 0 or y_adj == 0:
-      continue
-    if x_adj  >= len(lit) or y_adj >= len(lit):
+  while queue:
+    x, y = queue.pop()
+    
+    if (x, y) in visited:
       continue
 
-    if lit[x_adj][y_adj] and (x_adj, y_adj) not in visited:
-      lit_chng += flood_fill(lit, visited, switches, x_adj, y_adj)
+    visited.add((x, y))
+    for x_adj, y_adj in switches[(x, y)]:
+      if not lit[x_adj][y_adj]:
+        lit[x_adj][y_adj] = True
+        lit_chng += 1
+        for x_, y_ in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+          if (x_adj + x_, y_adj + y_) in visited:
+            queue.append((x_adj, y_adj))
+
+    for x_, y_ in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+      if x_ == y_ and x_ == 0:
+        continue
+      x_adj = x + x_
+      y_adj = y + y_
+      if x_adj  == 0 or y_adj == 0:
+        continue
+      if x_adj  >= len(lit) or y_adj >= len(lit):
+        continue
+
+      if lit[x_adj][y_adj] and (x_adj, y_adj) not in visited:
+        queue.append((x_adj, y_adj))
 
   return lit_chng
     
