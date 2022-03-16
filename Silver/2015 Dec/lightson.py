@@ -42,20 +42,22 @@ def flood_fill(lit, visited, switches, x, y):
     if not lit[x_adj][y_adj]:
       lit[x_adj][y_adj] = True
       lit_chng += 1
+      for x_, y_ in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+        if (x_adj + x_, y_adj + y_) in visited:
+          lit_chng += flood_fill(lit, visited, switches, x_adj, y_adj)
 
-  for i in range(2):
-    for x_, y_ in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
-      if x_ == y_ and x_ == 0:
-        continue
-      x_adj = x + x_
-      y_adj = y + y_
-      if x_adj  == 0 or y_adj == 0:
-        continue
-      if x_adj  >= len(lit) or y_adj >= len(lit):
-        continue
+  for x_, y_ in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+    if x_ == y_ and x_ == 0:
+      continue
+    x_adj = x + x_
+    y_adj = y + y_
+    if x_adj  == 0 or y_adj == 0:
+      continue
+    if x_adj  >= len(lit) or y_adj >= len(lit):
+      continue
 
-      if lit[x_adj][y_adj] and (x_adj, y_adj) not in visited:
-        lit_chng += flood_fill(lit, visited, switches, x_adj, y_adj)
+    if lit[x_adj][y_adj] and (x_adj, y_adj) not in visited:
+      lit_chng += flood_fill(lit, visited, switches, x_adj, y_adj)
 
   return lit_chng
     
