@@ -33,13 +33,9 @@ def Run(input, output):
       cows_met = flood_fill(cows, i, visited, roads, N)
       pairs += (cows_met) * (cows_met - 1) // 2
   
-  ans = (N) * (N - 1) // 2 - pairs
+  ans = (K) * (K - 1) // 2 - pairs
 
   output.write("{}\n".format(ans))
-
-
-  
-  
 
 def flood_fill(cows, start, visited, roads, N):
   cows_met = 0
