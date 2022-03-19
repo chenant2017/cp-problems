@@ -35,15 +35,22 @@ def Run(input, output):
       for k in range(i, N): #maxx
         for l in range(j, N): #maxy
           if check(image, comp_dict, i, j, k, l):
-            works = True
-            for m, n, p, q in list(pcl):
-              if i <= m <= k and i <= p <= k and j <= n <= l and j <= q <= l:
-                pcl.remove((m, n, p, q))
-              if m <= i <= p and m <= k <= p and n <= j <= q and n <= l <= q:
-                works = False
-                break
-            if works:
-              pcl.add((i, j, k, l))
+            pcl.add((i, j, k, l))
+  
+  l_pcl = list(pcl)
+
+  for i in range(len(l_pcl)):
+    if l_pcl[i] not in pcl:
+      continue
+    m, n, p, q = l_pcl[i] 
+    for j in range(len(l_pcl)):
+      if i == j:
+        continue
+      if l_pcl[j] not in pcl:
+        continue
+      r, s, t, u = l_pcl[j]
+      if m <= r <= p and m <= t <= p and n <= s <= q and n <= u <= q:
+        pcl.remove((r, s, t, u))
             
   output.write("{}\n".format(len(pcl)))
 
@@ -56,6 +63,8 @@ def check(image, comp_dict, i, j, k, l):
       color_comp[image[m][n]].add(comp_dict[(m, n)])
       if len(color_comp) > 2:
         return False
+  if len(color_comp) < 2:
+    return False
   if valid(color_comp):
     return True
   return False
@@ -72,8 +81,6 @@ def valid(color_comp):
     return True
   return False
   
-
-
 
 def flood_fill(image, start, comp_dict, i):
   N = len(image)
@@ -92,8 +99,7 @@ def flood_fill(image, start, comp_dict, i):
         image[x_new][y_new]
         if image[x_new][y_new] == image[x][y] and (x_new, y_new) not in comp_dict:
           queue.append((x_new, y_new))
-        
-
+          
 def RunFileWrapper(input, output):
   fin = os.open(input, os.O_RDONLY)
   with open(output, 'w') as fout:
