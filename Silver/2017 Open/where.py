@@ -3,59 +3,6 @@ import io
 import os
 from collections import defaultdict, deque
 
-def Run(input, output):
-  
-  readline = io.BytesIO(
-      os.read(
-        input, 
-        os.fstat(input).st_size
-      )
-    ).readline
-  ## input using readline()
-  ## output using fout.write()
-
-  N = int(readline())
-  image = [None for _ in range(N)]
-  for i in range(N):
-    image[i] = [chr(c) for c in readline().strip()]
-
-  comp_dict = {}
-  k = 0
-
-  for i in range(N):
-    for j in range(N):
-      if (i, j) not in comp_dict:
-        k += 1
-        flood_fill(image, (i, j), comp_dict, k)
-  
-  pcl = set()
-
-  for i in range(N): #minx
-    for j in range(N): #miny
-      for k in range(i, N): #maxx
-        for l in range(j, N): #maxy
-          if check(image, comp_dict, i, j, k, l):
-            pcl.add((i, j, k, l))
-  
-  l_pcl = list(pcl)
-
-  for i in range(len(l_pcl)):
-    if l_pcl[i] not in pcl:
-      continue
-    m, n, p, q = l_pcl[i] 
-    for j in range(len(l_pcl)):
-      if i == j:
-        continue
-      if l_pcl[j] not in pcl:
-        continue
-      r, s, t, u = l_pcl[j]
-      if m <= r <= p and m <= t <= p and n <= s <= q and n <= u <= q:
-        pcl.remove((r, s, t, u))
-            
-  output.write("{}\n".format(len(pcl)))
-
-
-
 def check(image, comp_dict, i, j, k, l):
   color_comp = defaultdict(set)
   for m in range(i, k + 1):
@@ -82,24 +29,23 @@ def valid(color_comp):
   return False
   
 
-def flood_fill(image, start, comp_dict, i):
+def flood_fill(image, start, comp_dict, a, i, j, k, l):
   N = len(image)
-  x, y = start
   queue = deque([start])
 
   while queue:
     x, y = queue.pop()
     if (x, y) in comp_dict:
       continue
-    comp_dict[(x, y)] = i
+    comp_dict[(x, y)] = a
     for dx, dy in [(0, -1), (0, 1), (1, 0), (-1, 0)]:
       x_new = x + dx
       y_new = y + dy
-      if 0 <= x_new <= N - 1 and 0 <= y_new <= N - 1:
-        image[x_new][y_new]
+      if i <= x_new <= k and j <= y_new <= l:
         if image[x_new][y_new] == image[x][y] and (x_new, y_new) not in comp_dict:
           queue.append((x_new, y_new))
-          
+        
+
 def RunFileWrapper(input, output):
   fin = os.open(input, os.O_RDONLY)
   with open(output, 'w') as fout:
@@ -107,5 +53,55 @@ def RunFileWrapper(input, output):
     Run(fin, stringio)
     fout.write(stringio.getvalue())
   os.close(fin)
+
+def Run(input, output):
+  
+  readline = io.BytesIO(
+      os.read(
+        input, 
+        os.fstat(input).st_size
+      )
+    ).readline
+  ## input using readline()
+  ## output using fout.write()
+
+  N = int(readline())
+  image = [None for _ in range(N)]
+  for i in range(N):
+    image[i] = [chr(c) for c in readline().strip()]
+
+  pcl = set()
+
+  a = 0
+
+  for i in range(N): #minx
+    for j in range(N): #miny
+      for k in range(i, N): #maxx
+        for l in range(j, N): #maxy
+          comp_dict = {}
+          for m in range(i, k + 1):
+            for n in range(j, l + 1):
+              if (m, n) not in comp_dict:
+                a += 1
+                flood_fill(image, (m, n), comp_dict, a, i, j, k, l)
+          if check(image, comp_dict, i, j, k, l):
+            pcl.add((i, j, k, l))
+  
+  l_pcl = list(pcl)
+
+  for i in range(len(l_pcl)):
+    if l_pcl[i] not in pcl:
+      continue
+    m, n, p, q = l_pcl[i] 
+    for j in range(len(l_pcl)):
+      if i == j:
+        continue
+      if l_pcl[j] not in pcl:
+        continue
+      r, s, t, u = l_pcl[j]
+      if m <= r <= p and m <= t <= p and n <= s <= q and n <= u <= q:
+        pcl.remove((r, s, t, u))
+            
+  output.write("{}\n".format(len(pcl)))
 
 RunFileWrapper("where.in", "where.out")
