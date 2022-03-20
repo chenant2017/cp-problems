@@ -3,19 +3,6 @@ import io
 import os
 from collections import defaultdict, deque
 
-def check(image, comp_dict, i, j, k, l):
-  color_comp = defaultdict(set)
-  for m in range(i, k + 1):
-    for n in range(j, l + 1):
-      color_comp[image[m][n]].add(comp_dict[(m, n)])
-      if len(color_comp) > 2:
-        return False
-  if len(color_comp) < 2:
-    return False
-  if valid(color_comp):
-    return True
-  return False
-
 def valid(color_comp):
   cond1 = False
   cond2 = False
@@ -72,19 +59,28 @@ def Run(input, output):
 
   pcl = set()
 
-  a = 0
-
   for i in range(N): #minx
     for j in range(N): #miny
       for k in range(i, N): #maxx
         for l in range(j, N): #maxy
           comp_dict = {}
+          color_comp = defaultdict(set)
+          a = 0
+          good = True
           for m in range(i, k + 1):
             for n in range(j, l + 1):
               if (m, n) not in comp_dict:
                 a += 1
+                color_comp[image[m][n]].add(a)
+                if len(color_comp) > 2:
+                  good = False
+                  break
                 flood_fill(image, (m, n), comp_dict, a, i, j, k, l)
-          if check(image, comp_dict, i, j, k, l):
+              if not good:
+                break
+          if len(color_comp) < 2:
+            good = False
+          if good and valid(color_comp):
             pcl.add((i, j, k, l))
   
   l_pcl = list(pcl)
