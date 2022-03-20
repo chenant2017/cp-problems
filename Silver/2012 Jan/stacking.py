@@ -17,22 +17,17 @@ def Run(input, output):
   N, K = map(int, readline().split())
   stacks = [0] * (N + 1)
 
-  starts = defaultdict(int)
-  ends = defaultdict(int)
-
 
   for k in range(K):
     a, b = map(int, readline().split())
-    starts[a] += 1
-    ends[b] += 1
+    stacks[a] += 1
+    if b + 1 <= N:
+      stacks[b + 1] -= 1
   
-  value = 0
   for i in range(1, N + 1):
-    value += starts[i]
-    stacks[i] = value
-    value -= ends[i]
+    stacks[i] += stacks[i - 1]
   
   stacks = sorted(stacks)
   output.write("{}\n".format(stacks[len(stacks)//2]))
-
+  
 Run(0, sys.stdout)
