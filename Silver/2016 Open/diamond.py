@@ -21,7 +21,7 @@ def Run(input, output):
   
   diamonds = sorted(diamonds)
 
-  intervals = [0] * N
+  intervals = [None] * N
 
   p2 = 0
 
@@ -32,14 +32,23 @@ def Run(input, output):
       intervals[p1] = p2 - p1
     else:
       intervals[p1] = p2 - p1 + 1
-      break
   
-  intervals = sorted(intervals, reverse=True)
-
-  if len(intervals) >= 2:
-    ans = intervals[0] + intervals[1]
-  else:
-    ans = intervals[0]
+  maxes = [None] * N
+  
+  maxes[-1] = intervals[-1]
+  for i in range(N - 2, -1, -1):
+    if intervals[i] > maxes[i + 1]:
+      maxes[i] = intervals[i]
+    else:
+      maxes[i] = maxes[i + 1]
+  
+  ans = 0
+  for i in range(N):
+    test = intervals[i]
+    if i + intervals[i] < N:
+      test += maxes[i + intervals[i]]
+    if test > ans:
+      ans = test
 
   output.write("{}\n".format(ans))
 
