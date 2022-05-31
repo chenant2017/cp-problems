@@ -17,20 +17,14 @@ def Run(input, output):
   N = int(readline())
   xg, yg = (int(i) for i in readline().split())
 
-  moves1 = []
+  moves1 = [tuple(int(j) for j in readline().split()) for i in range(N//2)]
+  moves2 = [tuple(int(j) for j in readline().split()) for i in range(N//2, N)]
+  
+  counts1 = defaultdict(int)
+  counts2 = defaultdict(int)
 
-  for i in range(N//2):
-    x, y = (int(j) for j in readline().split())
-    moves1.append((x, y))
-  
-  moves2 = []
-  
-  for i in range(N//2, N):
-    x, y = (int(j) for j in readline().split())
-    moves2.append((x, y))
-  
-  counts1 = get_combos(moves1, 0, 0, 0, {}, 0)
-  counts2 = get_combos(moves2, 0, 0, 0, {}, 0)
+  get_combos(moves1, 0, 0, 0, counts1, 0)
+  get_combos(moves2, 0, 0, 0, counts2, 0)
 
   #print(counts1)
   #print(counts2)
@@ -46,16 +40,13 @@ def Run(input, output):
 
 def get_combos(moves, i, sx, sy, counts, m):
   if i == len(moves):
-    if (m, sx, sy) in counts:
-      counts[(m, sx, sy)] += 1
-    else:
-      counts[(m, sx, sy)] = 1
+    counts[(m, sx, sy)] += 1
   else:
     x, y = moves[i]
     sx_ = sx + x
     sy_ = sy + y
-    counts = get_combos(moves, i + 1, sx, sy, counts, m)
-    counts = get_combos(moves, i + 1, sx_, sy_, counts, m + 1)
+    get_combos(moves, i + 1, sx, sy, counts, m)
+    get_combos(moves, i + 1, sx_, sy_, counts, m + 1)
   return counts
 
 Run(0, sys.stdout)
