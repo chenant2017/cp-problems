@@ -1,5 +1,6 @@
 from collections import defaultdict, deque
 import sys
+
 def Run(fin_, fout_):
   with fin_ as fin, fout_ as fout:
     T = int(fin.readline())
@@ -22,26 +23,43 @@ def check(emails, last_occur, M, K):
   window = deque([])
   skipped = deque([]) 
   pos = 0
+  last_start = 1
   for f_start in range(1, M - K + 2):
     if last_occur[f_start] is not None:
       while pos <= last_occur[f_start]:
+        last_start = f_start
         if f_start <= emails[pos] <= f_start + K - 1:
           pos += 1
           continue
-        if len(window) < K:
+        if len(window) < K: 
           window.append(emails[pos])
         else:
           skipped.appendleft(window.popleft())
           window.append(emails[pos])
         pos += 1
   
-  f_start = M - K + 1
-  
   window.reverse()
-  for i in window + skipped:
-    if f_start <= i <= f_start + K - 1:
-      continue
-    if len(window) >= K:
-      return False
+  emails = window + skipped
+  last_occur = [None] * (M + 1)
+  pos = 0
+
+  for i in range(len(emails)):
+    last_occur[emails[i]] = i
+  
+  window = deque([])
+  for f_start in range(last_start, M - K + 2):
+    if last_occur[f_start] is not None:
+      while pos <= last_occur[f_start]:
+        if f_start <= emails[pos] <= f_start + K - 1:
+          pos += 1
+          continue
+        if len(window) < K: 
+          window.append(emails[pos])
+        else:
+          return False
+        pos += 1
+  if len(window) > 0:
+    return False
   return True
+  
 Run(sys.stdin, sys.stdout)
