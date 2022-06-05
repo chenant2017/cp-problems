@@ -15,7 +15,6 @@ bool works(ll fix) {
 	}
 	ll max_cont = 0;
 	for (ll i = 0; i <= B - fix; i++) {
-		//cout << broken[i + fix + 1] << " " << broken[i] << "\n";
 		ll cont = broken[i + fix + 1] - broken[i] - 1;
 		if (cont > max_cont) {
 			max_cont = cont;
@@ -43,17 +42,11 @@ int main() {
 	
 	broken[B + 1] = N + 1;
 	sort(broken, broken + B + 1);
-	
-	/*for (ll i = 0; i <= B+1; i++) {
-		cout << broken[i] << "\n";
-	}*/
-	
 
-	ll jump = (B) / 2;
+	ll jump = B / 2 + 1;
 	ll fix = B;
 	
 	while (jump > 0) {
-		//cout << "jump " << jump << " fix " << fix << "\n";
 		if (works(fix - jump)) {
 			fix -= jump;
 		}
