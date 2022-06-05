@@ -29,7 +29,7 @@ pair<ll, ll> solve(ll start) {
 		
 	for (ll i = start; i < 12; i++) {
 		for (ll j = i + 1; j < 12; j++) {
-			for (ll k = j + 1; j < 12; j++) {
+			for (ll k = j + 1; k < 12; k++) {
 				pair<ll, ll> poss;
 				
 				ll sum = skills[i] + skills[j] + skills[k];
@@ -75,8 +75,6 @@ int main() {
 	}
 	
 	pair<ll, ll> ans = solve(0);
-	
-	//cout << ans.first << " " << ans.second <<"\n";
 	
 	cout << ans.second - ans.first << "\n";
 		
