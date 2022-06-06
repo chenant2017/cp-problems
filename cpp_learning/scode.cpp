@@ -1,0 +1,61 @@
+#include <bits/stdc++.h>
+#include <cmath>
+
+#define ll long long
+
+using namespace std;
+
+bool works(string longer, string shorter) {
+	return longer.substr(1) == shorter || 
+		   longer.substr(0, longer.size() - 1) == shorter;
+}
+
+
+ll poss_starts(string s) {
+	ll ans = 0;
+	
+	ll longer = s.size() / 2 + 1;
+	
+	string s1 = s.substr(0, longer);
+	string s11 = s.substr(longer);
+	
+	string s2 = s.substr(longer - 1);
+	string s22 = s.substr(0, longer - 1);
+	
+	
+	if (longer % 2 == 0) {
+		if (works(s1, s11)) {
+			ans++;
+		}
+		if (works(s2, s22)) {
+			ans++;
+		}
+	}
+	
+	else {
+		if (works(s1, s11)) {
+			ans += poss_starts(s1);
+		}
+		if (works(s2, s22)) {
+			ans += poss_starts(s2);
+		}
+	}
+	return ans + 1;
+}
+
+
+int main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	
+	string name = "scode";
+	freopen((name + ".in").c_str(), "r", stdin);
+	freopen((name + ".out").c_str(), "w", stdout);
+	
+	string message;
+	cin >> message;
+	
+	cout << poss_starts(message) - 1 << "\n";
+	
+	return 0;
+}
