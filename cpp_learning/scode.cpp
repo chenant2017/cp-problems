@@ -5,39 +5,50 @@
 
 using namespace std;
 
-bool works(string longer, string shorter) {
-	return longer.substr(1) == shorter || 
-		   longer.substr(0, longer.size() - 1) == shorter;
-}
-
 
 ll poss_starts(string s) {
 	ll ans = 0;
 	
 	ll longer = s.size() / 2 + 1;
 	
-	string s1 = s.substr(0, longer);
-	string s11 = s.substr(longer);
+	string s1l = s.substr(0, longer);
+	string s1t1 = s1l.substr(1);
+	string s1t2 = s1l.substr(0, s1l.size() - 1);
+	string s1s = s.substr(longer);
 	
-	string s2 = s.substr(longer - 1);
-	string s22 = s.substr(0, longer - 1);
-	
+	string s2l = s.substr(longer - 1);
+	string s2t1 = s2l.substr(1);
+	string s2t2 = s2l.substr(0, s2l.size() - 1);
+	string s2s = s.substr(0, longer - 1);
 	
 	if (longer % 2 == 0) {
-		if (works(s1, s11)) {
+		if (s1t1 == s1s) {
 			ans++;
 		}
-		if (works(s2, s22)) {
+		if (s1t2 == s1s) {
+			ans++;
+		}
+		
+		if (s2t1 == s2s) {
+			ans++;
+		}
+		if (s2t2 == s2s) {
 			ans++;
 		}
 	}
 	
 	else {
-		if (works(s1, s11)) {
-			ans += poss_starts(s1);
+		if (s1t1 == s1s) {
+			ans += poss_starts(s1l);
+		} 
+		if (s1t2 == s1s) {
+			ans += poss_starts(s1l);
 		}
-		if (works(s2, s22)) {
-			ans += poss_starts(s2);
+		if (s2t1 == s2s) {
+			ans += poss_starts(s2l);
+		}
+		if (s2t2 == s2s) {
+			ans += poss_starts(s2l);
 		}
 	}
 	return ans + 1;
