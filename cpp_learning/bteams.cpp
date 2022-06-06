@@ -15,22 +15,15 @@ void swap(ll i, ll j) {
 
 pair<ll, ll> solve(ll start) {
 	if (start == 9) {
-		ll sum1 = skills[9] + skills[10] + skills[11];
-		pair<ll,ll> ans;
-		ans.first = sum1;
-		ans.second = sum1;
-		
-		return ans;
+		ll sum1 = skills[9] + skills[10] + skills[11];		
+		return {sum1, sum1};
 	}
 	
-	pair<ll, ll> ans;
-	ans.first = 0;
-	ans.second = 3000000;
+	pair<ll, ll> ans ({0, 3000000});
 		
 	for (ll i = start; i < 12; i++) {
 		for (ll j = i + 1; j < 12; j++) {
 			for (ll k = j + 1; k < 12; k++) {
-				pair<ll, ll> poss;
 				
 				ll sum = skills[i] + skills[j] + skills[k];
 				
@@ -38,7 +31,7 @@ pair<ll, ll> solve(ll start) {
 				swap(start + 1, j);
 				swap(start + 2, k);
 				
-				poss = solve(start + 3);
+				auto poss = solve(start + 3);
 				
 				swap(start + 2, k);
 				swap(start + 1, j);
