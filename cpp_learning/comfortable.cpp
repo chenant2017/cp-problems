@@ -44,10 +44,6 @@ int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	
-	/*string s = "comfortable";
-	freopen((s + ".in").c_str(), "r", stdin);
-	freopen((s + ".out").c_str(), "w", stdout);*/
-	
 	cin >> N;
 	
 	ll ans = 0;
@@ -59,7 +55,7 @@ int main() {
 			ans--;
 		}
 		else {
-			cows.insert(cow); //check adj cows if uncomf; only check comf cows
+			cows.insert(cow); /
 			
 			deque<Point> make_uncomf;
 			
@@ -82,15 +78,12 @@ int main() {
 					
 				vector<Point> missing = get_missing(curr);
 				
-				//cout << "missing.size()"<<  missing.size() << "\n";
-				
 				if (missing.size() != 1) {
 					continue;
 				}
 				
 				cows.insert(missing[0]);
 				ans++;			
-				//cout << ans << "\n";
 				
 				if (get_missing(missing[0]).size() == 1) {
 					make_uncomf.push_back(missing[0]);
