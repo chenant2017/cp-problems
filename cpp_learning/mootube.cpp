@@ -7,19 +7,18 @@
 using namespace std;
 ll N, Q;
 vector<pair<ll, ll>> adj[MAXN];
-set<ll> visited;
 
-ll solve(ll K, ll V) {
+ll solve(ll K, ll V, bool visited[MAXN]) {
 	//cout << V <<"\n";
 	ll ans = 0;
-	if (visited.find(V) != visited.end()) {
+	if (visited[V]) {
 		return ans;
 	}
-	visited.insert(V);
+	visited[V] = true;
 	ans++;
-	for (auto i: adj[V]) {
-		if (visited.find(i.first) == visited.end() && i.second >= K) {
-			ans += solve(K, i.first);
+	for (auto& i: adj[V]) {
+		if (!visited[i.first] && i.second >= K) {
+			ans += solve(K, i.first, visited);
 		}
 	}
 	return ans;
@@ -49,8 +48,8 @@ int main() {
 	for (ll i = 0; i < Q; i++) {
 		ll K, V;
 		cin >> K >> V;
-		visited.clear();
-		cout << solve(K, V) - 1 << "\n";
+		bool visited[MAXN] = {false};
+		cout << solve(K, V, visited) - 1 << "\n";
 	}
 
 	return 0;
