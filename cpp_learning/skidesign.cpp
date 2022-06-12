@@ -30,35 +30,24 @@ int main() {
 	
 	sort(heights, heights + N);
 	
-	heights[N] = 200;
-	
-	ll ptr1 = 0;
-	ll ptr2 = 1;
-	
 	ll ans = 10000000;
 	
-	while (ptr1 < N - 1) {
-		while (heights[ptr2] <= heights[ptr1] + 17 && ptr2 <= N) {
-			ptr2++;
-		}
+	for (ll lower = heights[0]; lower <= heights[N - 1] - 17; lower++) {
+		ll upper = lower + 17;
 		
 		ll cost = 0;
-		
-		for (ll i = 0; i < ptr1; i++) {
-			cost += pow(heights[ptr1] - heights[i], 2);
+		for (ll i = 0; i < N; i++) {
+			if (heights[i] < lower) {
+				cost += pow(heights[i] - lower, 2);
+			}
+			else if (heights[i] > upper) {
+				cost += pow(heights[i] - upper, 2);
+			}			
 		}
-		
-		for (ll i = ptr2; i < N; i++) {
-			cost += pow(heights[i] - (heights[ptr1] + 17), 2); // heights[ptr1] + 17, not heights[ptr2]
-		}	
 		
 		if (cost < ans) {
 			ans = cost;
 		}
-		while (heights[ptr1 + 1] == heights[ptr1]) {
-			ptr1++;
-		}
-		ptr1++;
 	}
 	
 	cout << ans << "\n";
