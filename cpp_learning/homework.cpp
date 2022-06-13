@@ -41,7 +41,7 @@ int main() {
 
 	for (ll k = 1; k <= N - 2; k++) {
 		ll points = scorespf[k];
-		double score = (points - currmin[k]) / (N - k - 1);
+		double score = (double)(points - currmin[k]) / (N - k - 1);
 		if (score > max_score) {
 			max_score = score;
 			poss_k.clear();
