@@ -11,7 +11,7 @@ int main() {
 	
 	string fname = "";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	freopen((fname + ".out").c_str(), "w", stdout);
+	//freopen((fname + ".out").c_str(), "w", stdout);
 	
 	return 0;
 }
