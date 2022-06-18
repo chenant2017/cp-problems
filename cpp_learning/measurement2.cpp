@@ -38,7 +38,6 @@ int main() {
 
 	sort(measures, measures + N, [](auto& a, auto& b){return a[0] < b[0];});
 
-	ll max_out = G;
 	ll ans = 0;
 
 	cow_out[-1] = G;
@@ -54,7 +53,10 @@ int main() {
 			out_cows[G].insert(cow);
 		}
 
-		ll old = cow_out[cow];
+		ll old_max = out_cows.rbegin()->first;
+
+		bool in_old_max = out_cows[old_max].find(cow) != out_cows[old_max].end();
+		ll old_max_count = out_cows[old_max].size();
 
 		out_cows[cow_out[cow]].erase(cow);
 		if (out_cows[cow_out[cow]].empty()) {
@@ -63,32 +65,18 @@ int main() {
 		cow_out[cow] += change;
 		out_cows[cow_out[cow]].insert(cow);
 
-		if (old < max_out) {
-			if (cow_out[cow] > max_out) {
-				max_out = cow_out[cow];
+		ll new_max = out_cows.rbegin()->first;
+
+		bool in_new_max = out_cows[new_max].find(cow) != out_cows[new_max].end();
+		ll new_max_count = out_cows[new_max].size();
+
+		if (in_old_max) {
+			if (!in_new_max || new_max_count != 1 || old_max_count != 1) {
 				ans++;
 			}
 		}
-		else if (old == max_out) { //old == max_out
-			if (cow_out[cow] > max_out) {
-				if (out_cows.find(max_out) != out_cows.end()) {
-					ans++;
-				}
-
-				max_out = cow_out[cow];
-			}
-			else if (cow_out[cow] < max_out) {
-				if (out_cows.find(max_out) != out_cows.end()) {
-					ans++;
-				}
-				else {
-					max_out = out_cows.rbegin()->first;
-					if (!(out_cows[max_out].size() == 1 &&
-						  *out_cows[max_out].begin() == cow)) {
-						ans++;
-					}
-				}
-			}
+		else if (in_new_max) {
+			ans++;
 		}
 
 		/*cout << max_out << "\n";
