@@ -30,7 +30,7 @@ int main() {
 		string var;
 		ll a;
 		cin >> var >> a;
-		freq[var[0]][a % 7]++;
+		freq[var[0]][(a + 105000) % 7]++;
 	}
 
 	/*for (auto i: freq) {
