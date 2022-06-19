@@ -90,12 +90,6 @@ int main() {
 				}
 			}
 		}
-
-		/*cout << max_out << "\n";
-		for (auto i: out_cows[max_out]) {
-			cout << i << " ";
-		}
-		cout << "\n";*/
 	}
 
 	cout << ans << "\n";

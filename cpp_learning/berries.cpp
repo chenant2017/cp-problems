@@ -67,9 +67,9 @@ int main() {
 
 	sort(trees.begin(), trees.end(), greater<>());
 
-	ll ans = -1;
+	ll ans = 0;
 
-	for (ll emin = 0; emin < 1000; emin++) {
+	for (ll emin = 0; emin <= 1000; emin++) {
 		ll bmax = get_bmax(emin, trees);
 		if (bmax > ans) {
 			ans = bmax;
