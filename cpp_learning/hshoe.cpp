@@ -26,6 +26,7 @@ ll dfs(ll i, ll j, bool closing, ll opened,
 
 	if (hshoes[i][j] == '(') {
 		if (closing) {
+			visited[i][j] = false;
 			return 0;
 		}
 		opened++;
@@ -34,6 +35,7 @@ ll dfs(ll i, ll j, bool closing, ll opened,
 		closed++;
 		if (closing) {
 			if (opened == closed) {
+				visited[i][j] = false;
 				return opened;
 			}
 		}
@@ -42,9 +44,18 @@ ll dfs(ll i, ll j, bool closing, ll opened,
 		}
 	}
 
+	ll result = 0;
+
 	for (int x = 0; x < 4; x++) {
-		return dfs(i + di[x], j + dj[x], closing, opened, closed, visited);
+		ll a = dfs(i + di[x], j + dj[x], closing, opened, closed, visited);
+		if (a > result) {
+			result = a;
+		}
 	}
+
+	visited[i][j] = false;
+
+	return result;
 }
 
 int main() {
@@ -53,7 +64,7 @@ int main() {
 	
 	string fname = "hshoe";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
+	freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N;
 
@@ -62,7 +73,7 @@ int main() {
 	}
 
 	bool visited[MAXN][MAXN] = {false};
-	cout << dfs(0, 0, false, 0, 0, visited) << "\n";
+	cout << dfs(0, 0, false, 0, 0, visited) * 2 << "\n";
 
 	return 0;
 }
