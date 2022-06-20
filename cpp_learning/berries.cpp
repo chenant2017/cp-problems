@@ -40,6 +40,9 @@ ll get_bmax(ll emin, const vector<ll>& trees) {
 		ll result = (at_emin - K / 2) * emin;
 		sort(t.begin() + stopped, t.end(), greater<>());
 		for (ll i = 0; i < K - at_emin; i++) {
+			if (i + stopped > t.size() - 1) {
+				break;
+			}
 			result += t[i + stopped];
 		}
 		return result;
