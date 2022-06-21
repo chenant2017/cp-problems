@@ -64,7 +64,7 @@ int main() {
 		out_cows[cow_out[cow]].insert(cow);
 
 		if (old < max_out) {
-			if (cow_out[cow] > max_out) {
+			if (cow_out[cow] >= max_out) {
 				max_out = cow_out[cow];
 				ans++;
 			}
