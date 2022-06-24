@@ -32,9 +32,7 @@ void get_cycle(ll start) {
 
 	for (ll i = 0; i < cycle.size(); i++) {
 		result[cycle[(i + K) % cycle.size()]] = cycle[i];
-		//cout << cycle[i] << "\n";
 	}
-	//cout << "\n";
 }
 
 int main() {
@@ -57,21 +55,9 @@ int main() {
 		reverse(l, r);
 	}
 
-	/* for (ll i = 1; i <= N; i++) {
-		cout << cows[i] << "\n";
-	}
-
-	cout <<"\n"; */
-
 	for (ll i = 1; i <= N; i++) {
 		new_pos[cows[i]] = i;
 	}
-
-	/*for (ll i = 1; i <= N; i++) {
-		cout << new_pos[i] << "\n";
-	}
-
-	cout <<"\n";*/
 
 	for (ll i = 1; i <= N; i++) {
 		get_cycle(i);
