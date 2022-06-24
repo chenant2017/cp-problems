@@ -33,7 +33,7 @@ int main() {
 	monoq.push(0);
 
 	for (ll i = 1; i < N; i++) {
-		if (stops[i].s < stops[monoq.back()].s) {
+		if (stops[i].s <= stops[monoq.back()].s) {
 			cout << i << " ";
 			monoq.push(i);
 		}
@@ -57,11 +57,12 @@ int main() {
 		}
 
 		if (i == next_stop) {
-			fuel_added = min(G, D - pos) - fuel;
+			monoq.pop();
+			fuel_added = min(G, D - monoq.front()) - fuel;
 			cost += fuel_added * stops[i].s;
 			cout << fuel_added << " " << stops[i].s << "aaa\n";
 			fuel += fuel_added;
-			monoq.pop();
+			
 			if (!monoq.empty()) {
 				next_stop = monoq.front();
 			}
