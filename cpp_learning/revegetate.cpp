@@ -20,14 +20,16 @@ ll floodfill(ll start, ll color) {
 		return 0;
 	}
 
-	ll result = 0;
 	colors[start] = color;
 
 	for (auto& i: adj[start]) {
-		result = floodfill(i.f, color * i.s);
+		ll ff = floodfill(i.f, color * i.s);
+		if (ff == 0) {
+			return 0;
+		}
 	}
 
-	return result;
+	return 1;
 }
 
 int main() {
@@ -69,7 +71,12 @@ int main() {
 		comps++;
 	}
 
-	cout << pow(10, comps) << "\n";
+	cout << "1";
+	for (ll i = 0; i < comps; i++) {
+		cout << "0";
+	}
+
+	cout << "\n";
 
 	return 0;
 }
