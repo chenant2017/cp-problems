@@ -26,11 +26,6 @@ ll find_good(ll start) {
 
 	path.push_back(curr);
 
-	/*for (ll i = 0; i < path.size(); i++) {
-		cout << path[i] << " ";
-	}
-	cout << "\n";*/
-
 	for (ll i = 0; i < path.size(); i++) {
 		if (path[i] == curr) {
 			//cout << path.size() - 1 - i << "\n";
