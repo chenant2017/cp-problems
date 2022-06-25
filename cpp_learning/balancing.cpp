@@ -25,30 +25,46 @@ int main() {
 	}
 
 	sort(cows, cows + N);
+
 	vector<ll> possa;
 	if (N % 2 == 0) {
-		possa.insert(possa.end(), {cows[N/2 - 1].f + 1, cows[N/2 + 1].f - 1}); 
+		possa.insert(possa.end(), {cows[N/2].f + 1, cows[N/2].f + 3,
+							       cows[N/2 + 1].f - 1, cows[N/2 + 1].f - 3}); 
 	}
 	else {
-		possa.insert(possa.end(), {cows[N/2].f + 1, cows[N/2].f - 1}); 
+		possa.insert(possa.end(), {cows[N/2].f + 1, cows[N/2].f + 3, 
+							       cows[N/2].f - 1, cows[N/2].f - 3}); 
 	}
 
+	/*for (ll i: possa) {
+		cout << i << "\n";
+	}
+	cout << "\n";*/
 
 	sort(cows, cows + N, [](auto& a, auto& b) {
 		return a.s < b.s || (a.s == b.s && a.f < b.f);
 	});
+	
 	vector<ll> possb;
 	if (N % 2 == 0) {
-		possb.insert(possb.end(), {cows[N/2 - 1].s + 1, cows[N/2 + 1].s - 1}); 
+		possb.insert(possb.end(), {cows[N/2].s + 1, cows[N/2].s + 3, 
+								   cows[N/2 + 1].s - 1, cows[N/2 + 1].s - 3}); 
 	}
 	else {
-		possb.insert(possb.end(), {cows[N/2].s + 1, cows[N/2].s - 1});
+		possb.insert(possb.end(), {cows[N/2].s + 1, cows[N/2].s + 3,
+								   cows[N/2].s - 1, cows[N/2].s - 3});
 	}
+	/*for (ll i: possb) {
+		cout << i << "\n";
+	}
+	cout << "\n";*/
 
 	ll ans = 1010;
 
 	for (auto aa: possa) {
 		for (auto bb: possb) {
+
+			//cout << aa << " " << bb << " aa bb\n";
 			ll quads[4] = {0};
 
 			for (ll i = 0; i < N; i++) {
@@ -71,20 +87,17 @@ int main() {
 
 			ll M = 0;
 			for (ll i = 0; i < 4; i++) {
+				//cout << quads[i] << " ";
 				if (quads[i] > M) {
 					M = quads[i];
 				}
 			}
-
-			cout << M << " ";
-
+			//cout << "\n";
 			if (M < ans) {
 				ans = M;
 			}
 		}
 	}
-
-	cout << "\n";
 
 	cout << ans << "\n";
 
