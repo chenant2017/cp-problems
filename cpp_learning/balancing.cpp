@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 
 #define ll long long
-#define MAXN 1000
+#define MAXN 1010
 #define f first
 #define s second
 
@@ -28,8 +28,8 @@ int main() {
 
 	vector<ll> possa;
 	if (N % 2 == 0) {
-		possa.insert(possa.end(), {cows[N/2].f + 1, cows[N/2].f + 3,
-							       cows[N/2 + 1].f - 1, cows[N/2 + 1].f - 3}); 
+		possa.insert(possa.end(), {cows[N/2 - 1].f + 1, cows[N/2 - 1].f + 3,
+							       cows[N/2].f - 1, cows[N/2].f - 3}); 
 	}
 	else {
 		possa.insert(possa.end(), {cows[N/2].f + 1, cows[N/2].f + 3, 
@@ -47,8 +47,8 @@ int main() {
 	
 	vector<ll> possb;
 	if (N % 2 == 0) {
-		possb.insert(possb.end(), {cows[N/2].s + 1, cows[N/2].s + 3, 
-								   cows[N/2 + 1].s - 1, cows[N/2 + 1].s - 3}); 
+		possb.insert(possb.end(), {cows[N/2 - 1].s + 1, cows[N/2 - 1].s + 3, 
+								   cows[N/2].s - 1, cows[N/2].s - 3}); 
 	}
 	else {
 		possb.insert(possb.end(), {cows[N/2].s + 1, cows[N/2].s + 3,
@@ -80,19 +80,19 @@ int main() {
 				else if (x < aa && y < bb) {
 					quads[2]++;
 				}
-				else {
+				else if (x > aa && y < bb) {
 					quads[3]++;
 				}
 			}
 
 			ll M = 0;
 			for (ll i = 0; i < 4; i++) {
-				//cout << quads[i] << " ";
+				cout << quads[i] << " ";
 				if (quads[i] > M) {
 					M = quads[i];
 				}
 			}
-			//cout << "\n";
+			cout << "\n";
 			if (M < ans) {
 				ans = M;
 			}
