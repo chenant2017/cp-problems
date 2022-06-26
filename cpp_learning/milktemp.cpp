@@ -30,7 +30,7 @@ int main() {
 		ranges[i].s = b;
 	}
 
-	queue<ll> overlap;
+	unordered_set<ll> overlap;
 
 	ll max_overlap = 0;
 	ll lower = 1000000010;
@@ -39,16 +39,22 @@ int main() {
 	for (auto& i: startend) {
 		ll temp = i.f;
 		vector<ll> to_process = i.s;
-		ll to_remove = 0;
+		vector<ll> to_remove;
 
 		for (auto j: to_process) {
-			if (overlap.empty() || overlap.front() != j) {
-				overlap.push(j);
+			if (overlap.find(j) == overlap.end()) {
+				overlap.insert(j);
 			}
 			else {
-				to_remove++;
+				to_remove.push_back(j);
 			}
 		}
+
+		/*cout << temp << " is temp\n";
+		for (auto k: overlap) {
+			cout << k << " ";
+		}
+		cout << "\n";*/
 
 		if (overlap.size() > max_overlap) {
 			lower = temp;
@@ -64,8 +70,8 @@ int main() {
 			}
 		}
 
-		for (ll j = 0; j < to_remove; j++) {
-			overlap.pop();
+		for (auto j: to_remove) {
+			overlap.erase(j);
 		}
 	}
 
