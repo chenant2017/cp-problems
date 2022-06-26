@@ -42,10 +42,6 @@ int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	
-	//string fname = "cowntagion";
-	//freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
-	
 	cin >> N;
 	for (ll i = 0; i < N - 1; i++) {
 		ll a, b;
