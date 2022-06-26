@@ -7,8 +7,8 @@
 using namespace std;
 
 ll N, G;
-vector<ll> cow_group[MAXN];
-vector<ll> group_cow[MAXG];
+unordered_set<ll> cow_group[MAXN];
+unordered_set<ll> group_cow[MAXG];
 bool visited[MAXN] = {false};
 bool included[MAXG] = {false};
 
@@ -27,21 +27,17 @@ ll get_cows(ll start) {
 		visited[curr] = true;
 		result++;
 
-		for (auto i: cow_group[curr]) {\
+		for (auto i: cow_group[curr]) {
 			if (included[i]) {
 				continue;
 			}
 
-			vector<ll> rem;
-			for (auto j: group_cow[i]) {
-				if (!visited[j]) {
-					rem.push_back(j);
-				}
-			}
-			if (rem.size() <= 1) {
+			group_cow[i].erase(curr);
+
+			if (group_cow[i].size() <= 1) {
 				included[i] = true;
-				if (rem.size() == 1) {
-					cowq.push(rem[0]);
+				if (group_cow[i].size() == 1) {
+					cowq.push(*group_cow[i].begin());
 				}
 			}
 		}
@@ -59,15 +55,14 @@ int main() {
 	
 	cin >> N >> G;
 
-
 	for (ll i = 0; i < G; i++) {
 		ll size;
 		cin >> size;
 		for (ll j = 0; j < size; j++) {
 			ll a;
 			cin >> a;
-			cow_group[a].push_back(i);
-			group_cow[i].push_back(a);
+			cow_group[a].insert(i);
+			group_cow[i].insert(a);
 		}
 	}
 
