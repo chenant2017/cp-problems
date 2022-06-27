@@ -41,10 +41,11 @@ int main() {
 		map<string, ll> counts = i.s;
 
 		for (auto &j: counts) {
-			if (sc_counts.find(j.f) != sc_counts.end()) {
-				if (sc_counts[j.f].find(state) != sc_counts[j.f].end()) {
-					ans += sc_counts[j.f][state] * j.s;
-				}
+			if (sc_counts.find(j.f) != sc_counts.end() &&
+				sc_counts[j.f].find(state) != sc_counts[j.f].end() &&
+				state != j.f) {
+				ans += sc_counts[j.f][state] * j.s;
+				//cout << j.f << " " << state << "\n";
 			}
 		}
 	}
