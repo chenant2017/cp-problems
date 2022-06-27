@@ -45,7 +45,6 @@ int main() {
 				sc_counts[j.f].find(state) != sc_counts[j.f].end() &&
 				state != j.f) {
 				ans += sc_counts[j.f][state] * j.s;
-				//cout << j.f << " " << state << "\n";
 			}
 		}
 	}
