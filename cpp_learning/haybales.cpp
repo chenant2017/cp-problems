@@ -9,7 +9,7 @@ using namespace std;
 ll N, Q;
 map<ll, ll> haybales;
 
-ll get_value(map<ll, ll> m, ll i) {
+ll get_value(const map<ll, ll>& m, ll i) {
 	auto it = m.upper_bound(i);
 	it--;
 	return it->s;
@@ -28,12 +28,7 @@ int main() {
 	for (ll i = 0; i < N; i++) {
 		ll a;
 		cin >> a;
-		if (haybales.find(a) == haybales.end()) {
-			haybales[a] = 1;
-		}
-		else {
-			haybales[a]++;
-		}
+		haybales[a]++;
 	}
 
 	haybales[-1] = 0;
