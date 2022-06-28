@@ -13,7 +13,7 @@ vector<string> missing[MAXN];
 ll sizes[MAXADJ];
 unordered_map<string, ll> adjloc;
 
-ll adjsll(vector<string> adjs1) {
+ll adjsll(vector<string>& adjs1) {
 	ll result = 0;
 
 	for (ll i = 0; i < num_adj; i++) {
@@ -54,7 +54,7 @@ int main() {
 		}
 
 		num_adj = 0;
-		for (ll j = 0; j < 30; j++) {
+		for (ll j = 0; j < 35; j++) {
 			cin >> curr;
 			if (curr == "cow.") {
 				break;
@@ -78,34 +78,27 @@ int main() {
 		}
 	}
 
-	ll change = 0;
+	ll values[MAXN];
 
 	for (ll i = 0; i < N; i++) {
-		//cout << adjsll(missing[i]) << "\n";
-		if (adjsll(missing[i]) <= K) {
-			change++;
+		ll value = adjsll(missing[i]);
+		values[i] = value;
+	}
+	
+	sort(values, values + N);
+
+	for (ll i = 0; i < N; i++) {
+		if (values[i] <=K) {
+			K++;
 		}
 	}
 
-	vector<string> result = lladjs(K + change);
+	vector<string> result = lladjs(K);
 
 	for (ll i = 0; i < num_adj - 1; i++) {
 		cout << result[i] << " ";
 	}
 	cout << result[num_adj - 1] << "\n";
-
-
-
-
-
-	
-
-
-
-
-
-	
-
 
 	return 0;
 }
