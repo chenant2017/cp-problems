@@ -13,13 +13,15 @@ int main() {
 	
 	string fname = "paintbarn";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
+	freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N >> K;
 
 	for (ll i = 0; i < N; i++) {
 		ll x1, y1, x2, y2;
 		cin >> x1 >> y1 >> x2 >> y2;
+		x2--;
+		y2--;
 		barn[x1][y1]++;
 		barn[x2+1][y2+1]++;
 		barn[x2+1][y1]--;
@@ -46,13 +48,6 @@ int main() {
 				ans++;
 			}
 		}
-	}
-
-	for (ll i = 0; i <= 10; i++) {
-		for (ll j = 0; j <= 10; j++) {
-			cout << barn[i][j] << " ";
-		}
-		cout << "\n";
 	}
 
 	cout << ans << "\n";
