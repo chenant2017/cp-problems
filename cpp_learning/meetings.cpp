@@ -44,7 +44,7 @@ int main() {
 	double time = 0;
 	ll ans = 0;
 
-	while (weight <= total_weight) {
+	while (weight <= total_weight) { // got stuck in loop
 		ll min_dist = pow(10, 10);
 		vector<pair<si, si>> min_pairs; 
 
