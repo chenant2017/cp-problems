@@ -4,7 +4,7 @@ using namespace std;
 #define ll long long
 #define f first
 #define s second
-#define si set<pair<ll, ll>>::iterator
+#define si set<pair<ll, double>>::iterator
 
 
 bool cmp(const pair<ll, double>& a, const pair<ll, double>& b) {
@@ -12,8 +12,8 @@ bool cmp(const pair<ll, double>& a, const pair<ll, double>& b) {
 }
 
 ll N, L;
-set<pair<ll, ll>, decltype(&cmp)> rright(cmp);
-set<pair<ll, ll>, decltype(&cmp)> lleft(cmp);
+set<pair<ll, double>, decltype(&cmp)> rright(cmp);
+set<pair<ll, double>, decltype(&cmp)> lleft(cmp);
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -21,11 +21,11 @@ int main() {
 	
 	string fname = "meetings";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
+	freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N >> L;
 
-	ll total_weight = 0;
+	double total_weight = 0;
 
 	for (ll i = 0; i < N; i++) {
 		ll w, d;
@@ -40,12 +40,25 @@ int main() {
 		total_weight += w;
 	}
 
-	ll weight = 0;
+	double weight = 0;
 	double time = 0;
 	ll ans = 0;
 
-	while (weight <= total_weight) { // got stuck in loop
-		ll min_dist = pow(10, 10);
+	while (weight < total_weight / 2) { // got stuck in loop
+		//cout << weight << " " << time << "\n";
+
+		for (auto& i: rright) {
+			cout << i.f << " " << i.s << "   ";
+		}
+		cout << "\n";
+
+		for (auto& i: lleft) {
+			cout << i.f << " " << i.s << "   ";
+		}
+
+		cout << "\n\n\n";
+
+		double min_dist = pow(10, 10);
 		vector<pair<si, si>> min_pairs; 
 
 		auto ptrl = lleft.begin();
@@ -54,8 +67,8 @@ int main() {
 			while (ptrl != lleft.end() && ptrl->s <= ptrr->s) {
 				ptrl++;
 			}
-			if (ptrl->s > ptrr->s) {
-				double dist = ptrl->s - ptrr->s;
+			if (ptrl->s - time > ptrr->s + time) {
+				double dist = ptrl->s - time - (ptrr->s + time);
 				if (dist < min_dist) {
 					min_dist = dist;
 					min_pairs.clear();
@@ -67,23 +80,28 @@ int main() {
 			}
 		}
 
+		//cout << min_dist << " mindist\n";
 		time += min_dist / 2.0;
 
 		for (auto& i: min_pairs) {
 			ans++;
 			double midpoint = (i.f->s + i.s->s) / 2.0;
-			rright.insert(pair<ll, double>({i.s->f, midpoint}));
-			rright.erase(*i.s);
-			lleft.insert(pair<ll, double>({i.f->f, midpoint}));
-			lleft.erase(*i.f);
+
+			cout << midpoint - min_dist / 2.0 << " yYYS\n";
+			rright.insert(pair<ll, double>({i.s->f, midpoint - min_dist / 2.0}));
+			rright.erase(i.f);
+			lleft.insert(pair<ll, double>({i.f->f, midpoint + min_dist / 2.0}));
+			lleft.erase(i.s);
 		}
 
-		while (rright.rbegin()->s + time >= L) {
+		//cout <<"hi\n";
+
+		while (!rright.empty() && rright.rbegin()->s + time >= L) {
 			weight += rright.rbegin()->f;
 			rright.erase(*rright.rbegin());
 		}
 
-		while (lleft.begin()->s - time <= 0) {
+		while (!lleft.empty() && lleft.begin()->s - time <= 0) {
 			weight += lleft.begin()->f;
 			lleft.erase(*lleft.begin());
 		}
