@@ -24,6 +24,9 @@ vector<ll> get_profit(ll gallons, ll ptrM, ll remM) {
 
 			if (remM == 0) {
 				ptrM++;
+				if (ptrM < M) {
+					remM = stores[ptrM].f;
+				}
 			}
 
 			gallons = 0;
