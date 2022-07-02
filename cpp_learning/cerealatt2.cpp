@@ -18,32 +18,39 @@ ll give(ll cow, ll cereal) {
 		return -1;
 	}
 
+	ll cow1 = N + 5;
+	ll cow2 = N + 5;
+
 	auto &ff = faves1[cereal];
-	if (ff.empty()) {
-		auto &fs = faves2[cereal];
-		if (fs.empty()) {
-			taken[cereal] = 0;
-			//cout << cereal << " is no longer taken\n";
-			return -1;
+	if (!ff.empty()) {
+		cow1 = ff.front();
+	}
+
+	auto &fs = faves2[cereal];
+	for (auto i: fs) {
+		if (taken[faves[i].f] != i) {
+			cow2 = i;
+			break;
 		}
-		else {
-			for (auto i: fs) {
-				if (taken[faves[i].f] != i) {
-					taken[cereal] = i;
-					//cout << i << " took " << cereal << " a\n";
-					return 0;
-				}
+	}
+
+	ll cow3 = min(cow1, cow2);
+
+	if (cow3 <= N) {
+		taken[cereal] = cow3;
+		if (cow3 == cow1) {
+			if (taken[faves[cow3].s] == cow3) {
+				taken[faves[cow3].s] = 0;
+				return give(cow3, faves[cow3].s);
 			}
-			return -1;
+			return 0;
 		}	
+		else {
+			return 0;
+		}
 	}
 	else {
-		taken[cereal] = ff.front();
-		//cout << ff.front() << " took " << cereal << " b\n";
-		if (taken[faves[ff.front()].s] == ff.front()) {
-			return give(ff.front(), faves[ff.front()].s);
-		}
-		return 0;
+		return -1;
 	}
 }
 
@@ -89,6 +96,8 @@ int main() {
 	for (ll i = 1; i <= N - 1; i++) {
 		faves1[faves[i].f].pop_front();
 		faves2[faves[i + 1].s].pop_front();
+
+		taken[faves[i].f] = 0;
 
 		ans += give(i, faves[i].f);
 		cout << ans << "\n";
