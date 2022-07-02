@@ -10,35 +10,40 @@ using namespace std;
 pair<ll, ll> faves[MAX];
 ll N, M;
 ll taken[MAX] = {0};
-set<ll> faves1[MAX];
-set<ll> faves2[MAX];
+list<ll> faves1[MAX];
+list<ll> faves2[MAX];
 
 ll give(ll cow, ll cereal) {
-	set<ll> &ff = faves1[cereal];
-	while (!ff.empty() && *ff.begin() <= cow) {
-		ff.erase(ff.begin());
+	if (cow == N) {
+		return -1;
 	}
 
+	auto &ff = faves1[cereal];
 	if (ff.empty()) {
-		set<ll> &fs = faves2[cereal];
-		while (!fs.empty()) {
-			if (*fs.begin() > cow && taken[faves[*fs.begin()].f] != *fs.begin()) {
-				break;
-			}
-			fs.erase(fs.begin());
-		}
-
-		if (!fs.empty()) {
-			taken[cereal] = *fs.begin();
-			return 0;
-		}
-		else {
+		auto &fs = faves2[cereal];
+		if (fs.empty()) {
+			taken[cereal] = 0;
+			//cout << cereal << " is no longer taken\n";
 			return -1;
 		}
+		else {
+			for (auto i: fs) {
+				if (taken[faves[i].f] != i) {
+					taken[cereal] = i;
+					//cout << i << " took " << cereal << " a\n";
+					return 0;
+				}
+			}
+			return -1;
+		}	
 	}
 	else {
-		taken[cereal] = *ff.begin();
-		return give(*ff.begin(), faves[*ff.begin()].s);
+		taken[cereal] = ff.front();
+		//cout << ff.front() << " took " << cereal << " b\n";
+		if (taken[faves[ff.front()].s] == ff.front()) {
+			return give(ff.front(), faves[ff.front()].s);
+		}
+		return 0;
 	}
 }
 
@@ -57,12 +62,14 @@ int main() {
 		cin >> fave1 >> fave2;
 		pair<ll, ll> fave = pair<ll, ll>({fave1, fave2});
 		faves[i] = fave;
-		faves1[fave1].insert(i);
-		faves2[fave2].insert(i);
+		faves1[fave1].push_back(i);
+		faves2[fave2].push_back(i);
 	}
 
 
 	ll ans = 0;
+
+	faves2[faves[1].s].pop_front();
 
 	for (ll i = 1; i <= N; i++) {
 		if (taken[faves[i].f] != 0) {
@@ -80,6 +87,9 @@ int main() {
 	cout << ans << "\n";
 
 	for (ll i = 1; i <= N - 1; i++) {
+		faves1[faves[i].f].pop_front();
+		faves2[faves[i + 1].s].pop_front();
+
 		ans += give(i, faves[i].f);
 		cout << ans << "\n";
 	}
