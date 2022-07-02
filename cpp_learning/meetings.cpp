@@ -2,18 +2,23 @@
 
 using namespace std;
 #define ll long long
+#define MAXN 50010
 #define f first
 #define s second
-#define si set<pair<ll, double>>::iterator
 
+using namespace std;
 
-bool cmp(const pair<ll, double>& a, const pair<ll, double>& b) {
-	return a.s < b.s;
-}
+struct Cow {
+	ll w, x, d;
+};
 
 ll N, L;
-set<pair<ll, double>, decltype(&cmp)> rright(cmp);
-set<pair<ll, double>, decltype(&cmp)> lleft(cmp);
+Cow cows[MAXN];
+ll lcows[MAXN];
+ll rcows[MAXN];
+ll weights[MAXN];
+list<ll> rcowsdist;
+list<ll> lcowsdist;
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -28,86 +33,107 @@ int main() {
 	double total_weight = 0;
 
 	for (ll i = 0; i < N; i++) {
-		ll w, d;
-		double x;
-		cin >> w >> x >> d;
-		if (d == 1)  {
-			rright.insert(pair<ll, double>({w, x})); //going right
+		ll w, x, d;
+		cin >> cows[i].w >> cows[i].x >> cows[i].d;
+		total_weight += cows[i].w;
+	}
+
+	sort(cows, cows + N, [](auto& a, auto& b) {
+		return a.x < b.x;
+	});
+
+	for (ll i = 0; i < N; i++) {
+		weights[i] = cows[i].w;
+		if (cows[i].d == 1) {
+			rcowsdist.push_front(i);
 		}
 		else {
-			lleft.insert(pair<ll, double>({w, x}));
+			lcowsdist.push_back(i);
 		}
-		total_weight += w;
 	}
 
-	double weight = 0;
-	double time = 0;
+	rcows[0] = 0;
+	for (ll i = 1; i < N; i++) {
+		rcows[i] = rcows[i - 1];
+		if (cows[i - 1].d == 1) {
+			rcows[i]++;
+		}
+	}
+
+	lcows[N - 1] = 0;
+	for (ll i = N - 2; i >= 0; i--) {
+		lcows[i] = lcows[i + 1];
+		if (cows[i + 1].d == -1) {
+			lcows[i]++;
+		}
+	}
+
+	for (ll i = 0; i < N; i++) {
+		if (cows[i].d == 1) {
+			cows[i].w = weights[i + lcows[i]];
+		}
+		else {
+			cows[i].w = weights[i - rcows[i]];
+		}
+	}
+
+	ll weight = 0;
 	ll ans = 0;
+	ll dist;
 
-	while (weight < total_weight / 2) { // got stuck in loop
-		//cout << weight << " " << time << "\n";
-
-		for (auto& i: rright) {
-			cout << i.f << " " << i.s << "   ";
+	while (weight < total_weight / 2.0) {
+		ll rdist = 2 * L;
+		ll ldist = 2 * L;
+		if (!rcowsdist.empty()) {
+			rdist = L - cows[rcowsdist.front()].x;
 		}
-		cout << "\n";
-
-		for (auto& i: lleft) {
-			cout << i.f << " " << i.s << "   ";
-		}
-
-		cout << "\n\n\n";
-
-		double min_dist = pow(10, 10);
-		vector<pair<si, si>> min_pairs; 
-
-		auto ptrl = lleft.begin();
-		
-		for(auto ptrr = rright.begin(); ptrr != rright.end(); ptrr++) {
-			while (ptrl != lleft.end() && ptrl->s <= ptrr->s) {
-				ptrl++;
-			}
-			if (ptrl->s - time > ptrr->s + time) {
-				double dist = ptrl->s - time - (ptrr->s + time);
-				if (dist < min_dist) {
-					min_dist = dist;
-					min_pairs.clear();
-					min_pairs.push_back(pair<si, si>({ptrr, ptrl}));
-				}
-				else if (dist == min_dist) {
-					min_pairs.push_back(pair<si, si>({ptrr, ptrl}));
-				}
-			}
+		if (!lcowsdist.empty()) {
+			ldist = cows[lcowsdist.front()].x;
 		}
 
-		//cout << min_dist << " mindist\n";
-		time += min_dist / 2.0;
-
-		for (auto& i: min_pairs) {
-			ans++;
-			double midpoint = (i.f->s + i.s->s) / 2.0;
-
-			cout << midpoint - min_dist / 2.0 << " yYYS\n";
-			rright.insert(pair<ll, double>({i.s->f, midpoint - min_dist / 2.0}));
-			rright.erase(i.f);
-			lleft.insert(pair<ll, double>({i.f->f, midpoint + min_dist / 2.0}));
-			lleft.erase(i.s);
+		if (rdist < ldist) {
+			dist = ldist;
+			weight += cows[rcowsdist.front()].w;
+			rcowsdist.pop_front();
 		}
-
-		//cout <<"hi\n";
-
-		while (!rright.empty() && rright.rbegin()->s + time >= L) {
-			weight += rright.rbegin()->f;
-			rright.erase(*rright.rbegin());
+		else if (rdist > ldist) {
+			dist = rdist;
+			weight += cows[lcowsdist.front()].w;
+			lcowsdist.pop_front();
 		}
-
-		while (!lleft.empty() && lleft.begin()->s - time <= 0) {
-			weight += lleft.begin()->f;
-			lleft.erase(*lleft.begin());
+		else if (rdist != 2 * L && rdist == ldist) {
+			dist = rdist;
+			weight += cows[rcowsdist.front()].w + cows[lcowsdist.front()].w;
+			rcowsdist.pop_front();
+			lcowsdist.pop_front();
 		}
 	}
+
+	ll ptr = 0;
+	ll lcows2 = 0;
+
+	for (ll i = 0; i < N; i++) {
+		if (cows[i].d == -1) {
+			if (i <= ptr) {
+				lcows2--;
+			}
+			continue;
+		}
+
+		while (ptr + 1 < N && cows[ptr + 1].x - cows[i].x <= dist) {
+			ptr++;
+			if (ptr > i && cows[ptr].d == -1) {
+				lcows2++;
+			}
+		}
+
+		ans += lcows2;
+	}
+
 
 	cout << ans << "\n";
+
+
 
 
 	return 0;
