@@ -81,7 +81,6 @@ int main() {
 	//cout << lcowsdist.front() << "\n";
 
 	ll weight = 0;
-	ll ans = 0;
 	ll dist = -1;
 
 	while (weight < total_weight / 2.0) {
@@ -123,34 +122,30 @@ int main() {
 	}
 
 	ll ptr = 0;
-	ll lcows2 = 0;
+	list<ll> lcows2;
 
-	if (cows[0].d == -1) {
-		lcows2++;
-	}
+	ll ans = 0;
 
-	//cout << dist << "\n";
 
 	for (ll i = 0; i < N; i++) {
-		if (cows[i].d == -1) {
-			if (i <= ptr) {
-				lcows2--;
-			}
-			continue;
-		}
-
 		while (ptr + 1 < N && cows[ptr + 1].x - cows[i].x <= dist) {
 			ptr++;
-			if (ptr > i && cows[ptr].d == -1) {
-				lcows2++;
+			if (cows[ptr].d == -1) {
+				lcows2.push_back(ptr);
 			}
 		}
+		while (!lcows2.empty() && lcows2.front() <= i) {
+			lcows2.pop_front();
+		}
 
-		//cout << i << " " << lcows2 << "\n";
-
-		ans += lcows2;
+		/*for (auto k: lcows2) {
+			cout << k << " ";
+		}
+		cout << " is the queue for " << i << "\n";*/
+		if (cows[i].d == 1) {
+			ans += lcows2.size();
+		}
 	}
-
 
 	cout << ans << "\n";
 
