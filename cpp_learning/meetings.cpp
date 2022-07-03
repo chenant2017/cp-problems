@@ -17,8 +17,15 @@ Cow cows[MAXN];
 ll lcows[MAXN];
 ll rcows[MAXN];
 ll weights[MAXN];
-list<ll> rcowsdist;
-list<ll> lcowsdist;
+
+ll barn_dist(Cow& a) {
+	if (a.d == 1) {
+		return L - a.x;
+	}
+	else {
+		return a.x;
+	}
+}
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -32,40 +39,32 @@ int main() {
 
 	double total_weight = 0;
 
+	ll lc = 0;
+
 	for (ll i = 0; i < N; i++) {
-		ll w, x, d;
 		cin >> cows[i].w >> cows[i].x >> cows[i].d;
 		total_weight += cows[i].w;
+		if (cows[i].d == -1) {
+			lc++;
+		}
 	}
 
 	sort(cows, cows + N, [](auto& a, auto& b) {
 		return a.x < b.x;
 	});
 
+	ll rc = 0;
 	for (ll i = 0; i < N; i++) {
 		weights[i] = cows[i].w;
+		rcows[i] = rc;
+		lcows[i] = lc;
 		if (cows[i].d == 1) {
-			rcowsdist.push_front(i);
+			rc++;
 		}
 		else {
-			lcowsdist.push_back(i);
+			lc--;
 		}
-	}
 
-	rcows[0] = 0;
-	for (ll i = 1; i < N; i++) {
-		rcows[i] = rcows[i - 1];
-		if (cows[i - 1].d == 1) {
-			rcows[i]++;
-		}
-	}
-
-	lcows[N - 1] = 0;
-	for (ll i = N - 2; i >= 0; i--) {
-		lcows[i] = lcows[i + 1];
-		if (cows[i + 1].d == -1) {
-			lcows[i]++;
-		}
 	}
 
 	for (ll i = 0; i < N; i++) {
@@ -77,58 +76,32 @@ int main() {
 		}
 	}
 
-	//out << rcowsdist.front() << "\n";
-	//cout << lcowsdist.front() << "\n";
-
 	ll weight = 0;
 	ll dist = -1;
 
-	while (weight < total_weight / 2.0) {
-		ll rdist = 2 * L;
-		ll ldist = 2 * L;
-		if (!rcowsdist.empty()) {
-			rdist = L - cows[rcowsdist.front()].x;
-		}
-		if (!lcowsdist.empty()) {
-			ldist = cows[lcowsdist.front()].x;
-		}
+	sort(cows, cows + N, [](auto& a, auto& b) {
+		return barn_dist(a) < barn_dist(b);
+	});
 
-		//cout << rdist << " " << ldist << " rdist ldist\n";
-
-		if (rdist < ldist) {
-			if (rdist > dist) {
-				dist = rdist;
-			}
-			weight += cows[rcowsdist.front()].w;
-			rcowsdist.pop_front();
+	for (ll i = 0; i < N; i++) {
+		weight += cows[i].w;
+		if (weight >= total_weight / 2.0) {
+			dist = barn_dist(cows[i]);
+			break;
 		}
-		else if (rdist > ldist) {
-			if (ldist > dist) {
-				dist = ldist;
-			}
-			weight += cows[lcowsdist.front()].w;
-			lcowsdist.pop_front();
-		}
-		else if (rdist != 2 * L && rdist == ldist) {
-			if (rdist > dist) {
-				dist = rdist;
-			}
-			weight += cows[rcowsdist.front()].w + cows[lcowsdist.front()].w;
-			rcowsdist.pop_front();
-			lcowsdist.pop_front();
-		}
-
-		//cout << "weight " << weight << "\n";
 	}
+
+	sort(cows, cows + N, [](auto& a, auto& b) {
+		return a.x < b.x;
+	});
 
 	ll ptr = 0;
 	list<ll> lcows2;
 
 	ll ans = 0;
 
-
 	for (ll i = 0; i < N; i++) {
-		while (ptr + 1 < N && cows[ptr + 1].x - cows[i].x <= dist) {
+		while (ptr + 1 < N && cows[ptr + 1].x - cows[i].x <= 2 * dist) {
 			ptr++;
 			if (cows[ptr].d == -1) {
 				lcows2.push_back(ptr);
@@ -137,20 +110,12 @@ int main() {
 		while (!lcows2.empty() && lcows2.front() <= i) {
 			lcows2.pop_front();
 		}
-
-		/*for (auto k: lcows2) {
-			cout << k << " ";
-		}
-		cout << " is the queue for " << i << "\n";*/
 		if (cows[i].d == 1) {
 			ans += lcows2.size();
 		}
 	}
 
 	cout << ans << "\n";
-
-
-
 
 	return 0;
 }
