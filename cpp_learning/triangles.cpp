@@ -75,9 +75,7 @@ int main() {
 		total += i.s.f * i.s.s;
 	}
 
-	cout << total << "\n";
-
-
+	cout << total % (1000000007) << "\n";
 
 
 	return 0;
