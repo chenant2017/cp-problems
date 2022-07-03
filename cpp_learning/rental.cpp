@@ -13,8 +13,6 @@ pair<ll, ll> stores[MAX];
 ll rentals[MAX];
 
 vector<ll> get_profit(ll gallons, ll ptrM, ll remM) {
-	//cout << gallons << " " << ptrM << " " << remM <<"\n";
-
 	ll profit = 0;
 
 	while (gallons > 0 && ptrM < M) {
@@ -87,17 +85,14 @@ int main() {
 
 	while (ptr1 != ptr2) {
 		vector<ll> gp = get_profit(cows[ptr2], ptrM, remM);
-		//cout << "comparing " << gp[0] << " and " << rentals[ptrR] << "\n";
 		if (gp[0] > rentals[ptrR]) {
 			ans += gp[0];
-			//cout << "chose first!\n";
 			ptr2--;
 			ptrM = gp[1];
 			remM = gp[2];
 		}
 		else {
 			ans += rentals[ptrR];
-			//cout << "chose second!\n";
 			ptr1++;
 			if (ptrR < R) {
 				ptrR++;
@@ -114,8 +109,6 @@ int main() {
 	}
 
 	cout << ans << "\n";
-
-
 
 	return 0;
 }
