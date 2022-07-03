@@ -77,9 +77,12 @@ int main() {
 		}
 	}
 
+	//out << rcowsdist.front() << "\n";
+	//cout << lcowsdist.front() << "\n";
+
 	ll weight = 0;
 	ll ans = 0;
-	ll dist;
+	ll dist = -1;
 
 	while (weight < total_weight / 2.0) {
 		ll rdist = 2 * L;
@@ -91,26 +94,42 @@ int main() {
 			ldist = cows[lcowsdist.front()].x;
 		}
 
+		//cout << rdist << " " << ldist << " rdist ldist\n";
+
 		if (rdist < ldist) {
-			dist = ldist;
+			if (rdist > dist) {
+				dist = rdist;
+			}
 			weight += cows[rcowsdist.front()].w;
 			rcowsdist.pop_front();
 		}
 		else if (rdist > ldist) {
-			dist = rdist;
+			if (ldist > dist) {
+				dist = ldist;
+			}
 			weight += cows[lcowsdist.front()].w;
 			lcowsdist.pop_front();
 		}
 		else if (rdist != 2 * L && rdist == ldist) {
-			dist = rdist;
+			if (rdist > dist) {
+				dist = rdist;
+			}
 			weight += cows[rcowsdist.front()].w + cows[lcowsdist.front()].w;
 			rcowsdist.pop_front();
 			lcowsdist.pop_front();
 		}
+
+		//cout << "weight " << weight << "\n";
 	}
 
 	ll ptr = 0;
 	ll lcows2 = 0;
+
+	if (cows[0].d == -1) {
+		lcows2++;
+	}
+
+	//cout << dist << "\n";
 
 	for (ll i = 0; i < N; i++) {
 		if (cows[i].d == -1) {
@@ -126,6 +145,8 @@ int main() {
 				lcows2++;
 			}
 		}
+
+		//cout << i << " " << lcows2 << "\n";
 
 		ans += lcows2;
 	}
