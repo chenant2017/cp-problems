@@ -6,8 +6,7 @@
 using namespace std;
 
 ll N;
-unordered_map<ll, ll> orig;
-ll sorted[MAXN];
+pair<ll, ll> values[MAXN];
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -22,18 +21,17 @@ int main() {
 	for (ll i = 0; i < N; i++) {
 		ll a;
 		cin >> a;
-		orig[a] = i;
-		sorted[i] = a;
+		values[i] = pair<ll, ll>({a, i});
 	}
 
-	sort(sorted, sorted + N);
+	sort(values, values + N);
 
 	ll ans = 0;
 
 	for (ll i = 0; i < N; i++) {
-		ll d = i - orig[sorted[i]];
-		if (d < 0 && -1*d > ans) {
-			ans = -1*d;
+		ll d = values[i].second - i;
+		if (d > 0 && d > ans) {
+			ans = d;
 		}
 	}
 
