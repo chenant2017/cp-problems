@@ -7,10 +7,10 @@ using namespace std;
 ll N;
 ll barn[MAXN];
 unordered_set<ll> sources;
-unordered_set<ll> not_emptied;
+unordered_set<ll> emptied;
 
 ll get_energy(ll i) {
-	cout << "NEW I " << i << "\n"; 
+	//cout << "NEW I " << i << "\n"; 
 	ll d[MAXN] = {0};
 	ll energy = 0;
 
@@ -24,16 +24,16 @@ ll get_energy(ll i) {
 		i = (i - 1 + 5 * N) % N;
 
 		if (sources.find(i) != sources.end()) {
-			while (!to_put.empty() && barn[i] + d[i] > 0 && not_emptied.find(i) != not_emptied.end()) {
+			while (!to_put.empty() && barn[i] + d[i] > 0 && emptied.find(i) == emptied.end()) {
 				ll a = to_put.front();
 				to_put.pop();
 				d[i]--;
 				d[a]++;
 				energy += pow((a - i + 5 * N) % N, 2);
-				cout << a << " " << (a - i + 5 * N) % N << "\n";
+				//cout << a << " " << (a - i + 5 * N) % N << "\n";
 
 				if (barn[i] + d[i] == 0) {
-					not_emptied.erase(i);
+					emptied.insert(i);
 				}
 			}
 		}
@@ -55,7 +55,6 @@ int main() {
 		cin >> barn[i];
 		if (barn[i] > 0) {
 			sources.insert(i);
-			not_emptied.insert(i);
 		}
 	}
 
@@ -63,8 +62,9 @@ int main() {
 
 	for (ll i = 0; i < N; i++) {
 		if (barn[i] == 0) {
+			emptied.clear();
 			ll energy = get_energy(i);
-			cout << "energy is " << energy << " for i " << i << "\n";
+			//cout << "energy is " << energy << " for i " << i << "\n";
 			if (energy < ans) {
 				ans = energy;
 			}
