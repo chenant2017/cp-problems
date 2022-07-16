@@ -66,21 +66,6 @@ int main() {
 		}
 	}
 
-	/*for (ll i = 0; i < N; i++) {
-		for (ll j = 0; j < N; j++) {
-			cout << ge100[i][j] << " ";
-		}
-		cout << "\n";
-	}
-	cout << "\n";
-
-	for (ll i = 0; i < N; i++) {
-		for (ll j = 0; j < N; j++) {
-			cout << ge101[i][j] << " ";
-		}
-		cout << "\n";
-	}*/
-
 	cout << get_rects(ge100) - get_rects(ge101) << "\n";
 
 	return 0;
