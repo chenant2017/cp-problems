@@ -18,7 +18,7 @@ ll bfs(pair<ll, ll> start) {
 
 	queue<pair<ll, ll>> nextq;
 
-	while (level < k && !q.empty()) {
+	while (level <= k && !q.empty()) {
 		pair<ll, ll> curr = q.front();
 		q.pop();
 
@@ -61,8 +61,10 @@ ll bfs(pair<ll, ll> start) {
 		if (!visited[next.f][next.s]) nextq.push(next);
 		next = curr;
 
-		if (q.empty()) q = nextq;
-		level++;
+		if (q.empty()) {
+			swap(nextq, q);
+			level++;
+		}
 	}
 
 	return ans;
