@@ -13,17 +13,23 @@ vector<ll> bfs(ll start) {
 	q.push(start);
 	queue<ll> nextq;
 	ll dist = 0;
-	vector<ll> dists (MAXN, -1);
+	vector<ll> dists (MAXN, MAXN);
 
 	while (!q.empty()) {
 		ll curr = q.front();
 		q.pop();
-		if (dists[curr] != -1) continue;
+		if (dists[curr] != MAXN) {
+			if (q.empty()) {
+				swap(q, nextq);
+				dist++;
+			}
+			continue;
+		} 
 
 		dists[curr] = dist;
 
 		for (auto i: adj[curr]) {
-			if (dists[i] == -1) nextq.push(i);
+			if (dists[i] == MAXN) nextq.push(i);
 		}
 
 		if (q.empty()) {
