@@ -23,18 +23,13 @@ void get_ends2(ll b) {
 
 	for (ll i = 1; i < N - boots[b].s; i++) {
 		if (last_good < i) {
-			last_good = -1;
+			last_good = i;
 		}
 		if (boots[b].f >= snow[i + boots[b].s]) {
 			last_good = i + boots[b].s;
 		}
 
-		if (last_good == -1) {
-			ends2[b][i] = i;
-		}
-		else {
-			ends2[b][i] = last_good;
-		}
+		ends2[b][i] = last_good;
 	}
 
 	for (ll i = N - boots[b].s; i < N; i++) {
@@ -66,23 +61,20 @@ int main() {
 		get_ends2(i);
 	}
 
-	/*for (ll i = 0; i < B; i++) {
-		for (ll j = 0; j < N; j++) {
-			cout << ends2[i][j] << " ";
-		}
-		cout << "\n";
-	}*/
-
 	ll pos = 0;
 	ll ans = 0;
 	for (ll i = 0; i < B; i++) {
-		while (pos != ends2[i][pos]) {
+		if (boots[i].f < snow[pos]) {
+			ans++;
+			continue;
+		}
+
+		while (boots[i].f >= snow[pos] && pos != ends2[i][pos]) {
 			pos = ends2[i][pos];
 		}
 		//cout << pos << " is pos\n";
-		if (pos == N - 1) {
-			break;
-		}
+		if (pos == N - 1) break;
+
 		ans++;
 	}
 
