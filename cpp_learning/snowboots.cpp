@@ -10,36 +10,31 @@ using namespace std;
 ll N, B;
 ll snow[MAX];
 pair<ll, ll> boots[MAX];
-ll ends2[MAX][MAX] = {0};
+bool visited[MAX][MAX] = {false};
+ll ans;
 
-void get_ends2(ll b) {
-	ll last_good = 0;
-	for (ll i = 0; i <= boots[b].s; i++) {
-		if (boots[b].f >= snow[i]) {
-			last_good = i;
-		}
-	}	
-	ends2[b][0] = last_good;
+void dfs(ll b, ll pos) {
+	if (visited[b][pos]) return;
 
-	for (ll i = 1; i < N - boots[b].s; i++) {
-		if (last_good < i) {
-			last_good = i;
-		}
-		if (boots[b].f >= snow[i + boots[b].s]) {
-			last_good = i + boots[b].s;
-		}
+	visited[b][pos] = true;
 
-		ends2[b][i] = last_good;
+	if (b == B) return;
+	if (boots[b].f < snow[pos]) return;
+	if (pos == N - 1) {
+		if (b < ans) {
+			ans = b;
+		}
+		return;
 	}
 
-	for (ll i = N - boots[b].s; i < N; i++) {
-		if (last_good < i) {
-			ends2[b][i] = i;
+	for (ll i = 1; i <= boots[b].s; i++) {
+		if (pos + i >= N) break;
+		if (boots[b].f >= snow[pos + i]) {
+			dfs(b, pos + i);
 		}
-		else {
-			ends2[b][i] = last_good;
-		}	
 	}
+
+	dfs(b + 1, pos);
 }
 
 int main() {
@@ -51,32 +46,16 @@ int main() {
 	freopen((fname + ".out").c_str(), "w", stdout);
 
 	cin >> N >> B;
+	ans = B + 1;
 
 	for (ll i = 0; i < N; i++) {
 		cin >> snow[i];
 	}
-
 	for (ll i = 0; i < B; i++) {
 		cin >> boots[i].f >> boots[i].s;
-		get_ends2(i);
 	}
 
-	ll pos = 0;
-	ll ans = 0;
-	for (ll i = 0; i < B; i++) {
-		if (boots[i].f < snow[pos]) {
-			ans++;
-			continue;
-		}
-
-		while (boots[i].f >= snow[pos] && pos != ends2[i][pos]) {
-			pos = ends2[i][pos];
-		}
-		//cout << pos << " is pos\n";
-		if (pos == N - 1) break;
-
-		ans++;
-	}
+	dfs(0, 0);
 
 	cout << ans << "\n";
 
