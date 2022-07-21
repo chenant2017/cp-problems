@@ -37,6 +37,7 @@ int main() {
 	}
 
 	ll max_sizes[MAXN];
+	max_sizes[N] = 0;
 
 	ll max_size = -1;
 	for (ll i = N - 1; i >= 0; i--) {
