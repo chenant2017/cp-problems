@@ -18,8 +18,11 @@ void dfs(ll b, ll pos) {
 
 	visited[b][pos] = true;
 
-	if (b == B) return;
-	if (boots[b].f < snow[pos]) return;
+	if (b >= B) return;
+	if (boots[b].f < snow[pos])  {
+		dfs(b + 1, pos);
+		return;
+	} 
 	if (pos == N - 1) {
 		if (b < ans) {
 			ans = b;
