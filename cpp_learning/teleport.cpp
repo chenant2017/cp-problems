@@ -9,6 +9,7 @@ using namespace std;
 
 ll N;
 pair<ll, ll> moves[MAXN];
+map<ll, ll> dslope; 
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -20,31 +21,45 @@ int main() {
 	
 	cin >> N;
 
-	double sum = 0;
-	ll count = 0;
+	ll value = 0;
 
 	for (ll i = 0; i < N; i++) {
 		ll a, b;
 		cin >> a >> b;
 
-		moves[i].f = a;
-		moves[i].s = b;
-
-		if (abs(a) < abs(a - b)) {
-			sum += b;
-			count++;
+		value += abs(b - a);
+		if (abs(a) < abs(b - a)) {
+			if (a <= 0 && b >= 0 ||
+				a >= 0 && b <= 0) {
+				dslope[0]--;
+				dslope[b] += 2;
+				dslope[2*b]--;
+			}
+			else {
+				dslope[2*a]--;
+				dslope[b] += 2;
+				dslope[2*b - 2*a]--;
+			}
 		}
 	}
 
-	double y = sum / count;
-	double dist = 0;
+	ll ans = value;
+	ll slope = 0;
 
-	for (ll i = 0; i < N; i++) {
-		dist += min((double)abs(moves[i].f - moves[i].s), 
-					abs(moves[i].f) + abs(y - moves[i].s));
+	auto it = dslope.begin();
+	slope -= it->s;
+	it++;
+
+	for (; it != dslope.end(); it++) {
+		auto prev = it;
+		prev--;
+		value += prev->s * (it->f - prev->f);
+		if (value < ans) {
+			ans = value;
+		}
 	}
 
-	cout << dist << "\n";
+	cout << ans << "\n";
 
 	return 0;
 }
