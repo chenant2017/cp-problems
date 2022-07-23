@@ -8,7 +8,6 @@
 using namespace std;
 
 ll N;
-pair<ll, ll> moves[MAXN];
 map<ll, ll> dslope; 
 
 int main() {
@@ -29,8 +28,8 @@ int main() {
 
 		value += abs(b - a);
 		if (abs(a) < abs(b - a)) {
-			if (a <= 0 && b >= 0 ||
-				a >= 0 && b <= 0) {
+			if ((a <= 0 && b >= 0) ||
+				(a >= 0 && b <= 0)) {
 				dslope[0]--;
 				dslope[b] += 2;
 				dslope[2*b]--;
@@ -47,13 +46,14 @@ int main() {
 	ll slope = 0;
 
 	auto it = dslope.begin();
-	slope -= it->s;
+	slope += it->s;
 	it++;
 
 	for (; it != dslope.end(); it++) {
 		auto prev = it;
 		prev--;
-		value += prev->s * (it->f - prev->f);
+		value += slope * (it->f - prev->f);
+		slope += it->s;
 		if (value < ans) {
 			ans = value;
 		}
