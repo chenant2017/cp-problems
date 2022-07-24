@@ -17,10 +17,6 @@ int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	
-	/*string fname = "pasture";
-	freopen((fname + ".in").c_str(), "r", stdin);
-	freopen((fname + ".out").c_str(), "w", stdout);*/
-	
 	cin >> N;
 
 	for (ll i = 0; i < N; i++) {
@@ -68,14 +64,9 @@ int main() {
 			ll mins = min(points[i].s, points[j].s);
 			ll maxs = max(points[i].s, points[j].s);
 
-			//cout << points[i].f << " " << points[i].s << "\n";
-			//cout << points[j].f << " " << points[j].s << "\n";
-
 			ll left = cows[maxf][mins - 1] - cows[minf - 1][mins - 1];
 			ll right = cows[maxf][N] - cows[maxf][maxs] - cows[minf - 1][N] + 
 					   cows[minf - 1][maxs];
-
-			//cout << left << " " << right << "\n\n";
 
 			ans += (left + 1) * (right + 1);
 		}

@@ -46,10 +46,6 @@ int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	
-	//string fname = "acowdemia";
-	//freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
-	
 	cin >> N >> K >> L;
 
 	for (ll i = 0; i < N; i++) {

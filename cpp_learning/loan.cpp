@@ -47,14 +47,11 @@ int main() {
 
 	while (maxx - minx > 1) {
 		ll mid = (minx + maxx) / 2;
-		//cout << minx << " " << maxx << " " << mid << "mid\n";
 		if (works(mid)) {
 			minx = mid;
-			//cout << "works\n";
 		}
 		else {
 			maxx = mid;
-			//cout << "doesnt work\n";
 		}
 	}
 

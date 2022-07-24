@@ -17,10 +17,6 @@ int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	
-	//string fname = "yearcow";
-	//freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
-	
 	cin >> N >> K;
 
 	for (ll i = 0; i < N; i++) {

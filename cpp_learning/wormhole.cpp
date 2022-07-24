@@ -97,11 +97,7 @@ int main() {
 	}
 
 	xadj[N - 1] = -1;
-
-	/*for (ll i = 0; i < N; i++) {
-		cout << xadj[i] << "\n";
-	}*/
-
+	
 	set<ll> to_pair;
 	for (ll i = 0; i < N; i++) {
 		to_pair.insert(i);
@@ -112,12 +108,6 @@ int main() {
 	ll ans = 0;
 
 	for (auto& i: pairings) {
-
-		/*for (auto& mm: i) {
-			cout << mm.f << " " << mm.s << "\n";
-		}
-		cout << "\n";*/
-
 		bool cycle = false;
 		for (ll j = 0; j < N; j++) {
 			if (traverse(j, i)) {
@@ -127,7 +117,6 @@ int main() {
 		}
 
 		if (cycle) {
-			//cout << "cycle!\n";
 			ans++;
 		}
 	}

@@ -16,7 +16,7 @@ ll get_rects(int ge[MAXN][MAXN]) {
 
 	for (ll i = 0; i < N; i++) {
 
-		int all_ones[MAXN] = {0}; // all_ones in column, starting from row i
+		int all_ones[MAXN] = {0}; 
 		for (ll j = 0; j < N; j++) {
 			all_ones[j] = 1;
 		}
@@ -46,10 +46,6 @@ ll get_rects(int ge[MAXN][MAXN]) {
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
-	
-	//string fname = "justgreen";
-	//freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N;
 

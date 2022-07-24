@@ -10,7 +10,6 @@ unordered_set<ll> sources;
 unordered_set<ll> emptied;
 
 ll get_energy(ll i) {
-	//cout << "NEW I " << i << "\n"; 
 	ll d[MAXN] = {0};
 	ll energy = 0;
 
@@ -30,7 +29,6 @@ ll get_energy(ll i) {
 				d[i]--;
 				d[a]++;
 				energy += pow((a - i + 5 * N) % N, 2);
-				//cout << a << " " << (a - i + 5 * N) % N << "\n";
 
 				if (barn[i] + d[i] == 0) {
 					emptied.insert(i);
@@ -64,7 +62,6 @@ int main() {
 		if (barn[i] == 0) {
 			emptied.clear();
 			ll energy = get_energy(i);
-			//cout << "energy is " << energy << " for i " << i << "\n";
 			if (energy < ans) {
 				ans = energy;
 			}

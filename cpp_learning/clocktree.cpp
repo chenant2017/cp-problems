@@ -11,8 +11,7 @@ int clocks[MAXN];
 bool visited[MAXN];
 ll changes[MAXN] = {0};
 
-ll get_change(ll start, ll prev) { //change that affects prev. clock
-	//cout << start << "\n";
+ll get_change(ll start, ll prev) { 
 	if (visited[start]) {
 		return 0;
 	}
@@ -36,12 +35,9 @@ ll get_change(ll start, ll prev) { //change that affects prev. clock
 	}
 
 	if (prev != -1 && adj[start].size() == 1) {
-		//cout << 12 - clocks[start] << " a " << start << "\n";
 		return 12 - clocks[start];
 	}
 	else {
-		//cout << change << " is change\n";
-		//cout << 12 - (clocks[start] + change) % 12 << " b " << start << "\n";
 		return 12 - (clocks[start] + change) % 12;
 	}
 }
@@ -58,9 +54,7 @@ int main() {
 	
 	for (ll i = 1; i <= N; i++) {
 		cin >> clocks[i];
-		//cout << clocks[i] << " ";
 	}
-	//cout << "\n";
 
 	for (ll i = 0; i < N - 1; i++) {
 		ll a, b;
@@ -71,21 +65,16 @@ int main() {
 
 	ll ans = 0;
 
-	//cout << "hi\n";
-
 	for (ll i = 1; i <= N; i++) {
 		for (ll j = 1; j <= N; j++) {
 			visited[j] = false;
 		}
-		//cout << "\n";
 		ll change = get_change(i, -1);
 		if (change % 12 == 0 || change % 12 == 11) {
 			ans++;
 		}
 	}
 	cout << ans << "\n";
-
-
 
 	return 0;
 }

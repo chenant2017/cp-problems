@@ -1,5 +1,3 @@
-//2021 Silver Open #2
-
 #include <bits/stdc++.h>
 
 #define ll long long
@@ -9,10 +7,6 @@ using namespace std;
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
-	
-	//string fname = "abc";
-	//freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
 
 	ll T;
 	ll N;
