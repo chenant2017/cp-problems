@@ -94,7 +94,6 @@ int main() {
     seg ans1, ans2;
 
     while (s_ptr < N && se_ptr < N) {
-    	//cout << segs[s_ptr].s << " " << segs[se_ptr].s << "\n";
     	if (cmpcll(segs[s_ptr].f.f, segs_end[se_ptr].f.s)) {
     		currx = segs[s_ptr].f.f.x;
     		active.insert(segs[s_ptr]);
@@ -105,7 +104,6 @@ int main() {
 	    		if (intersect(*it, segs[s_ptr])) {
 	    			ans1 = *it;
 	    			ans2 = segs[s_ptr];
-	    			//cout << ans1.s << " " << ans2.s << "\n";
 	    			break;
 	    		}
 	    		it++;
@@ -115,7 +113,6 @@ int main() {
 	    		if (intersect(*it, segs[s_ptr])) {
 	    			ans1 = *it;
 	    			ans2 = segs[s_ptr];
-	    			//cout << ans1.s << " " << ans2.s << "\n";
 	    			break;
 	    		}
 	    	}
@@ -134,7 +131,6 @@ int main() {
 	    			if (intersect(*above, *below)) {
 	    				ans1 = *above;
 	    				ans2 = *below;
-	    				//cout << ans1.s << " " << ans2.s << "\n";
 	    				break;
 	    			}
 	    			below++;
@@ -143,7 +139,6 @@ int main() {
     		active.erase(segs_end[se_ptr]);
     		se_ptr++;
     	}
-    	//cout << s_ptr << " " << se_ptr << " moo\n";
     }
 
     if (ans1.s > ans2.s) {
@@ -154,7 +149,6 @@ int main() {
     for (ll i = 0; i < N; i++) {
     	if (segs[i].s == ans2.s) continue;
     	if (intersect(segs[i], ans2)) {
-    		//cout << "inter with " << i << "\n";
     		count++;
     	}
     }
