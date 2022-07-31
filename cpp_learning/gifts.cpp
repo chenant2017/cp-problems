@@ -1,80 +1,60 @@
-#include <bits/stdc++.h>
+//2022 Silver Feb #1
 
-#define ll long long
+#include <bits/stdc++.h>
 #define MAXN 510
+
+typedef long long ll;
 
 using namespace std;
 
 ll N;
-ll prefs[MAXN][MAXN];
-ll ans[MAXN];
+ll choices[MAXN][MAXN];
+vector<ll> adj[MAXN];
+unordered_set<ll> access[MAXN];
 
 
-bool works(ll start, ll taking, bool visited[MAXN]) {
-	//cout << start << " " << taking << "\n";
+void dfs(ll start, ll curr) {
+	if (access[start].find(curr) != access[start].end()) return;
 
-	ll i;
-	if (taking % N == start - 1) {
-		i = 0;
-		while (i < N && prefs[taking][i - 1] != taking) {
-			if (!visited[prefs[taking][i]]) return true;
-			i++;
-		}
-		return false;
+	access[start].insert(curr);
+
+	for (auto i: adj[curr]) {
+		dfs(start, i);
 	}
-
-	i = 0;
-	while (i < N && prefs[taking][i - 1] != taking) {
-
-		if (visited[prefs[taking][i]]) {
-			i++;
-			continue;
-		}
-
-		visited[prefs[taking][i]] = true;
-
-		if (works(start, taking % N + 1, visited)) {
-			return true;
-		}
-
-		visited[prefs[taking][i]] = false;
-		i++;
-	}
-	return false;
 }
+
 
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	
-	//string fname = "gifts";
-	//freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
-	
 	cin >> N;
 
 	for (ll i = 1; i <= N; i++) {
-		for (ll j = 0; j < N; j++) {
-			cin >> prefs[i][j];
+		for (ll j = 1; j <= N; j++) {
+			cin >> choices[i][j];
 		}
 	}
 
 	for (ll i = 1; i <= N; i++) {
-		ll j = 0;
-		while (j < N && prefs[i][j - 1] != i) {
-			bool visited[MAXN] = {false};
-			visited[prefs[i][j]] = true;
+		for (ll j = 1; j <= N; j++) {
+			adj[i].push_back(choices[i][j]);
+			if (choices[i][j] == i) break;
+		}
+	}
 
-			if (works(i, i % N + 1, visited)) {
-				ans[i] = prefs[i][j];
+	for (ll i = 1; i <= N; i++) {
+		bool visited[MAXN] = {false};
+		dfs(i, i);
+	}
+
+	for (ll i = 1; i <= N; i++) {
+		for (ll j = 1; j <= N; j++) {
+			if (access[choices[i][j]].find(i) != access[choices[i][j]].end()) {
+				cout << choices[i][j] << "\n";
 				break;
 			}
-			j++;
 		}
-	}
-
-	for (ll i = 1; i <= N; i++) {
-		cout << ans[i] << "\n";
 	}
 
 	return 0;
