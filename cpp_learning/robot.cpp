@@ -57,6 +57,9 @@ int main() {
 	cin >> N;
 	cin >> goal.f >> goal.s;
 
+	moves1.reserve(N);
+	moves2.reserve(N);
+
 	for (ll i = 0; i < N / 2; i++) {
 		pll p;
 		cin >> p.f >> p.s;
