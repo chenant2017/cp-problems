@@ -12,10 +12,10 @@ typedef long long ll;
 typedef pair<ll, ll> pll;
 struct pair_hash {
 	size_t operator() (const pll& p) const {
-		return p.f * (2 * pow(10, 9) + 5) + p.s;
+		return p.f * 239 + p.s;
 	}
 };
-typedef unordered_map<pll, vector<ll>, pair_hash> um;
+typedef unordered_map<pll, unordered_map<ll, ll>, pair_hash> um;
 
 
 
@@ -41,7 +41,7 @@ void find_sums(vector<pll>& moves,
 	curr.s += moves[index].s;
 	size++;
 
-	sums[curr].push_back(size);
+	sums[curr][size]++;
 
 	find_sums(moves, sums, curr, index + 1, size);
 }
@@ -69,27 +69,28 @@ int main() {
 		moves2.push_back(p);
 	}
 
-	pll start = pll({0, 0});
+	pll start = pll({0, 0}); 
 
-	sums1[start].push_back(0);
-	sums2[start].push_back(0);
+	sums1[start][0]++;
+	sums2[start][0]++;
 
 	find_sums(moves1, sums1, start, 0, 0);
 	find_sums(moves2, sums2, start, 0, 0);
 
-	for (auto i: sums1) {
+	for (auto& i: sums1) {
 		auto sum1 = i.f;
 		pll sum2;
 		sum2.f = goal.f - sum1.f;
 		sum2.s = goal.s - sum1.s;
 
-		for (auto j: i.s) {
-			for (auto k: sums2[sum2]) {
-				ll size = j + k;
-				ans[size]++;
+		if (sums2.find(sum2) != sums2.end()) {
+			for (auto& j: i.s) {
+				for (auto k: sums2[sum2]) {
+					ans[j.f + k.f] += j.s * k.s;
+				}
 			}
 		}
-	}
+	} 
 
 	for (ll i = 1; i <= N; i++) {
 		cout << ans[i] << "\n";
