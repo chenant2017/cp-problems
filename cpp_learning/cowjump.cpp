@@ -17,8 +17,8 @@ ll N;
 ll currx;
 seg segs[MAXN];
 
-bool cmpcll(cll v1, cll v2) {
-	return v2.x - v1.x > 1e-9 || (abs(v1.x - v2.x) < 1e-9 && v2.y - v1.y > 1e-9);
+bool cmpcll(cll a, cll b) {
+	return b.x - a.x > 1e-9 || (abs(a.x - b.x) < 1e-9 && b.y - a.y > 1e-9);
 }
 
 ld gety(seg a) {
