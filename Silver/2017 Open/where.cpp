@@ -72,8 +72,6 @@ bool is_pcl(ll i, ll j, ll k, ll l) {
 		}
 	}
 
-	//cout << char1.s << " " << char2.s << "\n";
-
 	return (char1.f != '0' && char2.f != '0' &&
 			((char1.s == 1 && char2.s > 1) || 
 			 (char1.s > 1 && char2.s == 1))
@@ -109,7 +107,6 @@ int main() {
 		states[c.i][c.j][c.k][c.l] = true;
 
 		if (is_pcl(c.i, c.j, c.k, c.l)) {
-			//cout << c.i << " " << c.j << " " << c.k << " " << c.l << "\n";
 			ans++;
 			for (ll p = c.i; p <= c.k; p++) {
 				for (ll q = c.j; q <= c.l; q++) {
