@@ -16,7 +16,6 @@ int main() {
 	
 	string fname = "gifts";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N >> B;
 	
