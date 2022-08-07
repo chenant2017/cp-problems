@@ -2,28 +2,28 @@
 using namespace std;
 
 typedef long long ll;
-typedef double long ld;
-typedef complex<long double> cll;
-typedef pair<pair<cll, cll>, ll> seg;
+typedef long double ld;
+typedef complex<long double> cld;
+typedef pair<pair<cld, cld>, ll> seg;
 
 #define MAXN 100010
 #define f first
 #define s second
 #define x real()
 #define y imag()
+#define EPSILON 1e-9
 
 
 ll N;
 ll currx;
-seg segs[MAXN];
 
-bool cmpcll(cll a, cll b) {
-	return b.x - a.x > 1e-9 || (abs(a.x - b.x) < 1e-9 && b.y - a.y > 1e-9);
+bool cmpcld(cld a, cld b) {
+	return b.x - a.x > EPSILON || (abs(a.x - b.x) < EPSILON && b.y - a.y > EPSILON);
 }
 
 ld gety(seg a) {
-	cll ca = a.f.s - a.f.f;
-	if (abs(ca.x) < 1e-9) return a.f.f.y;
+	cld ca = a.f.s - a.f.f;
+	if (abs(ca.x) < EPSILON) return a.f.f.y;
 
 	ld m = ca.y / ca.x;
 
@@ -34,7 +34,7 @@ bool cmpseg(seg a, seg b) {
 	return gety(a) < gety(b);
 }
 
-ld cp(cll a, cll b) {
+ld cp(cld a, cld b) {
 	return a.x * b.y - a.y * b.x;
 }
 
@@ -44,11 +44,11 @@ bool intersect(seg s1, seg s2) {
 	ld sides2 = cp(s2.f.f - s1.f.f, s2.f.f - s1.f.s) *
 				cp(s2.f.s - s1.f.f, s2.f.s - s1.f.s);
 
-	if (sides1 < -1e-9 && sides2 < -1e-9) return true;
-	if (sides1 < -1e-9 && abs(sides2) < 1e-9) return true;
-	if (sides2 < -1e-9 && abs(sides1) < 1e-9) return true;
-	if (abs(sides1) < 1e-9 && abs(sides2) < 1e-9) {
-		return !(cmpcll(s1.f.s, s2.f.f) || cmpcll(s2.f.s, s1.f.f));
+	if (sides1 < -EPSILON && sides2 < -EPSILON) return true;
+	if (sides1 < -EPSILON && abs(sides2) < EPSILON) return true;
+	if (sides2 < -EPSILON && abs(sides1) < EPSILON) return true;
+	if (abs(sides1) < EPSILON && abs(sides2) < EPSILON) {
+		return !(cmpcld(s1.f.s, s2.f.f) || cmpcld(s2.f.s, s1.f.f));
 	}
 	return false;
 }
@@ -63,28 +63,29 @@ int main() {
 	
 	ll N;
 	cin >> N;
+	vector<seg> segs (N);
 
 	for (ll i = 0; i < N; i++) {
 		ll a, b, c, d;
 		cin >> a >> b >> c >> d;
-		cll m(a, b), n(c, d);
+		cld m(a, b), n(c, d);
 		seg s;
-		if (cmpcll(m, n)) {
-			s = seg(pair<cll, cll>({m, n}), i);
+		if (cmpcld(m, n)) {
+			s = seg(pair<cld, cld>({m, n}), i);
 		}
 		else {
-			s = seg(pair<cll, cll>({n, m}), i);
+			s = seg(pair<cld, cld>({n, m}), i);
 		}
 		segs[i] = s;
 	}
 
-	sort(segs, segs + N, [](auto& a, auto& b) {
-		return cmpcll(a.f.f, b.f.f);
+	sort(segs.begin(), segs.end(), [](auto& a, auto& b) {
+		return cmpcld(a.f.f, b.f.f);
 	});
     
     auto segs_end = segs;
-    sort(segs_end, segs_end + N, [](auto& a, auto& b) {
-    	return cmpcll(a.f.s, b.f.s);
+    sort(segs_end.begin(), segs_end.end(), [](auto& a, auto& b) {
+    	return cmpcld(a.f.s, b.f.s);
     });
 
     set<seg,decltype(&cmpseg)> active(cmpseg);
@@ -94,7 +95,7 @@ int main() {
     seg ans1, ans2;
 
     while (s_ptr < N && se_ptr < N) {
-    	if (cmpcll(segs[s_ptr].f.f, segs_end[se_ptr].f.s)) {
+    	if (cmpcld(segs[s_ptr].f.f, segs_end[se_ptr].f.s)) {
     		currx = segs[s_ptr].f.f.x;
     		active.insert(segs[s_ptr]);
 	    	auto it = active.find(segs[s_ptr]);
@@ -119,24 +120,27 @@ int main() {
 	    	s_ptr++;
     	}
     	else {
+    		bool found = false;
     		currx = segs_end[se_ptr].f.s.x;
-    		auto it = active.find(segs_end[se_ptr]);
-    		auto above = it;
-    		auto below = it;
-    		if (above != active.end()) {
-    			above++;
-
-	    		if (above != active.end() &&  below != active.begin()) {
-	    			below--;
-	    			if (intersect(*above, *below)) {
-	    				ans1 = *above;
-	    				ans2 = *below;
-	    				break;
-	    			}
-	    			below++;
-	    		}
+    		for (auto it = active.begin(); it != active.end(); it++) {
+    			if (it->s == segs_end[se_ptr].s)  {
+    				auto above = it;
+    				auto below = it;
+    				above++;
+    				
+    				if (above != active.end() && below != active.begin()) {
+    					below--;
+    					if (intersect(*above, *below)) {
+		    				ans1 = *above;
+		    				ans2 = *below;
+		    				found = true;
+		    			}
+    				}
+    				active.erase(it);
+    				break;
+    			}
     		}
-    		active.erase(segs_end[se_ptr]);
+    		if (found) break;
     		se_ptr++;
     	}
     }
