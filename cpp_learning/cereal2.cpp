@@ -1,8 +1,6 @@
-//Silver 2022 Jan #3
-
 #include <bits/stdc++.h>
 #define MAX 100010
-#define f first   
+#define f first
 #define s second
 using namespace std;
 
@@ -10,82 +8,63 @@ typedef long long ll;
 typedef pair<ll, ll> pll;
 
 ll N, M;
-
+pll cows[MAX];
 vector<pll> adj[MAX];
-vector<pll> edges (MAX);
+bool v_cereal[MAX] = {false};
+pll no_start = pll({-1, -1});
 
-pll find_start(ll& start, vector<bool>& visited_v) {
-	pll result = pll({-1, -1});
+bool taken[MAX] = {false};
+bool v_cow[MAX] = {false};
 
-	vector<bool> visited_e (MAX, false);
-	stack<pll> q; //node, edge it's planning to go on
-	
-	for (auto& i: adj[start]) {
-		pll p = pll({start, i.s});
-		q.push(p);
-		result.f = edges[i.s].f;
-		result.s = i.s;
+vector<ll> path;
+
+pll get_start(ll i, ll prev, pll ans) {
+	if (v_cereal[i]) {
+		return ans;
 	}
+	v_cereal[i] = true;
 
-	while (!q.empty()) {
-		auto curr = q.top(); 
-		q.pop();
-		if (visited_e[curr.s]) {
-			result.f = edges[curr.s].f;
-			result.s = curr.s;
-			break;
-		}
-
-		visited_v[curr.f] = true;
-		visited_e[curr.s] = true;
-
-		ll next = edges[curr.s].f;
-		if (next == curr.f) {
-			next = edges[curr.s].s;
-		}
-
-		for (auto& i: adj[next]) {
-			if (i.s == curr.s) {
-				continue;
+	for (auto j: adj[i]) {
+		if (v_cereal[j.f]) {
+			if (j.f != prev) {
+				ans.f = cows[j.s].f;
+				ans.s = j.s;
 			}
-			q.push(pll({next, i.s}));
+		}
+		else {
+			ans = get_start(j.f, i, ans);
 		}
 	}
-	return result;
+	return ans;
 }
 
-void get_path(pll& start, vector<bool>& cow, 
-		vector<bool>& cereal, vector<ll>& path) {
-	stack<pll> q;
-
-	cow[start.s] = true;
-	cereal[start.f] = true;
-	path.push_back(start.s);
-
-	//cout << start.f << " " << start.s << " start\n";
-
-	for (auto& i: adj[start.f]) {
-		//cout << cow[i.s] << " >:(\n";
-		if (!cow[i.s] && !cereal[i.f]) q.push(i);
+void dfs(ll c) {
+	if (taken[cows[c].f]) {
+		if (taken[cows[c].s]) {
+			return;
+		}
+		taken[cows[c].s] = true;
 	}
-	
-	while (!q.empty()) {
-		auto curr = q.top();
-		q.pop();
+	else {
+		taken[cows[c].f] = true;
+	}
 
-		if (cereal[curr.f] || cow[curr.s]) continue;
+	v_cow[c] = true;
+	path.push_back(c);
 
-		cow[curr.s] = true;
-		cereal[curr.f] = true;
-		//cout << curr.f << " " << curr.s << "\n";
+	for (auto i: adj[cows[c].f]) {
+		if (!v_cow[i.s]) {
+			dfs(i.s);
+		}
+	}
 
-		path.push_back(curr.s);
-
-		for (auto& i: adj[curr.f]) {
-			if (!cow[i.s] && !cereal[i.f]) q.push(i);
+	for (auto i: adj[cows[c].s]) {
+		if (!v_cow[i.s]) {
+			dfs(i.s);
 		}
 	}
 }
+
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -94,43 +73,46 @@ int main() {
 	string fname = "cereal2";
 	//freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
-	
+
 	cin >> N >> M;
 
-	for (ll i = 1; i <= N; i++){
+	for (ll i = 1; i <= N; i++) {
 		ll a, b;
 		cin >> a >> b;
-		edges[i] = pll({a, b});
+
+		cows[i] = pll({a, b});
+
 		adj[a].push_back(pll({b, i}));
 		adj[b].push_back(pll({a, i}));
 	}
 
-	vector<bool> visited_v (MAX, false);
-	vector<bool> cow (MAX, false);
-	vector<bool> cereal(MAX, false);
-	vector<ll> path;
-	ll fed = 0;
+	for (ll i = 1; i <= M; i++) {
+		pll start = get_start(i, -1, no_start);
+
+		if (start.f != -1) {
+			if (!v_cow[start.s]) {
+				dfs(start.s);
+			}
+		}
+	}
 
 	for (ll i = 1; i <= N; i++) {
-		if (!visited_v[i]) {
-			pll result = find_start(i, visited_v);
-			if (result.f != -1 && !cereal[result.f] && !cow[result.s]) { //other conditions too
-				get_path(result, cow, cereal, path);
-			}
+		if (!v_cow[i]) {
+			dfs(i);
 		}
 	}
 
 	ll hungry = 0;
 
 	for (ll i = 1; i <= N; i++) {
-		if (!cow[i]) {
-			hungry++;
+		if (!v_cow[i]) {
 			path.push_back(i);
+			hungry++;
 		}
 	}
 
 	cout << hungry << "\n";
-	
+
 	for (auto i: path) {
 		cout << i << "\n";
 	}
