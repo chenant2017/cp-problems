@@ -13,6 +13,8 @@ vector<pll> adj[MAX];
 bool v_cereal[MAX] = {false};
 pll no_start = pll({-1, -1});
 
+
+//initialize big objects globally to save time
 bool taken[MAX] = {false};
 bool v_cow[MAX] = {false};
 
