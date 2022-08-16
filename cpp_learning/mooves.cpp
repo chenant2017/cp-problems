@@ -4,11 +4,11 @@ using namespace std;
 
 typedef long long ll;
 
-set<ll> reaches[MAX];
-
 ll N, K;
+set<ll> reaches[MAX];
 ll cows[MAX];
 ll ind[MAX];
+vector<bool> visited (MAX);
 ll ans[MAX];
 
 int main() {
@@ -17,22 +17,21 @@ int main() {
 	
 	string fname = "mooves";
 	//freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".ouzt").c_str(), "w", stdout);
+	//freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N >> K;
 
 	for (ll i = 1; i <= N; i++) {
 		cows[i] = i;
 		reaches[i].insert(i);
-	}
+	} 
 
 	for (ll i = 1; i <= K; i++) {
 		ll a, b;
 		cin >> a >> b;
-
 		swap(cows[a], cows[b]);
-		reaches[cows[a]].insert(b);
-		reaches[cows[b]].insert(a);
+		reaches[cows[a]].insert(a);
+		reaches[cows[b]].insert(b);
 	}
 
 	for (ll i = 1; i <= N; i++) {
@@ -40,13 +39,24 @@ int main() {
 	}
 
 	for (ll i = 1; i <= N; i++) {
-		set<ll> result = reaches[cows[i]];
+		if (visited[i]) continue;
+
+		vector<ll> comp;
+		set<ll> total_reaches;
 		ll curr = i;
-		while (curr != cows[i]) {
-			result.insert(reaches[curr].begin(), reaches[curr].end());
+		while (!visited[curr]) {
+			visited[curr] = true;
+			comp.push_back(curr);
+			for (auto j: reaches[curr]) {
+				if (total_reaches.find(j) == total_reaches.end()) {
+					total_reaches.insert(j);
+				}
+			}
 			curr = ind[curr];
 		}
-		ans[cows[i]] = result.size();
+		for (auto j: comp) {
+			ans[j] = total_reaches.size();
+		}
 	}
 
 	for (ll i = 1; i <= N; i++) {
