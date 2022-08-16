@@ -52,7 +52,7 @@ vector<ll> solve(ll a, ll b, int dir) {
 	}
 }
 
-ll get(vector<ll> v, ll i) {
+ll get(vector<ll>& v, ll i) {
 	if (i < 0 || i >= v.size()) {
 		return 0;
 	}
