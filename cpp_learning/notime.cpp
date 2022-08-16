@@ -12,44 +12,23 @@ vector<ll> solve(ll a, ll b, int dir) {
 	vector<ll> result;
 	ll strokes = 0;
 	stack<ll> mono;
-	if (dir == 1) {
-		for (ll i = a; i <= b; i++) {
+	for (ll i = a; i - dir != b; i += dir) {
+		if (mono.empty() || mono.top() < fence[i]) {
+				mono.push(fence[i]);
+				strokes++;
+		}
+		else {
+			while (!mono.empty() && mono.top() > fence[i]) {
+				mono.pop();
+			}
 			if (mono.empty() || mono.top() < fence[i]) {
 				mono.push(fence[i]);
 				strokes++;
 			}
-			else {
-				while (!mono.empty() && mono.top() > fence[i]) {
-					mono.pop();
-				}
-				if (mono.empty() || mono.top() < fence[i]) {
-					mono.push(fence[i]);
-					strokes++;
-				}
-			}
-			result.push_back(strokes);
 		}
-		return result;
+		result.push_back(strokes);
 	}
-	else {
-		for (ll i = a; i >= b; i--) {
-			if (mono.empty() || mono.top() < fence[i]) {
-				mono.push(fence[i]);
-				strokes++;
-			}
-			else {
-				while (!mono.empty() && mono.top() > fence[i]) {
-					mono.pop();
-				}
-				if (mono.empty() || mono.top() < fence[i]) {
-					mono.push(fence[i]);
-					strokes++;
-				}
-			}
-			result.push_back(strokes);
-		}
-		return result;
-	}
+	return result;
 }
 
 ll get(vector<ll>& v, ll i) {
