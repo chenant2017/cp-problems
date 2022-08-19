@@ -10,7 +10,7 @@ ll times[MAX][MAX];
 
 ll get_max(ll i, ll j) {
 	//cout << i << " " << j << "\n";
-	ll result = -1;
+	ll result = 0;
 
 	times[i][j] = 0;
 
@@ -56,7 +56,7 @@ int main() {
 		cin >> pastures[i];
 	}
 
-	ll ans = -1;
+	ll ans = 0;
 
 	for (ll i = 0; i < N; i++) {
 		for (ll j = 0; j < N; j++) {
