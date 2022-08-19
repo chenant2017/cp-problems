@@ -37,21 +37,6 @@ int main() {
 		mono.push(i);
 	}
 
-	/*stack<ll> mono2;
-	mono.push(N - 1);
-
-	for (ll i = N - 1; i >= 0; i--) {
-		while (!mono.empty() && heights[i] > heights[mono.top()]) {
-			ans += mono.top() - i;
-			cout << 
-			mono.pop();
-		}
-		if (!mono.empty()) {
-			ans += mono.top() - i;
-		}
-		mono.push(i);
-	}*/
-
 	cout << ans << "\n";
 
 	
