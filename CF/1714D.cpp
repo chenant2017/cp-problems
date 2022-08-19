@@ -14,19 +14,20 @@ int main() {
 	cin.tie(NULL);
 	
 	string fname = "1714D";
-	freopen((fname + ".in").c_str(), "r", stdin);
+	//freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
-	
+
 	cin >> Q;
 
 	for (ll q = 0; q < Q; q++) {
 		cin >> t;
 		t = " " + t;
-		vector<pll> reach (t.size()); //index it can reach, index of string
+		ll ts = t.size();
+		vector<pll> reach (ts); //index it can reach, index of string
 		vector<pll> ans;
 
-		for (ll i = 1; i < t.size(); i++) {
-			reach[i].f = i;
+		for (ll i = 1; i < ts; i++) {
+			reach[i].f = -1;
 			reach[i].s = -1;
 		}
 
@@ -37,16 +38,14 @@ int main() {
 			cin >> s[i];
 		}
 
-		for (ll i = 1; i < t.size(); i++) {
-			cout << "i " << i << "\n";
+		for (ll i = 1; i < ts; i++) {
 			for (ll j = 1; j <= N; j++) {
 				ll dest = i + s[j].size() - 1;
-				cout << s[j] << " " << t.substr(i, s[j].size()) << " " << dest << "\n";
-				if (dest < t.size() &&
+				if (dest < ts &&
 					s[j] == t.substr(i, s[j].size())) {
 
 					for (ll k = i; k <= dest; k++) {
-						if (dest > reach[k].f) {
+						if (dest >= reach[k].f) {
 							reach[k].f = dest;
 							reach[k].s = j;
 						}
@@ -55,25 +54,26 @@ int main() {
 			}
 		}
 
-		for (auto i: reach) {
-			cout << i.f << " " << i.s << "\n";
-		}
-		cout << "\n";
-
-		ll curr = 1;
+		ll curr = 0;
 		ll next;
+
+		/*for (ll i = 1; i < ts; i++) {
+			cout << i << " " << reach[i].f << " " << reach[i].s << "\n";
+		}*/
 
 		bool works = true;
 
-		while (curr < t.size() - 1) {
+		while (curr < ts - 1) {
+			curr++;
+			//cout << curr << "\n";
 			next = reach[curr].f;
-			if (next == curr) {
+			if (next == -1) {
 				cout << "-1\n";
 				works = false;
 				break;
 			}
 			else {
-				pll p = pll({reach[curr].s, curr});
+				pll p = pll({reach[curr].s, next - s[reach[curr].s].size() + 1});
 				ans.push_back(p);
 				curr = next;
 			}
