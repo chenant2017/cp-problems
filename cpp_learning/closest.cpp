@@ -38,10 +38,12 @@ int main() {
     for (ll i = 0; i < K; i++) {
         ll closest = pow(10, 10);
         auto left = ends_.lower_bound(patches[i].f);
-        left--;
-        ll ldist = patches[i].f - *left;
-        if (ldist > 0 && ldist < closest) {
-            closest = ldist;
+        if (left != ends_.begin()) {
+            left--;
+            ll ldist = patches[i].f - *left;
+            if (ldist < closest) {
+                closest = ldist;
+            }
         }
         auto right = ends_.upper_bound(patches[i].f);
         if (right != ends_.end()) {
@@ -57,13 +59,25 @@ int main() {
     });
 
     ll sum = 0;
+    ll total = 0;
     ll max_sum = 0;
     for (ll i = 0; i < new_ends.size(); i++) {
         sum += new_ends[i].s;
+        if (new_ends[i].s > 0) total += new_ends[i].s;
         max_sum = max(max_sum, sum);
         if (sum == 0) {
             tasty.push(max_sum);
+            tasty.push(total - max_sum); //why this is needed:
+            /*
+                3 2 2
+                14 3
+                5 5
+                8 4
+                2
+                15
+            */
             max_sum = 0;
+            total = 0;
         }
     }
 
