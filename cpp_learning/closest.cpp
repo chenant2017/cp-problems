@@ -9,7 +9,7 @@ typedef pair<ll, ll> pll;
 ll K, M, N;
 priority_queue<ll> tasty;
 set<ll> ends_;
-set<ll> add_ends_;
+vector<pll> new_ends;
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -48,45 +48,29 @@ int main() {
             ll rdist = *right - patches[i].f;
             if (rdist < closest) closest = rdist;
         }
-        add_ends_.insert(patches[i].f + closest);
-        add_ends_.insert(patches[i].f - closest);
+        new_ends.push_back(pll({patches[i].f - closest, patches[i].s}));
+        new_ends.push_back(pll({patches[i].f + closest, -patches[i].s}));
     }
 
-    ends_.insert(add_ends_.begin(), add_ends_.end());
+    sort(new_ends.begin(), new_ends.end(), [](auto& a, auto& b) {
+        return a.f < b.f || (a.f == b.f && a.s < b.s);
+    });
 
-    auto it = ends_.begin();
-    ll i = 0;
     ll sum = 0;
-    while (it != ends_.end() && i < K) {
-        if (*it >= patches[i].f) {
-            sum += patches[i].s;
-            i++;
+    ll max_sum = 0;
+    for (ll i = 0; i < new_ends.size(); i++) {
+        sum += new_ends[i].s;
+        max_sum = max(max_sum, sum);
+        if (sum == 0) {
+            tasty.push(max_sum);
+            max_sum = 0;
         }
-        else {
-            //cout << *it << " end\n";
-            tasty.push(sum);
-            //cout << "push " << sum << "\n";
-            sum = 0;    
-            it++;
-        }
-    }
-
-    if (it == ends_.end()) {
-        sum = 0;
-        while (i < K) {
-            sum += patches[i].s;
-            i++;
-        }
-    }
-    else if (i == K) {
-        tasty.push(sum);
     }
 
     ll taken = 0;
     ll ans = 0;
     while (taken < N && !tasty.empty()) {
         ans += tasty.top();
-        //cout << tasty.top() << "\n";
         tasty.pop();
         taken++;
     }
