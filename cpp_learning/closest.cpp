@@ -16,7 +16,7 @@ int main() {
 	cin.tie(NULL);
 	
 	string fname = "closest";
-	freopen((fname + ".in").c_str(), "r", stdin);
+	//freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> K >> M >> N;
@@ -35,39 +35,38 @@ int main() {
         ends_.insert(f);
     }
 
-    ll i = 0;
-    auto it = ends_.begin();
-
-    for (; it != ends_.end(); it++) {
-        while (i + 1 < K && patches[i + 1].f < *it) {
-            i++;
+    for (ll i = 0; i < K; i++) {
+        ll closest = pow(10, 10);
+        auto left = ends_.lower_bound(patches[i].f);
+        left--;
+        ll ldist = patches[i].f - *left;
+        if (ldist > 0 && ldist < closest) {
+            closest = ldist;
         }
-        add_ends_.insert(2 * patches[i].f - *it);
-        if (i + 1 < K) {
-             add_ends_.insert(2 * patches[i].f - *it);
+        auto right = ends_.upper_bound(patches[i].f);
+        if (right != ends_.end()) {
+            ll rdist = *right - patches[i].f;
+            if (rdist < closest) closest = rdist;
         }
+        add_ends_.insert(patches[i].f + closest);
+        add_ends_.insert(patches[i].f - closest);
     }
 
     ends_.insert(add_ends_.begin(), add_ends_.end());
 
-    for (auto j: ends_) {
-        cout << j << " ";
-    }
-    cout << "\n";
-
-    it = ends_.begin();
-    i = 0;
+    auto it = ends_.begin();
+    ll i = 0;
     ll sum = 0;
     while (it != ends_.end() && i < K) {
         if (*it >= patches[i].f) {
             sum += patches[i].s;
             i++;
         }
-        else if (*it < patches[i].f) {
-            cout << *it << " " << sum << "end\n";
+        else {
+            //cout << *it << " end\n";
             tasty.push(sum);
+            //cout << "push " << sum << "\n";
             sum = 0;    
-           
             it++;
         }
     }
@@ -79,13 +78,17 @@ int main() {
             i++;
         }
     }
+    else if (i == K) {
+        tasty.push(sum);
+    }
 
     ll taken = 0;
     ll ans = 0;
     while (taken < N && !tasty.empty()) {
         ans += tasty.top();
-        cout << tasty.top() << "\n";
+        //cout << tasty.top() << "\n";
         tasty.pop();
+        taken++;
     }
 
     cout << ans << "\n";
