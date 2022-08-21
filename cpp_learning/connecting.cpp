@@ -9,36 +9,32 @@ vector<bool> visited;
 vector<vector<ll>> adj;
 vector<vector<ll>> comps;
 
-vector<ll> dfs(ll i) {
-    vector<ll> result;
+void dfs(ll i, vector<ll>& result) {
     if (visited[i]) {
-        return result;
+        return;
     }
     visited[i] = true;
     result.push_back(i);
     for (auto j: adj[i]) {
-        vector<ll> v = dfs(j);
-        result.insert(result.end(), v.begin(), v.end());
+        dfs(j, result);
     }
-    return result;
 }
 
 ll cheapest_path(ll i, ll j) {
-    sort(comps[i].begin(), comps[i].end());
-    sort(comps[j].begin(), comps[j].end());
-
-    ll p = 0, q = 0;
-
-    ll result = pow(N, 2);
-
-    while (p < comps[i].size() && q < comps[j].size()) {
-        ll diff = abs(comps[i][p] - comps[j][q]);
-        result = min(diff, result);
-
-        if (comps[i][p] < comps[j][q]) p++;
-        else q++;
+    if (comps[i].size() > comps[j].size()) {
+        swap(i, j);
     }
-
+    ll result = N + 5;
+    for (auto p: comps[i]) {
+        auto a = lower_bound(comps[j].begin(), comps[j].end(), p);
+        if (a != comps[j].end()) {
+            result = min(result, *a - p);
+        }
+        if (a != comps[j].begin()) {
+            a--;
+            result = min(result, p - *a); 
+        }
+    }
     return pow(result, 2);
 }
 
@@ -76,7 +72,10 @@ int main() {
         ll compN = -1;
 
         for (ll i = 1; i <= N; i++) {
-            auto comp = dfs(i);
+            if (visited[i]) continue;
+            vector<ll> comp;
+            dfs(i, comp);
+            sort(comp.begin(), comp.end());
             comps.push_back(comp);
             if (visited[1] && comp1 == -1) comp1 = comps.size() - 1;
             if (visited[N] && compN == -1) compN = comps.size() - 1;
@@ -88,9 +87,13 @@ int main() {
         }
 
         for (ll i = 0; i < comps.size(); i++) {
+            if (i == comp1 || i == compN) continue;
             ll cost = cheapest_path(comp1, i) + cheapest_path(compN, i);
             ans = min(ans, cost);
         }
+
+        ll cost = cheapest_path(comp1, compN);
+        ans = min(ans, cost);
 
         ans = min(ans, (ll)pow(N - 1, 2));
 
