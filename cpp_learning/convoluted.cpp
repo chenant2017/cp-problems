@@ -1,13 +1,13 @@
 #include <bits/stdc++.h>
-#define MAXM 10010
+#define MAXM 5010
 using namespace std;
 
 typedef long long ll;
 
 ll N, M;
-vector<int> acounts (MAXM, 0);
-vector<int> bcounts (MAXM, 0);
-vector<ll> prefix (MAXM, 0);
+vector<ll> acounts (2 * MAXM, 0);
+vector<ll> bcounts (2 * MAXM, 0);
+vector<ll> prefix (2 * MAXM, 0);
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -26,14 +26,14 @@ int main() {
         bcounts[b]++;
     }
 
-    for (ll i = 0; i <= M; i++) {
-        for (ll j = 0; j <= M; j++) {
+    for (ll i = 0; i <= 2 * M; i++) {
+        for (ll j = 0; j <= 2 * M; j++) {
             prefix[i + j] += acounts[i] * acounts[j];
         }
     }
 
-    for (ll i = 0; i <= M; i++) {
-        for (ll j = 0; j <= M; j++) {
+    for (ll i = 0; i <= 2 * M; i++) {
+        for (ll j = 0; j <= 2 * M; j++) {
             prefix[i + j + 1] -= bcounts[i] * bcounts[j];
         }
     }
