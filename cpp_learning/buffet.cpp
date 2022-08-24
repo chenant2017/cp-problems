@@ -95,7 +95,7 @@ int main() {
     ll ans = 0;
 
     for (auto& i: comps) {
-        ans += get_energy(i);
+        ans = max(ans, get_energy(i));
     }
 
     cout << ans << "\n";
