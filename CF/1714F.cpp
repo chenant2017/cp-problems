@@ -47,9 +47,9 @@ int main() {
 
 		ll root = 0;
 
-		double d1 = (d12 - d23 + d31) / 2;
+		double d1 = (d12 - d23 + d31) / 2.;
 		if (d1 == 0) root = 1;
-		double d2 = (d12 + d23 - d31) / 2;
+		double d2 = (d12 + d23 - d31) / 2.;
 		if (d2 == 0) root = 2;
 		double d3 = (-d12 + d23 + d31) / 2;
 		if (d3 == 0) root = 3;

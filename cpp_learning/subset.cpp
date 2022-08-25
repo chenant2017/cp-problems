@@ -42,15 +42,22 @@ int main() {
             cout << "N";
             continue;
         }
-        string s_mod = string();
-        for (char c: s) {
-            if (letters.find(c) != letters.end()) s_mod += c;
+
+        ll tptr = 0;
+
+        for (ll j = 0; j < s.size(); j++) {
+            if (letters.find(s[j]) != letters.end()) {
+                while (tptr < t.size() && letters.find(t[tptr]) == letters.end()) {
+                    tptr++;
+                }
+                if (tptr == t.size() || t[tptr] != s[j]) {
+                    works = false;
+                    break;
+                }
+                tptr++;
+            }
         }
-        string t_mod = string();
-        for (char c: t) {
-            if (letters.find(c) != letters.end()) t_mod += c;
-        }
-        cout << (s_mod == t_mod ? "Y":"N");
+        cout << (works ? "Y":"N");
     }
     cout << "\n";
 
