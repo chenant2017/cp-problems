@@ -25,36 +25,33 @@ void find_nodes(ll starti, ll startj, ll startt, queue<tll>& bq) { //get nodes f
         fq.pop();
 
         if (ans[i][j] != 0) continue;
-
         ans[i][j] = t;
 
-        for (auto k: lr) {
-            if (0 <= j + k && j + k < M &&
-                grid[i][j + k] == '.') {
-                
-                ll gravity = pow(-1, t + 1);
+        ll gravity = pow(-1, t + 1);
+        ll gravity2 = -1 * gravity;
 
-                ll i2 = i;
-                ll j2 = j + k;
-                
-                while (i2 + gravity >= 0 && i2 + gravity < N && 
-                       grid[i2 + gravity][j2] == '.') {
+        ll i2 = i;
+        while (i2 + gravity2 > 0 && i2 + gravity2 < N - 1 && 
+               grid[i2 + gravity2][j] == '.') {
+            i2 += gravity2;
+        }
+        if (grid[i2 + gravity2][j] == '#') {
+            bq.push(tll({i2, j, t + 1}));
+        }
+
+        for (auto k: lr) {
+            ll j2 = j + k;
+            if (0 <= j2 && j2 < M &&
+                grid[i][j2] == '.') {
+
+                i2 = i;
+                while (i2 + gravity > 0 && i2 + gravity < N - 1 && 
+                    grid[i2 + gravity][j2] == '.') {
                     i2 += gravity;
                 }
 
-                if (i2 + gravity >= 0 && i2 + gravity < N &&
-                    grid[i2 + gravity][j2] == '#') {
-                        fq.push(tll({i2, j2, t}));
-
-                        ll gravity2 = -1 * gravity;
-                        while (i2 + gravity2 >= 0 && i2 + gravity2 < N && 
-                            grid[i2 + gravity2][j2] == '.') {
-                            i2 += gravity2;
-                        }
-                        if (i2 + gravity2 >= 0 && i2 + gravity2 < N &&
-                            grid[i2 + gravity2][j2] == '#') {
-                                bq.push(tll({i2, j2, t + 1}));
-                        }
+                if (grid[i2 + gravity][j2] == '#') {
+                    fq.push(tll({i2, j2, t}));
                 }   
             }
         }
@@ -63,15 +60,21 @@ void find_nodes(ll starti, ll startj, ll startt, queue<tll>& bq) { //get nodes f
 
 void bfs(ll starti, ll startj) {
     queue<tll> bq;
-    bq.push(tll({starti, startj, 1}));
 
+    while (starti + 1 > 0 && starti + 1 < N - 1 && 
+        grid[starti + 1][startj] == '.') {
+        starti++;
+    }
+
+    if (grid[starti + 1][startj] == '#') {
+        bq.push(tll({starti, startj, 1}));
+    }
+     
     while (!bq.empty()) {
         ll i, j, t;
         tie(i, j, t) = bq.front();
         bq.pop();
 
-        if (ans[i][j] != 0) continue;
-    
         find_nodes(i, j, t, bq);
     }
 }
