@@ -17,7 +17,7 @@ void toggle(ll i, ll j, vector<vector<ll>>& grid2) {
 
         if (0 <= i2 && i2 < M &&
             0 <= j2 && j2 < N) {
-            grid2[i2][j2] = 1 - grid[i2][j2];
+            grid2[i2][j2] = 1 - grid2[i2][j2];
         }
     }
 }
