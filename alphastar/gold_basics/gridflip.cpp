@@ -46,16 +46,16 @@ int main() {
 
     for (ll combo = 0; combo < 1 << N; combo++) {
         vector<vector<ll>> grid2 = grid;
-        vector<vector<ll>> ans;
+        vector<vector<ll>> ans (M);
 
         for (ll i = 0; i < M; i++) {
             for (ll j = 0; j < N; j++) {
-                ans[i][j] = 0;
+                ans[i].push_back(0);
             }
         }
 
         for (ll i = 0; i < N; i++) {
-            if (combo & i > 0) {
+            if ((combo & (1 << (N - 1 - i))) > 0) { //must put parentheses around bit operation
                 ans[0][i]++;
                 toggle(0, i, grid2);
             }
@@ -83,7 +83,7 @@ int main() {
                 }
                 cout << "\n";
             }
-            cout << "\n";
+        
             break;
         }
     }
