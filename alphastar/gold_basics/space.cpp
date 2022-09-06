@@ -19,7 +19,7 @@ ll bfs() {
         tie(i, j, t) = q.front();
         q.pop();
 
-        if (visited[i][j]) continue;
+        if (visited[i][j] || t >= field[i][j]) continue;
         visited[i][j] = true;
 
         //cout << i << " " << j << " " << t << "\n";
