@@ -60,7 +60,7 @@ int main() {
     for (ll i = 0; i < A; i++) {
         ll x, y, t;
         cin >> x >> y >> t;
-        field[x][y] = t;
+        field[x][y] = min(t, field[x][y]);
         for (ll d = 0; d < 4; d++) {
             ll nexti = x + di[d];
             ll nextj = y + dj[d];
