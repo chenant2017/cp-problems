@@ -21,20 +21,21 @@ int main() {
     for (ll i = 0; i <= H; i++) { //vert
         for (ll j = 0; j <= W; j++) { //horiz
             if (i == 0 && j == 0) continue;
-            ll l;
-            cout << i << " " << j << "\n";
+            double l;
+            //cout << i << " " << j << "\n";
             if (i + j == 1) {
                 l = i + j;
                 if (L1 <= l && l <= L2) {
                     ans += (H - i + 1) * (W - j + 1);
-                    cout << (H - i + 1) * (W - j + 1) << "\n";
+                    //cout << (H - i + 1) * (W - j + 1) << "\n";
                 }
             }
             else if (__gcd(i, j) == 1) {
                 l = sqrt(pow(i, 2) + pow(j, 2));
+                //cout << "l is " << l << "\n";
                 if (L1 <= l && l <= L2) {
                     ans += 2 * (H - i + 1) * (W - j + 1);
-                    cout << 2 * (H - i + 1) * (W - j + 1) << "\n";
+                    //cout << 2 * (H - i + 1) * (W - j + 1) << "\n";
                 }
             }
             else {
