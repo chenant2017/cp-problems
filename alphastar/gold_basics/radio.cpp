@@ -17,12 +17,8 @@ int get_dist(ll a, ll b) {
 }
 
 void prim(vector<ll>& result) {
-    //vector<pll> v;
-    // v.reserve(N * (N - 1) / 2);
-    //priority_queue<pll, vector<pll>, greater<pll>> q (greater<pll>(), move(v));
-
     visited.insert(1);
-    D[1] = 0;
+    D[1] = 1;
 
     while (visited.size() < N) {
         ll mini;
@@ -36,13 +32,12 @@ void prim(vector<ll>& result) {
 
         visited.insert(mini);
         result.push_back(mind);
+        if (mind == 2019201998) cout <<"hi\n";
         D[mini] = 0;
 
         for (ll i = 1; i <= N; i++) {
-            if (i != mini) {
-                ll dist = get_dist(i, mini);
-                D[i] = min(dist, D[i]);
-            }
+            ll dist = get_dist(i, mini);
+            D[i] = min(dist, D[i]);
         }
     }
 }
