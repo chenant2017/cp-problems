@@ -1,40 +1,50 @@
 #include <bits/stdc++.h>
 #define f first 
-#define MAXN 
+#define MAXN 7510
 #define s second
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<int, int> pll;
 
 ll N, K;
-set<ll> to_visit;
+ll D[MAXN];
+set<ll> visited;
 
-ll get_dist(ll a, ll b) {
+int get_dist(ll a, ll b) {
     if (a > b) swap(a, b);
     return (2019201913 * a + 2019201949 * b) % 2019201997;
 }
 
-vector<ll> prim() {
-    vector<ll> result;
-    priority_queue<pll, vector<pll>, greater<pll>> q;
-    q.push({0, 1}); // dist, node
-    while (!q.empty()) {
-        auto curr = q.top();
-        q.pop();
+void prim(vector<ll>& result) {
+    //vector<pll> v;
+    // v.reserve(N * (N - 1) / 2);
+    //priority_queue<pll, vector<pll>, greater<pll>> q (greater<pll>(), move(v));
 
-        if (to_visit.find(curr.s) == to_visit.end()) {
-            continue;
+    visited.insert(1);
+    D[1] = 0;
+
+    while (visited.size() < N) {
+        ll mini;
+        ll mind = 20192019998;
+        for (ll i = 1; i <= N; i++) {
+            if (D[i] != 0 && D[i] < mind) {
+                mini = i;
+                mind = D[i];
+            }
         }
 
-        to_visit.erase(curr.s);
-        result.push_back(curr.f);
+        visited.insert(mini);
+        result.push_back(mind);
+        D[mini] = 0;
 
-        for (auto i: to_visit) {
-            q.push({get_dist(curr.s, i), i});
+        for (ll i = 1; i <= N; i++) {
+            if (i != mini) {
+                ll dist = get_dist(i, mini);
+                D[i] = min(dist, D[i]);
+            }
         }
     }
-    return result;
 }
 
 int main() {
@@ -48,10 +58,11 @@ int main() {
 	cin >> N >> K;
 
     for (ll i = 1; i <= N; i++) {
-        to_visit.insert(i);
+        D[i] = 2019201998;
     }
 
-    vector<ll> lengths = prim();
+    vector<ll> lengths;
+    prim(lengths);
 
     sort(lengths.begin(), lengths.end(), greater<ll>());
 
