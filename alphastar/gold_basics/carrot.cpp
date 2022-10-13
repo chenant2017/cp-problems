@@ -10,6 +10,8 @@ typedef tuple<ll, ll, ll> tll;
 ll N, T;
 ll sizes[MAXN][MAXN];
 ll times[MAXN][MAXN];
+ll destsi[6] = {N - 3, N - 2, N - 2, N - 1, N - 1, N - 1};
+ll destsj[6] = {N - 1, N - 1, N - 2, N - 1, N - 2, N - 3};
 bool visited[MAXN][MAXN] = {{false}};
 
 void reset() {
@@ -20,8 +22,9 @@ void reset() {
     }
 }
 
-ll dijkstra(pll start) {
+ll dijkstra() {
     priority_queue<tll, vector<tll>, greater<tll>> q;
+    q.push(tll({0, 0, 0}));
 
     while (!q.empty()) {
         ll t, i, j;
@@ -50,8 +53,24 @@ ll dijkstra(pll start) {
             }
         }
 
-        for (ll di = -1; )
+        for (ll di = -1; di <= 1; di++) {
+            for (ll dj = -1; dj <= 1; dj++) {
+                if (di + dj != -1 && di + dj != 1) {
+                    continue;
+                }
+                ll nexti = i + di;
+                ll nextj = j + dj;
 
+                if (0 <= nexti && nexti < N &&
+                    0 <= nextj && nextj < N &&
+                    !visited[nexti][nextj]) {
+                    times[nexti][nextj] = min(times[nexti][nextj], 
+                                                times[i][j] + sizes[nexti][nextj] + 
+                                                3 * T);
+                    q.push(tll({times[nexti][nextj], nexti, nextj}));
+                }
+            }
+        }
     }
 }
 
@@ -71,7 +90,18 @@ int main() {
         }
     }
 
+    reset();
+    dijkstra();
 
+    ll ans = pow(10, 7);
+
+    for (ll x = 0; x < 6; x++) {
+        ll desti = destsi[x];
+        ll destj = destsj[x];
+        ans = min(ans, times[desti][destj]);
+    }
+    
+    cout << ans << "\n";
 	
 	return 0;
 }
