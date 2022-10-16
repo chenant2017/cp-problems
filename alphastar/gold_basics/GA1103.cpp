@@ -15,12 +15,13 @@ ll dj[] = {2, 1};
 
 void dijkstra(ll starti, ll startj) {
     priority_queue<tll, vector<tll>, greater<tll>> q;
-    q.push(tll({0, 0, starti, startj, 1}));
+    q.push(tll({0, 0, starti, startj, -1}));
     dists[starti][startj] = ttll({0, 0, 1});
 
     while (!q.empty()) {
         ll geese, jumps, i, j, ways;
         std::tie(geese, jumps, i, j, ways) = q.top();
+        ways *= -1;
         q.pop();
 
         if (visited[i][j]) continue;
@@ -46,13 +47,16 @@ void dijkstra(ll starti, ll startj) {
                             ngeese = geese;
                             njumps = jumps + 1;
                             nways = ways;
-                            
+                             if (ni == 5 && nj == 5) {
+                                //cout << nways << "\n";
+                            }   
                         }
                         else if (geese == ngeese) {
                             if (njumps == jumps + 1) {
-                                //cout << nways << " nways before\n";
                                 nways += ways;
-                                
+                                if (ni == 5 && nj == 5) {
+                                    //cout << nways - ways << " " << nways << "\n";
+                                }                                
                             }
                             else if (jumps + 1 < njumps) {
                                 njumps = jumps + 1;
@@ -61,7 +65,7 @@ void dijkstra(ll starti, ll startj) {
                         }
                         if (pond[ni][nj] == 0) geese--;
                         dists[ni][nj] = ttll({ngeese, njumps, nways});
-                        q.push(tll({ngeese, njumps, ni, nj, nways}));
+                        q.push(tll({ngeese, njumps, ni, nj, -1 * nways}));
                     }
                 }
             }
@@ -108,9 +112,9 @@ int main() {
         for (ll j = 0; j < N; j++) {
             ll a, b, c;
             tie(a, b, c) = dists[i][j];
-            cout << a << ", " << b << ", " << c << "   ";
+            //cout << a << ", " << b << ", " << c << "   ";
         }
-        cout << "\n";
+        //cout << "\n";
     }
 
     ll ans1, ans2, ans3;
