@@ -14,15 +14,13 @@ ll di[] = {1, 2};
 ll dj[] = {2, 1};
 
 void dijkstra(ll starti, ll startj) {
-    ll min_geese = M * N;
-    
     priority_queue<tll, vector<tll>, greater<tll>> q;
     q.push(tll({0, 0, starti, startj, 1}));
     dists[starti][startj] = ttll({0, 0, 1});
 
     while (!q.empty()) {
         ll geese, jumps, i, j, ways;
-        tie(geese, jumps, i, j, ways) = q.top();
+        std::tie(geese, jumps, i, j, ways) = q.top();
         q.pop();
 
         if (visited[i][j]) continue;
@@ -36,19 +34,25 @@ void dijkstra(ll starti, ll startj) {
                     ll nj = j + dj[d] * sj;
 
                     if (0 <= ni && ni < M &&
-                        0 <= nj && nj < N) {
+                        0 <= nj && nj < N &&
+                        pond[ni][nj] != 2) {
+                        if (ni == 5 && nj == 5) {
+                            //cout << ni << " " << nj << "\n";
+                        }
                         ll ngeese, njumps, nways;
-                        tie(ngeese, njumps, nways) = dists[ni][nj];
+                        std::tie(ngeese, njumps, nways) = dists[ni][nj];
                         if (pond[ni][nj] == 0) geese++;
                         if (geese < ngeese) {
                             ngeese = geese;
                             njumps = jumps + 1;
                             nways = ways;
+                            
                         }
                         else if (geese == ngeese) {
                             if (njumps == jumps + 1) {
                                 //cout << nways << " nways before\n";
                                 nways += ways;
+                                
                             }
                             else if (jumps + 1 < njumps) {
                                 njumps = jumps + 1;
@@ -104,18 +108,23 @@ int main() {
         for (ll j = 0; j < N; j++) {
             ll a, b, c;
             tie(a, b, c) = dists[i][j];
-            //cout << a << ", " << b << ", " << c << "   ";
+            cout << a << ", " << b << ", " << c << "   ";
         }
-        //cout << "\n";
+        cout << "\n";
     }
 
     ll ans1, ans2, ans3;
 
-    tie(ans1, ans2, ans3) = dists[desti][destj];
+    std::tie(ans1, ans2, ans3) = dists[desti][destj];
 
-    cout << ans1 << "\n";
-    cout << ans2 << "\n";
-    cout << ans3 << "\n";
+    if (ans1 == pow(10, 4)) cout << "-1\n";
+    else  {
+        cout << ans1 << "\n";
+        cout << ans2 << "\n";
+        cout << ans3 << "\n";
+    }
+
+    
 	
 	return 0;
 }
