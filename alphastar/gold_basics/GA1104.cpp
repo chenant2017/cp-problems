@@ -19,10 +19,9 @@ vector<ll> top_sort(ll max) {
 
     if (max >= M) return path;
 
-    cout << max << " max" << "\n";
-
-    for (ll i = 0; i <= max; i++) {
+    for (ll i = 0; i <= edges.size(); i++) {
         Edge &edge = edges[i];
+        if (edge.o > max) break;
         indegrees[edge.end]++;
         adj[edge.start].push_back(edge.end);
     }
@@ -39,19 +38,12 @@ vector<ll> top_sort(ll max) {
         indegrees[curr]--;
 
         for (auto i: adj[curr]) {
-            //cout << i << "\n";
-            //return path;
             indegrees[i]--;
             if (indegrees[i] == 0) {
                 q.push(i);
             }
         }
     }
-
-    for (auto i: path) {
-        //cout << i << " a";
-    }
-    //cout << "\n";
 
     return path;
 }
@@ -86,23 +78,14 @@ int main() {
         }
     }
 
-    for (auto i: edges) {
-        //cout << i.start << " " << i.end << " " << i.o << "\n";
-    }
-
     ll curr = 0; 
     ll jump = M / 2;
     
     vector<ll> path;
 
     while (jump > 0) {
-        //cout << curr << " curr \n";
         path = top_sort(curr + jump);
         if (path.size() == N) {
-            for (auto i: path) {
-                cout << i + 1 << " a";
-            }
-            cout << "\n";
             curr += jump;
         }
         else {
@@ -110,7 +93,6 @@ int main() {
         }
     }
 
-    cout << curr << " ad;skf\n";
     path = top_sort(curr);
     for (auto i: path) {
         cout << i + 1 << " ";
