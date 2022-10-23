@@ -1,52 +1,42 @@
 #include <bits/stdc++.h>
 #define MAXN 2010
-#define f first
+#define f first 
 #define s second
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
-bool visited[MAXN] = {false};
+typedef pair<ll, ll> pll; 
 
-ll N, C;
 pll points[MAXN];
-
-ll get_dist(ll a, ll b) {
-    ll x1, y1;
-    tie(x1, y1) = points[a];
-    ll x2, y2;
-    tie(x2, y2) = points[b];
-    return pow(x1 - x2, 2) + pow(y1 - y2, 2);
-}
+bool visited[MAXN] = {false};
+ll N, C;
 
 ll prims() {
-    ll result = 0;
-    ll reached = 0;
+	priority_queue<pll, vector<pll>, greater<pll>> q;
+	q.push(pll({0, 0}));
 
-    priority_queue<pll, vector<pll>, greater<pll>> q;
-    q.push(pll({0, 0}));
+	ll total = 0;
+	ll visited_ct = 0;
+	
+	while (!q.empty()) {
+		auto curr = q.top();
+		q.pop();
 
-    while (!q.empty()) {
-        auto curr = q.top();
-        q.pop();
+		if (visited[curr.s]) continue;
+		visited_ct++;
+		visited[curr.s] = true;
 
-        if (visited[curr.s]) continue;
+		total += curr.f;
 
-        result += curr.f;
-        visited[curr.s] = true;
-        reached++;
+		for (ll i = 0; i < N; i++) {
+			ll dist = pow(points[i].f - points[curr.s].f, 2) +
+					  pow(points[i].s - points[curr.s].s, 2);
+			if (dist >= C && !visited[i]) q.push(pll({dist, i}));
+		}
+	}
 
-        for (ll i = 0; i < N; i++) {
-            if (visited[i]) continue;
-            ll dist = get_dist(curr.s, i);
-            if (dist >= C) {
-                q.push(pll({get_dist(curr.s, i), i}));
-            }
-        }
-    }
-
-    if (reached == N) return result;
-    return -1;
+	if (visited_ct < N) return -1;
+	return total;
 }
 
 int main() {
@@ -59,11 +49,15 @@ int main() {
 	
 	cin >> N >> C;
 
-    for (ll i = 0; i < N; i++) {
-        cin >> points[i].f >> points[i].s;
+	ll x, y;
+	for (ll i = 0; i < N; i++) {
+        cin >> x >> y;
+		points[i].first = x;
+		points[i].second = y;
     }
-	
-    cout << prims() << "\n";
 
+	cout << prims() << "\n";
+	
 	return 0;
 }
+
