@@ -1,85 +1,79 @@
 #include <bits/stdc++.h>
 #define MAXN 1010
-#define f first 
-#define s second
-
 using namespace std;
 
 typedef long long ll;
-typedef pair<double, ll> pdl;
-typedef pair<ll, ll> pll;
 
-ll N, M;
-pll points[MAXN];
+double adj[MAXN][MAXN];
+double dists[MAXN];
 bool visited[MAXN] = {false};
-set<pll> connected;
-
-double get_dist(ll a, ll b) {
-    if (a > b) swap(a, b);
-
-    if (connected.find(pll({a, b})) == connected.end()) {
-        ll x1, y1;
-        tie(x1, y1) = points[a];
-        ll x2, y2;
-        tie(x2, y2) = points[b];
-
-        return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
-    }
-    else {
-        return 0;
-    }
-}
+pair<ll, ll> points[MAXN];
+ll N, M;
 
 double prims() {
-    double result = 0;
-    priority_queue<pdl, vector<pdl>, greater<pdl>> q;
-    q.push({0, 0}); //dist, point index
+    double total = 0;
 
-    while (!q.empty()) {
-        auto curr = q.top();
-        q.pop();
-        
-        if (visited[curr.s]) {
-            continue;
-        }
-        visited[curr.s] = true;
-        result += curr.f;
+    for (ll i = 0; i < N; i++) {
+        dists[i] = 2 * pow(10, 6);
+    }
+    dists[0] = 0;
 
-        for (ll i = 0; i < N; i++) {
-            if (!visited[i]) {
-                q.push(pdl({get_dist(curr.s, i), i}));
+    for (ll i = 0; i < N; i++) {
+        ll curr = -1;
+        for (ll j = 0; j < N; j++) {
+            if (!visited[j] && (curr == -1 || dists[j] < dists[curr])) {
+                curr = j;
             }
+        }
+
+        visited[curr] = true;
+        total += dists[curr];
+        //cout << dists[curr] << " hi\n";
+        //cout << curr << "\n";
+        dists[curr] = 0;
+
+        for (ll j = 0; j < N; j++) {
+            dists[j] = min(dists[j], dists[curr] + adj[curr][j]);
         }
     }
 
-    return result;
+    return total;
 }
 
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	
-	string fname = "fixing";
+	string fname = "GA0702";
 	freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N >> M;
 
+    ll x, y;
     for (ll i = 0; i < N; i++) {
-        cin >> points[i].f >> points[i].s;
+        cin >> x >> y;
+        points[i].first = x;
+        points[i].second = y;
     }
 
+    for (ll i = 0; i < N; i++) {
+        for (ll j = 0; j < N; j++) {
+            adj[i][j] = sqrt(pow(points[i].first - points[j].first, 2) + 
+                             pow(points[i].second - points[j].second, 2));
+        }
+    }
+
+    ll a, b;
     for (ll i = 0; i < M; i++) {
-        pll road; 
-        cin >> road.f >> road.s;
-        road.f--;
-        road.s--;
-        if (road.f > road.s) swap(road.f, road.s);
-        connected.insert(road);
+        cin >> a >> b;
+        adj[a - 1][b - 1] = 0;
+        adj[b - 1][a - 1] = 0;
     }
 
-    printf("%.2f\n", prims());
+    cout << fixed;
+    cout << setprecision(2);
+    cout << prims() << "\n";
 
-	
 	return 0;
 }
