@@ -5,7 +5,7 @@
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 
 string pastures[MAXN];
 ll N, A, B;
@@ -13,7 +13,7 @@ ll N, A, B;
 ll df[2] = {0, 1};
 ll ds[2] = {1, 0};
 
-ll bfs(pll start, ll ans) {
+ll bfs(pdl start, ll ans) {
 	//cout << start.f << " " << start.s << " START\n";
 	ll visited[MAXN][MAXN];
 	for (ll i = 0; i < N; i++) {
@@ -21,7 +21,7 @@ ll bfs(pll start, ll ans) {
 			visited[i][j] = -1;
 		}
 	}
-	queue<pll> q;
+	queue<pdl> q;
 	q.push(start);
 
 	while(!q.empty()) {
@@ -101,7 +101,7 @@ int main() {
 
 	for (ll i = 0; i < N; i++) {
 		for (ll j = 0; j < N; j++) {
-			pll start = pll({i, j});
+			pdl start = pll({i, j});
 			ans = bfs(start, ans);
 		}
 	}
