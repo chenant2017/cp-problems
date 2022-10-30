@@ -1,15 +1,16 @@
 #include <bits/stdc++.h>
-#define MAXN 100010
+#define MAXN 1000
 #define f first 
 #define s second
 using namespace std;
 
-typedef long long ll;
+typedef int ll;
 typedef pair<ll, ll> pll;
 
 pll intervals[MAXN];
 ll N;
 ll ans[MAXN] = {0};
+int memo[MAXN][MAXN][MAXN];
 
 void solve(ll i, ll right, ll complexity) {
     if (i == N) {
