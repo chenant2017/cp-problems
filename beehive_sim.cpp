@@ -2,10 +2,9 @@
 using namespace std;
 
 vector<vector<double>> A;
-vector<vector<int>> flowers;
 vector<vector<int>> visited;
 
-int N, M, F, T, Ft; 
+int N, M, F, T; 
 double P;
 int di[] = {0, 0, 0, -1, 1};
 int dj[] = {0, -1, 1, 0, 0};
@@ -24,19 +23,10 @@ double random_double(double min, double max) {
 }
 
 void simulate(int hivei, int hivej) {
-    int i = hivei;
-    int j = hivej;
-    int pollinated = 0;
+    int i = hivei, j = hivej;
     vector<double> probs;
     for (int t = 0; t < T; t++) {
         visited[i][j]++;
-        pollinated += flowers[i][j];
-
-        /*if (pollinated >= Ft) {
-            i = hivei;
-            j = hivej;
-            pollinated = 0;
-        }*/
 
         probs.clear(); 
         probs.push_back(A[i][j]);
@@ -82,13 +72,11 @@ int main() {
 	cin >> N >> M >> P >> F >> T;
     A.resize(N, vector<double>(M, 0));
     visited.resize(N, vector<int>(M, 0));
-    flowers.resize(N, vector<int>(M, 0));
 
 	int i, j;
     double a;
 	for (int f = 0; f < F; f++) {
 		cin >> i >> j >> a;
-        flowers[i][j] = a;
         fill_A(i, j, a);
 	}
 
