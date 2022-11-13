@@ -1,48 +1,65 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 
-vector<vector<double>> A; //attractiveness force
-vector<vector<int>> visited; //how many times each cell is visited
 vector<vector<int>> flowers; //number of flowers
-vector<vector<vector<int>>> C; //crowdedness; how many bees in each cell at each point in time
+vector<vector<double>> a; //average attractiveness of flowers
+vector<vector<double>> A; //attractiveness FORCE
+vector<vector<int>> visited; //how many times visited
+vector<vector<int>> pollinated; //how many times pollinated
+vector<vector<vector<int>>> C; //crowdedness; how many bees (at each point in time)
 
 int N, M, F; //rows, columns, number of flowers
-int B, T, Ft;  //bees, time, max flowers per trip 
-// int Cmax; //max crowdedness at a cell
-double P; //seasonality constant
-int di[] = {0, 0, 0, -1, 1};
+int B, T = 3000, Ft = 100; //bees, time, max flowers per trip 
+int Pmax = 50; //max times one flower can be pollinated
+int Pt = 10; //units of time to pollinate flowers flower
+double SD = 0.0001; //standard deviation
+double K_BPF = 500, MEAN_BPF = 0.01; //for p_prob
+double poll_rate = 0.3;
+int di[] = {0, 0, 0, -1, 1}; 
 int dj[] = {0, -1, 1, 0, 0};
 
 double random_double(double min, double max) {
     return min + ((double) rand()/RAND_MAX) * (max - min);
 }
 
-double v_index(int t, int i, int j) { //visiting index
-    return A[i][j] / (C[t][i][j] + 1);
+double density_control(int t, int i, int j) {
+    assert(flowers[i][j] != 0);
+    double bpf = C[t][i][j]/flowers[i][j]; //bees per flower
+    return 1 - 1/(1 + exp(-K_BPF * (bpf - MEAN_BPF)));
 }
 
-double p_index(int t, int i, int j) { //pollination index
-    return 1;
+double v_index(int t, int i, int j) { //visiting probability index
+    //if (flowers[i][j] == 0) return 
+    //return A[i][j] * density_control(t, i, j);
+    //return A[i][j] / (C[t][i][j] + 1);
+    return A[i][j];
 }
 
-double a_index(double a, double dist) { //attractivness index
-    return a / pow(dist + 1, P);
+double p_prob(int t, int i, int j) { //pollination probability
+    if (flowers[i][j] == 0) return 0;
+    return poll_rate * density_control(t, i, j);
+    //return 0.3 / (C[t][i][j] + 1);
 }
 
-void fill_A(int i, int j, double a) {
+double A_force(int i, int j, double dist) { //attractiveness force
+    return a[i][j] * flowers[i][j] * exp(-0.5 * pow(dist / SD, 2));
+    //return flowers[i][j] / pow(dist + 1, P);
+}
+
+void fill_A(int i, int j) {
     for (int i2 = 0; i2 < N; i2++) {
         for (int j2 = 0; j2 < M; j2++) {
             double dist = sqrt(pow(i2 - i, 2) + pow(j2 - j, 2));
-            A[i2][j2] += a_index(a, dist);
+            A[i2][j2] += A_force(i, j, dist);
         }
     }
 }
 
-vector<double> get_probs(int i, int j) {
+vector<double> get_v_probs(int t, int i, int j) {
     vector<double> probs;
-    
-    probs.clear(); 
-    probs.push_back(A[i][j]);
+
+    probs.push_back(v_index(t, i, j));
 
     int i2, j2;
     for (int d = 1; d < 5; d++) {
@@ -50,7 +67,7 @@ vector<double> get_probs(int i, int j) {
         j2 = j + dj[d];
         if (0 <= i2 && i2 < N &&
             0 <= j2 && j2 < M) {
-            probs.push_back(probs[d - 1] + A[i2][j2]);
+            probs.push_back(probs[d - 1] + v_index(t, i2, j2));
         }
         else {
             probs.push_back(probs[d - 1]);
@@ -60,33 +77,53 @@ vector<double> get_probs(int i, int j) {
     return probs;
 }
 
+int get_choice(vector<double> probs) {
+    double rd = random_double(0, *probs.rbegin());
+    int choice;
+    for (int p = 0; p < probs.size(); p++) {
+        if (rd <= probs[p]) {
+            choice = p;
+            break;
+        }
+    }
+    return choice;
+}
+
 void simulate(int hivei, int hivej) {
     int i = hivei;
     int j = hivej;
-    int pollinated = 0;
-    vector<double> probs;
+    int poll = 0; //number of flowers pollinated
+    vector<double> v_probs;
+    vector<double> p_probs;
+    int poll_time = 0;
 
     for (int t = 0; t < T; t++) {
-        visited[i][j]++;
-        C[t][i][j]++;
-        pollinated += flowers[i][j];
+        poll_time--;
+        if (poll_time > 0) continue;
 
-        if (pollinated >= Ft) return;
+        if (poll >= Ft) return;
 
-        probs = get_probs(i, j);
-
-        double rd = random_double(0, probs[4]);
+        v_probs = get_v_probs(t, i, j);
+        int v_choice = get_choice(v_probs);
+        i += di[v_choice];
+        j += dj[v_choice];
         
-        int move;
-        for (int p = 0; p < 5; p++) {
-            if (rd <= probs[p]) {
-                move = p;
-                break;
+        visited[i][j]++; 
+        C[t][i][j]++; // should be put under if statement or not??
+
+        if (flowers[i][j] != 0 && pollinated[i][j] < Pmax * flowers[i][j]) {
+            p_probs.clear();
+            p_probs.push_back(p_prob(t, i, j));
+            p_probs.push_back(1);
+
+            int p_choice = get_choice(p_probs);
+
+            if (p_choice == 0) {
+                poll++;
+                pollinated[i][j]++;
+                poll_time = Pt;
             }
         }
-
-        i += di[move];
-        j += dj[move];
     }
 }
 
@@ -97,33 +134,35 @@ int main() {
 	
 	string fname = "sim";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	freopen((fname + ".out").c_str(), "w", stdout);
+	freopen((fname + ".csv").c_str(), "w", stdout);
 	
-	cin >> N >> M >> P;
-    cin >> F >> B >> T;
-    cin >> Ft;
+	cin >> N >> M >> F >> B;
+
+    flowers.resize(N, vector<int>(M, 0));
+    a.resize(N, vector<double>(M, 0));
     A.resize(N, vector<double>(M, 0));
     visited.resize(N, vector<int>(M, 0));
-    flowers.resize(N, vector<int>(M, 0));
+    pollinated.resize(N, vector<int>(M, 0));
     C.resize(T, vector<vector<int>>(N, vector<int>(M, 0)));
 
     //initialize matrix A
-	int i, j;
-    double a;
+	int i, j, f_ij;
+    double a_ij;
 	for (int f = 0; f < F; f++) {
-		cin >> i >> j >> a;
-        flowers[i][j] = a;
-        fill_A(i, j, a);
+		cin >> i >> j >> f_ij >> a_ij;
+        flowers[i][j] = f_ij;
+        a[i][j] = a_ij;
+        fill_A(i, j);
 	}
 
     //simulate each bee's route
     for (int s = 0; s < B; s++) {
-        simulate(N/2 + 1, M/2 + 1);
+        simulate(N/2, M/2);
     }
     
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < M; j++) {
-            cout << visited[i][j] << ", ";
+            cout << pollinated[i][j] << ", ";
         }
         cout << "\n";
     }
