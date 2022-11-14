@@ -3,27 +3,36 @@
 using namespace std;
 
 vector<vector<int>> flowers; //number of flowers
+vector<pair<int, int>> firsts;
 vector<vector<double>> a; //average attractiveness of flowers
 vector<vector<double>> A; //attractiveness FORCE
 vector<vector<int>> visited; //how many times visited
 vector<vector<int>> pollinated; //how many times pollinated
 vector<vector<vector<int>>> C; //crowdedness; how many bees (at each point in time)
 
+int hivei = 45;
+int hivej = 50;
+
 int N, M, F; //rows, columns, number of flowers
 int B, T = 3000, Ft = 100; //bees, time, max flowers per trip 
 int Pmax = 50; //max times one flower can be pollinated
 int Pt = 10; //units of time to pollinate flowers flower
-double SD = 0.0001; //standard deviation
+double SD = 10; //standard deviation
 double K_BPF = 500, MEAN_BPF = 0.01; //for p_prob
 double poll_rate = 0.3;
 int di[] = {0, 0, 0, -1, 1}; 
 int dj[] = {0, -1, 1, 0, 0};
+double R = SD * 3;
 
-double random_double(double min, double max) {
+double random_double(double min, double max) { //USE UNIFORM_REAL_DISTRIBUTION INSTEAD
     return min + ((double) rand()/RAND_MAX) * (max - min);
 }
 
-double density_control(int t, int i, int j) {
+int random_int(int min, int max) {
+    return min + (rand())
+}
+
+double density_control(int t, int i, int j) { //USE UNIFORM_INT_DISTRIBUTION INSTEAD
     assert(flowers[i][j] != 0);
     double bpf = C[t][i][j]/flowers[i][j]; //bees per flower
     return 1 - 1/(1 + exp(-K_BPF * (bpf - MEAN_BPF)));
@@ -33,6 +42,7 @@ double v_index(int t, int i, int j) { //visiting probability index
     //if (flowers[i][j] == 0) return 
     //return A[i][j] * density_control(t, i, j);
     //return A[i][j] / (C[t][i][j] + 1);
+    //double r = sqrt(pow(i, 2) + pow(j, 2));
     return A[i][j];
 }
 
@@ -89,9 +99,12 @@ int get_choice(vector<double> probs) {
     return choice;
 }
 
-void simulate(int hivei, int hivej) {
+void simulate() {
     int i = hivei;
     int j = hivej;
+
+    int firsti = firsts
+
     int poll = 0; //number of flowers pollinated
     vector<double> v_probs;
     vector<double> p_probs;
@@ -130,7 +143,9 @@ void simulate(int hivei, int hivej) {
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
-    srand(time(NULL)); //initialize random seed
+    
+    random_device rd;
+
 	
 	string fname = "sim";
 	freopen((fname + ".in").c_str(), "r", stdin);
@@ -153,11 +168,15 @@ int main() {
         flowers[i][j] = f_ij;
         a[i][j] = a_ij;
         fill_A(i, j);
+
+        if (sqrt(pow(i - hivei, 2) + pow(j - hivej, 2)) <= R) {
+            firsts.push_back(pair<int, int>({i, j}));
+        }
 	}
 
     //simulate each bee's route
     for (int s = 0; s < B; s++) {
-        simulate(N/2, M/2);
+        simulate();
     }
     
     for (int i = 0; i < N; i++) {
