@@ -24,12 +24,21 @@ int di[] = {0, 0, 0, -1, 1};
 int dj[] = {0, -1, 1, 0, 0};
 double R = SD * 3;
 
+random_device rd;
+mt19937 gen(rd());
+
+int manhattan(int i1, int j1, int i2, int j2) {
+    return abs(i1 - i2) + abs(j1 - j2);
+}
+
 double random_double(double min, double max) { //USE UNIFORM_REAL_DISTRIBUTION INSTEAD
-    return min + ((double) rand()/RAND_MAX) * (max - min);
+    uniform_real_distribution<> distr(min, max);
+    return distr(gen);
 }
 
 int random_int(int min, int max) {
-    return min + (rand())
+    uniform_int_distribution<> distr(min, max);
+    return distr(gen);
 }
 
 double density_control(int t, int i, int j) { //USE UNIFORM_INT_DISTRIBUTION INSTEAD
@@ -103,12 +112,33 @@ void simulate() {
     int i = hivei;
     int j = hivej;
 
-    int firsti = firsts
+    int firsti, firstj;
+    tie(firsti, firstj) = firsts[random_int(1, firsts.size()) - 1];
 
     int poll = 0; //number of flowers pollinated
     vector<double> v_probs;
     vector<double> p_probs;
     int poll_time = 0;
+
+    int first_dist = manhattan(i, j, firsti, firstj);
+    for (int t = 0; t < first_dist; t++) {
+        vector<int> moves;
+        for (int d = 1; d < 5; d++) {
+            int nexti = i + di[d];
+            int nextj = j + dj[d];
+
+            if (manhattan(nexti, nextj, firsti, firstj) < first_dist - t) {
+                moves.push_back(d);
+            }
+        }
+
+        int move = moves[random_int(1, moves.size()) - 1];
+        i += di[move];
+        j += dj[move];
+    }  
+
+    assert(i == firsti && j == firstj);
+    pollinated[i][j]++;
 
     for (int t = 0; t < T; t++) {
         poll_time--;
@@ -143,9 +173,6 @@ void simulate() {
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
-    
-    random_device rd;
-
 	
 	string fname = "sim";
 	freopen((fname + ".in").c_str(), "r", stdin);
