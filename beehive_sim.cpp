@@ -17,8 +17,8 @@ int N, M, F; //rows, columns, number of flowers
 int B, T = 3000, Ft = 100; //bees, time, max flowers per trip 
 int Pmax = 50; //max times one flower can be pollinated
 int Pt = 10; //units of time to pollinate flowers flower
-double SD = 10; //standard deviation
-double K_BPF = 500, MEAN_BPF = 0.01; //for p_prob
+double SD = 50; //standard deviation
+double K_BPF = 500, MEAN_BPF = 1; //for p_prob
 double poll_rate = 0.3;
 int di[] = {0, 0, 0, -1, 1}; 
 int dj[] = {0, -1, 1, 0, 0};
@@ -138,6 +138,7 @@ void simulate() {
     }  
 
     assert(i == firsti && j == firstj);
+    poll++;
     pollinated[i][j]++;
 
     for (int t = 0; t < T; t++) {
