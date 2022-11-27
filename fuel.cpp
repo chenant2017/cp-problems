@@ -3,13 +3,13 @@
 using namespace std;
 
 typedef long long ll;
-
 struct Station {
-    ll x, y;
+    ll loc, cost;
 };
 
 ll N, G, B, D;
 Station stations[MAXN];
+ll next_cheaper[MAXN];
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -17,42 +17,65 @@ int main() {
 	
 	string fname = "fuel";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
+	freopen((fname + ".out").c_str(), "w", stdout);
 	
-	cin >> N >> G >> B >> D;
+    cin >> N >> G >> B >> D;
 
     for (ll i = 0; i < N; i++) {
-        Station s;
-        cin >> s.x >> s.y;
-        stations[i] = s;
+        cin >> stations[i].loc >> stations[i].cost;
     }
 
     sort(stations, stations + N, [](auto& a, auto& b) {
-        return a.x < b.x;
+        return a.loc < b.loc;
     });
 
-    stack<ll> mono;
-    ll ans = 0;
-    ll gas = B;
+    stations[N].cost = 0;
+    stations[N].loc = D;
 
-    for (ll i = 0; i < N; i++) {
-        while (!mono.empty()) {
-            if (stations[mono.top()].y > stations[i].y) {
-                ll dist = stations[i].x - stations[mono.top()].x;
-                if (dist > G) {
-                    ans += (G - gas) * stations[mono.top()].y;
-                    gas = G;
-                }
-                else {
-                    ans += max(0ll, dist - gas) * stations[mono.top()].y;
-                }
-                mono.pop();
-            }
+    stack<ll> mono;
+
+    for (ll i = 0; i <= N; i++) {
+        while (!mono.empty() && stations[mono.top()].cost > stations[i].cost) {
+            next_cheaper[mono.top()] = i;
+            mono.pop();
         }
         mono.push(i);
     }
 
-    cout << ans << "\n";
-	
+    /*for (ll i = 0; i < N; i++) {
+        cout << next_cheaper[i] << "\n";
+    }*/
+
+    ll gas = B;
+    ll ans = 0;
+    ll curr_loc = 0;
+    for (ll i = 0; i < N; i++) {
+        ll dist = stations[i].loc - curr_loc;
+        gas -= dist;
+        if (gas < 0) {
+            cout << "-1\n";
+            return 0;
+        }
+
+        curr_loc = stations[i].loc;
+        ll to_next = stations[next_cheaper[i]].loc - curr_loc;
+
+        if (to_next > G) {
+            ans += (G - gas) * stations[i].cost;
+            gas = G;
+        }
+        else {
+            ans += max(0ll, to_next - gas) * stations[i].cost;
+            if (gas < to_next) gas = to_next;
+        }
+    }
+
+    if (gas >= D - curr_loc)  {
+        cout << ans << "\n";
+    }
+    else {
+        cout << "-1\n";
+    }
+    
 	return 0;
 }
