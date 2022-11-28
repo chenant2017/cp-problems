@@ -1,7 +1,7 @@
 //2018 December Silver #2
 
 #include <bits/stdc++.h>
-#define MAXN 100000
+#define MAXN 100010
 using namespace std;
 
 typedef long long ll;
@@ -58,11 +58,18 @@ int main() {
         ans = max(wait, ans);
 
         time += curr.t;
-        //cout << time << " " << ci << " " << N << "\n";
 
         while (ci < N && cows[ci].a <= time) {
             pq.push(cows[ci]);
             ci++;
+        }
+
+        if (pq.empty() && ci < N) {
+            time = cows[ci].a;
+            while (ci < N && cows[ci].a == time) {
+                pq.push(cows[ci]);
+                ci++;
+            }
         }
     }
 
