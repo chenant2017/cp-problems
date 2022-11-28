@@ -1,72 +1,67 @@
 #include <bits/stdc++.h>
 #define MAX 35
+#define f first
+#define s second
+
 using namespace std;
 
 typedef long long ll;
-typedef tuple<ll, ll, ll> ttll;
-typedef tuple<ll, ll, ll, ll, ll> tll; 
+typedef pair<ll, ll> pll;
+typedef tuple<ll, ll, ll, ll> tll;
 
 ll M, N;
 ll pond[MAX][MAX];
-ttll dists[MAX][MAX];
+pll dists[MAX][MAX];
+ll counts[MAX][MAX];
 bool visited[MAX][MAX] = {false};
-ll di[] = {1, 2};
-ll dj[] = {2, 1};
+int di[] = {-2, -2, -1, -1, 1, 1, 2, 2};
+int dj[] = {-1, 1, -2, 2, -2, 2, -1, 1};
 
 void dijkstra(ll starti, ll startj) {
+    for (ll i = 0; i < M; i++) {
+        for (ll j = 0; j < N; j++) {
+            dists[i][j] = pll({1000, -1});
+        }
+    }
+
     priority_queue<tll, vector<tll>, greater<tll>> q;
-    q.push(tll({0, 0, starti, startj, -1}));
-    dists[starti][startj] = ttll({0, 0, 1});
+    dists[starti][startj] = pll({0, 0});
+    counts[starti][startj] = 1;
+    q.push(tll({0, 0, starti, startj}));
 
     while (!q.empty()) {
-        ll geese, jumps, i, j, ways;
-        std::tie(geese, jumps, i, j, ways) = q.top();
-        ways *= -1;
+        auto curr = q.top();
         q.pop();
+
+        ll geese, jumps, i, j;
+        tie(geese, jumps, i, j) = curr;
 
         if (visited[i][j]) continue;
         visited[i][j] = true;
-        //cout << i << " " << j << "\n";
-        
-        for (ll d = 0; d < 2; d++) {
-            for (ll si = -1; si <= 1; si += 2) {
-                for (ll sj = -1; sj <= 1; sj += 2) {
-                    ll ni = i + di[d] * si;
-                    ll nj = j + dj[d] * sj;
 
-                    if (0 <= ni && ni < M &&
-                        0 <= nj && nj < N &&
-                        pond[ni][nj] != 2) {
-                        if (ni == 5 && nj == 5) {
-                            //cout << ni << " " << nj << "\n";
-                        }
-                        ll ngeese, njumps, nways;
-                        std::tie(ngeese, njumps, nways) = dists[ni][nj];
-                        if (pond[ni][nj] == 0) geese++;
-                        if (geese < ngeese) {
-                            ngeese = geese;
-                            njumps = jumps + 1;
-                            nways = ways;
-                             if (ni == 5 && nj == 5) {
-                                //cout << nways << "\n";
-                            }   
-                        }
-                        else if (geese == ngeese) {
-                            if (njumps == jumps + 1) {
-                                nways += ways;
-                                if (ni == 5 && nj == 5) {
-                                    //cout << nways - ways << " " << nways << "\n";
-                                }                                
-                            }
-                            else if (jumps + 1 < njumps) {
-                                njumps = jumps + 1;
-                                nways = ways;
-                            }
-                        }
-                        if (pond[ni][nj] == 0) geese--;
-                        dists[ni][nj] = ttll({ngeese, njumps, nways});
-                        q.push(tll({ngeese, njumps, ni, nj, -1 * nways}));
+        for (ll d = 0; d < 8; d++) {
+            ll i2 = i + di[d];
+            ll j2 = j + dj[d];
+
+            if (0 <= i2 && i2 < M &&
+                0 <= j2 && j2 < N) {
+                
+                if (pond[i2][j2] != 2) {
+                    pll dist2;
+                    if (pond[i2][j2] == 0) {
+                        dist2 = pll({geese + 1, jumps + 1});
                     }
+                    else {
+                        dist2 = pll({geese, jumps + 1});
+                    }
+                    if (dist2 < dists[i2][j2]) {
+                        dists[i2][j2] = dist2;
+                        q.push(tll({dist2.f, dist2.s, i2, j2}));
+                        counts[i2][j2] = counts[i][j];
+                    }
+                    else if (dist2 == dists[i2][j2]) {
+                        counts[i2][j2] += counts[i][j];
+                    }   
                 }
             }
         }
@@ -100,35 +95,15 @@ int main() {
         }
     }
 
-    for (ll i = 0; i < M; i++) {
-        for (ll j = 0; j < N; j++) {
-            dists[i][j] = ttll({pow(10, 4), pow(10, 4), 0});
-        }
-    }
-
     dijkstra(starti, startj);
+    pll dist = dists[desti][destj];
 
-    for (ll i = 0; i < M; i++) {
-        for (ll j = 0; j < N; j++) {
-            ll a, b, c;
-            tie(a, b, c) = dists[i][j];
-            //cout << a << ", " << b << ", " << c << "   ";
-        }
-        //cout << "\n";
+    if (dist.f == 1000) {
+        cout << "-1\n";
     }
-
-    ll ans1, ans2, ans3;
-
-    std::tie(ans1, ans2, ans3) = dists[desti][destj];
-
-    if (ans1 == pow(10, 4)) cout << "-1\n";
-    else  {
-        cout << ans1 << "\n";
-        cout << ans2 << "\n";
-        cout << ans3 << "\n";
-    }
-
-    
+    else {
+        cout << dist.f << "\n" << dist.s << "\n" << counts[desti][destj] << "\n";
+    }   
 	
 	return 0;
 }
