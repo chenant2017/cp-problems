@@ -6,7 +6,7 @@ using namespace std;
 typedef long long ll;
 
 struct Point {
-    ll x, y;
+    double x, y;
 };
 
 ll N;
@@ -24,11 +24,7 @@ void dfs(ll start, ll comp) {
     if (comps[start] != 0) return;
     comps[start] = comp;
     for (ll i = 0; i < N; i++) {
-        if (adj[start][i]) {
-            cout << "asldfj " << comps[start] << "\n";
-        }
-        if (adj[start][i] && comps[start] == 0) {
-            cout << "aasdf\n";
+        if (adj[start][i] && comps[i] == 0) {
             dfs(i, comp);
         }
     }
@@ -53,7 +49,15 @@ int main() {
         cin >> s;
         for (ll j = 0; j < N; j++) {
             adj[i][j] = (s[j] == '1') ? true : false;
-            shortest[i][j] = get_dist(i, j);
+            if (adj[i][j]) {
+                shortest[i][j] = get_dist(i, j);
+            }
+            else if (i == j) {
+                shortest[i][j] = 0;
+            } 
+            else {
+                shortest[i][j] = 500000;
+            }
         }
     }
 
@@ -64,11 +68,6 @@ int main() {
             dfs(i, comp);
         }
     }
-
-    for (ll i = 0; i < N; i++) {
-        cout << comps[i] << " ";
-    }
-    cout << "\n";
 
     for (ll k = 0; k < N; k++) {
         for (ll i = 0; i < N; i++) {
@@ -93,7 +92,7 @@ int main() {
     for (ll i = 0; i < N; i++) {
         for (ll j = 0; j < N; j++) {
             if (comps[i] != comps[j]) {
-                double diameter = shortest[i][j] + longest[i] + longest[j];
+                double diameter = get_dist(i, j) + longest[i] + longest[j];
                 if (ans == -1 || diameter < ans) {
                     ans = diameter;
                 }
