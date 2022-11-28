@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #define MAXN 160
+
 using namespace std;
 
 typedef long long ll;
@@ -8,14 +9,29 @@ struct Point {
     ll x, y;
 };
 
-Point points[MAXN];
-double shortest[MAXN][MAXN];
-double farthest[MAXN];
 ll N;
+double shortest[MAXN][MAXN];
+double longest[MAXN];
+bool adj[MAXN][MAXN];
+Point points[MAXN];
+ll comps[MAXN] = {0};
 
-double get_dist(ll i, ll j) {
-    return sqrt(pow(points[i].x - points[j].x, 2) + 
-                pow(points[i].y - points[j].y, 2));
+double get_dist(ll a, ll b) {
+    return sqrt(pow(points[a].x - points[b].x, 2) + pow(points[a].y - points[b].y, 2));
+}
+
+void dfs(ll start, ll comp) {
+    if (comps[start] != 0) return;
+    comps[start] = comp;
+    for (ll i = 0; i < N; i++) {
+        if (adj[start][i]) {
+            cout << "asldfj " << comps[start] << "\n";
+        }
+        if (adj[start][i] && comps[start] == 0) {
+            cout << "aasdf\n";
+            dfs(i, comp);
+        }
+    }
 }
 
 int main() {
@@ -29,61 +45,65 @@ int main() {
 	cin >> N;
 
     for (ll i = 0; i < N; i++) {
-        Point p;
-        cin >> p.x >> p.y;
-
-        points[i] = p;
+        cin >> points[i].x >> points[i].y;
     }
 
     for (ll i = 0; i < N; i++) {
-        string a;
-        cin >> a;
+        string s;
+        cin >> s;
         for (ll j = 0; j < N; j++) {
-            shortest[i][j] = -1;
-            if (a[j] == '1') {
-                shortest[i][j] = get_dist(i, j);
-            }
-            if (i == j) shortest[i][j] = 0;
+            adj[i][j] = (s[j] == '1') ? true : false;
+            shortest[i][j] = get_dist(i, j);
         }
     }
+
+    ll comp = 0;
+    for (ll i = 0; i < N; i++) {
+        if (comps[i] == 0) {
+            comp++;
+            dfs(i, comp);
+        }
+    }
+
+    for (ll i = 0; i < N; i++) {
+        cout << comps[i] << " ";
+    }
+    cout << "\n";
 
     for (ll k = 0; k < N; k++) {
         for (ll i = 0; i < N; i++) {
             for (ll j = 0; j < N; j++) {
-                double newdist = shortest[i][k] + shortest[k][j];
-                if (shortest[i][k] != -1 && shortest[k][j] != -1) {
-                    if (shortest[i][j] == -1 || newdist < shortest[i][j]) {
-                        shortest[i][j] = newdist;
-                    }
-                }
+                shortest[i][j] = min(shortest[i][k] + shortest[k][j], shortest[i][j]);
             }
         }
     }
 
     for (ll i = 0; i < N; i++) {
-        double max_dist = -1;
+        double longest2 = 0;
         for (ll j = 0; j < N; j++) {
-            max_dist = max(max_dist, shortest[i][j]);
+            if (comps[i] == comps[j]) {
+                longest2 = max(longest2, shortest[i][j]);
+            } 
         }
-        farthest[i] = max_dist;
+        longest[i] = longest2;
     }
 
     double ans = -1;
 
     for (ll i = 0; i < N; i++) {
         for (ll j = 0; j < N; j++) {
-            if (shortest[i][j] == - 1) {
-                double dist = get_dist(i, j) + farthest[i] + farthest[j];
-                if (ans == -1 || dist < ans) {
-                    ans = dist;
+            if (comps[i] != comps[j]) {
+                double diameter = shortest[i][j] + longest[i] + longest[j];
+                if (ans == -1 || diameter < ans) {
+                    ans = diameter;
                 }
             }
         }
     }
-	
+
     cout << fixed;
     cout << setprecision(6);
     cout << ans << "\n";
-
+	
 	return 0;
 }
