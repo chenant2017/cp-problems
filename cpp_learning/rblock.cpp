@@ -7,11 +7,11 @@ using namespace std;
 
 typedef long long ll;
 typedef pair<ll, set<ll>> pls;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 
 ll N, M;
 ll edges[MAXM];
-vector<pll> adj[MAXN];
+vector<pdl> adj[MAXN];
 
 pls solve(ll field, set<ll> visited) {
 	pls result;

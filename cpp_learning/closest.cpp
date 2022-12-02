@@ -4,12 +4,12 @@
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 
 ll K, M, N;
 priority_queue<ll> tasty;
 set<ll> ends_;
-vector<pll> new_ends;
+vector<pdl> new_ends;
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -21,7 +21,7 @@ int main() {
 	
 	cin >> K >> M >> N;
 
-    vector<pll> patches;
+    vector<pdl> patches;
 
     for (ll i = 0; i < K; i++) {
         ll p, t;

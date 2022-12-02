@@ -28,7 +28,7 @@ int main() {
         ll x, b;
         cin >> x >> b;
         breeds.insert(b);
-        dogs[i] = pll({x, b});
+        dogs[i] = pdl({x, b});
     }
 
     sort(dogs, dogs + N);

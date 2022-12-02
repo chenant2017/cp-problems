@@ -6,17 +6,17 @@
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 typedef tuple<ll, ll, ll> tll;
 
 ll N, M;
 string grid[MAXN];
-pll visited[MAXN][MAXM];
+pdl visited[MAXN][MAXM];
 ll dir[] = {-1, 1};
 queue<tll> bfsq;
 
 void get_nodes(ll i, ll j, ll t) {
-    queue<pll> q;
+    queue<pdl> q;
     
     q.push(pll({i, j}));
 

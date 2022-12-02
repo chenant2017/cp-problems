@@ -9,6 +9,8 @@ string s, t;
 ll s_counts[26] = {0};
 ll t_counts[26] = {0};
 
+//Using breaks helps get partial credit.
+
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);

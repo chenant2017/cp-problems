@@ -4,10 +4,10 @@
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 
 ll N;
-vector<pll> cows;
+vector<pdl> cows;
 vector<ll> prefix;
 map<ll, ll> last;
 
@@ -25,7 +25,7 @@ int main() {
         ll b;
         string x;
         cin >> b >> x;
-        pll p;
+        pdl p;
         p.f = b;
         if (x == "G") {
             p.s = 1;

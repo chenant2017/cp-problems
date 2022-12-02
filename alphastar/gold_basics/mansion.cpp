@@ -7,12 +7,12 @@
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 typedef tuple<ll, ll, ll> tll;
 
 ll W, H;
 string maze[MAXH];
-vector<pll> distss;
+vector<pdl> distss;
 ll dists[MAXH][MAXW] = {{0}};
 ll di[4] = {0, 0, -1, 1};
 ll dj[4] = {1, -1, 0, 0};

@@ -1,43 +1,39 @@
 #include <bits/stdc++.h>
 #define f first 
-#define MAXN 7510
-#define s second
+#define s second 
 using namespace std;
 
 typedef long long ll;
-typedef pair<int, int> pll;
+typedef pair<ll, ll> pll;
 
 ll N, K;
-ll D[MAXN];
-set<ll> visited;
 
-int get_dist(ll a, ll b) {
+ll get_dist(ll a, ll b) {
     if (a > b) swap(a, b);
     return (2019201913 * a + 2019201949 * b) % 2019201997;
 }
 
-void prim(vector<ll>& result) {
-    visited.insert(1);
-    D[1] = 1;
+void prims(vector<ll>& edge_lengths) {
+    vector<ll> dists(N + 1, 2019201998);
+    vector<bool> visited (N + 1, false);
 
-    while (visited.size() < N) {
-        ll mini;
-        ll mind = 20192019998;
-        for (ll i = 1; i <= N; i++) {
-            if (D[i] != 0 && D[i] < mind) {
-                mini = i;
-                mind = D[i];
+    dists[1] = 0;
+
+    for (ll i = 1; i <= N; i++) {
+        ll curr = 0;
+        for (ll j = 1; j <= N; j++) {
+            if (!visited[j] && (curr == 0 || dists[j] < dists[curr])) {
+                curr = j;
             }
         }
 
-        visited.insert(mini);
-        result.push_back(mind);
-        if (mind == 2019201998) cout <<"hi\n";
-        D[mini] = 0;
-
-        for (ll i = 1; i <= N; i++) {
-            ll dist = get_dist(i, mini);
-            D[i] = min(dist, D[i]);
+        visited[curr] = true;
+        edge_lengths.push_back(dists[curr]);
+        dists[curr] = 0;
+        
+        for (ll j = 1; j <= N; j++) {
+            ll dist = get_dist(curr, j);
+            dists[j] = min(dists[j], dist);
         }
     }
 }
@@ -46,22 +42,17 @@ int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	
-	string fname = "radio";
+	string fname = "GA1002";
 	freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N >> K;
 
-    for (ll i = 1; i <= N; i++) {
-        D[i] = 2019201998;
-    }
+    vector<ll> edge_lengths;
+    prims(edge_lengths);
+    sort(edge_lengths.begin(), edge_lengths.end());
 
-    vector<ll> lengths;
-    prim(lengths);
-
-    sort(lengths.begin(), lengths.end(), greater<ll>());
-
-    cout << lengths[K - 2] << "\n";
+    cout << edge_lengths[N + 1 - K] << "\n";
 	
 	return 0;
 }

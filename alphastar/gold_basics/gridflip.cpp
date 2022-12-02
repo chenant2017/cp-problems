@@ -45,6 +45,7 @@ int main() {
     bool found = false;
 
     for (ll combo = 0; combo < 1 << N; combo++) {
+        //cout << combo << "\n";
         vector<vector<ll>> grid2 = grid;
         vector<vector<ll>> ans (M);
 
@@ -58,6 +59,15 @@ int main() {
             if ((combo & (1 << (N - 1 - i))) > 0) { //must put parentheses around bit operation
                 ans[0][i]++;
                 toggle(0, i, grid2);
+                if (combo == 55) {
+                     for (ll i = 0; i < M; i++) {
+                        for (ll j = 0; j < N; j++) {
+                            cout << grid2[i][j] << " ";
+                        }
+                        cout << "\n";
+                    }
+                    cout << "\n";
+                }
             }
         }
 
@@ -66,6 +76,15 @@ int main() {
                 if (grid2[i - 1][j] == 1) {
                     ans[i][j]++;
                     toggle(i, j, grid2);
+                    if (combo == 55) {
+                        for (ll i = 0; i < M; i++) {
+                            for (ll j = 0; j < N; j++) {
+                                cout << grid2[i][j] << " ";
+                            }
+                            cout << "\n";
+                        }
+                        cout << "\n";
+                    }
                 }
             }
         }

@@ -6,7 +6,7 @@
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 ll N;
 
 int main() {

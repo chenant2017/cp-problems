@@ -9,29 +9,29 @@ using namespace std;
 
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 struct pair_hash {
-	size_t operator() (const pll& p) const {
+	size_t operator() (const pdl& p) const {
 		return p.f * 239 + p.s;
 	}
 };
-typedef unordered_map<pll, unordered_map<ll, ll>, pair_hash> um;
+typedef unordered_map<pdl, unordered_map<ll, ll>, pair_hash> um;
 
 
 
-vector<pll> moves1;
+vector<pdl> moves1;
 um sums1; // sum : sizes
 
-vector<pll> moves2;
+vector<pdl> moves2;
 um sums2;
 
-pll goal;
+pdl goal;
 ll N;
 ll ans[MAXN] = {0};
 
-void find_sums(vector<pll>& moves, 
+void find_sums(vector<pdl>& moves, 
 			   um& sums,
-			   pll curr, ll index, ll size) {
+			   pdl curr, ll index, ll size) {
 
 	if (index == moves.size()) return;
 
@@ -61,18 +61,18 @@ int main() {
 	moves2.reserve(N);
 
 	for (ll i = 0; i < N / 2; i++) {
-		pll p;
+		pdl p;
 		cin >> p.f >> p.s;
 		moves1.push_back(p);
 	}
 
 	for (ll i = N / 2; i < N; i++) {
-		pll p;
+		pdl p;
 		cin >> p.f >> p.s;
 		moves2.push_back(p);
 	}
 
-	pll start = pll({0, 0}); 
+	pdl start = pdl({0, 0}); 
 
 	sums1[start][0]++;
 	sums2[start][0]++;
@@ -82,7 +82,7 @@ int main() {
 
 	for (auto& i: sums1) {
 		auto sum1 = i.f;
-		pll sum2;
+		pdl sum2;
 		sum2.f = goal.f - sum1.f;
 		sum2.s = goal.s - sum1.s;
 

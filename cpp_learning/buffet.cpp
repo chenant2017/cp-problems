@@ -5,9 +5,9 @@
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 
-ll N, E;
+ll N, M;
 vector<ll> adj[MAX];
 ll quality[MAX];
 ll shortest[MAX][MAX];
@@ -17,7 +17,7 @@ bool all_visited[MAX]; //for getting components
 vector<ll> get_shortest(ll i) {
     vector<ll> comp;
     vector<bool> visited(N + 1, false);
-    queue<pll> q;
+    queue<pdl> q;
     q.push(pll({i, 0}));
 
     while (!q.empty()) {
@@ -56,7 +56,7 @@ ll get_energy(vector<ll>& comp) {
     for (ll i = 1; i < comp.size(); i++) {
         ll inc = 0;
         for (ll j = 0; j < i; j++) {
-            ll e = sol[j] - E * shortest[comp[j]][comp[i]];
+            ll e = sol[j] - M * shortest[comp[j]][comp[i]];
             inc = max(e, inc);
         }
         sol[i] = quality[comp[i]] + inc;
@@ -72,7 +72,7 @@ int main() {
 	freopen((fname + ".in").c_str(), "r", stdin);
 	freopen((fname + ".out").c_str(), "w", stdout);
 	
-	cin >> N >> E;
+	cin >> N >> M;
 
     ll D;
 

@@ -1,34 +1,40 @@
 #include <bits/stdc++.h>
-#define MAXN 50010
-#define f first  
+#define MAXN 50000
+#define f first 
 #define s second
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pdl;
+typedef pair<ll, ll> pll;
 
 ll N, M;
+vector<pll> adj[MAXN];
 ll dists[MAXN];
 bool visited[MAXN] = {false};
-vector<pdl> adj[MAXN];
 
-void solve() {
-	dists[1] = 0;
-	priority_queue<pdl, vector<pdl>, greater<pdl>> q;
-	q.push(pdl({0, 1})); 
+ll dijkstra(ll start, ll end) {
+    for (ll i = 0; i < N; i++) {
+        dists[i] = 1000 * N;
+    }
+    priority_queue<pll, vector<pll>, greater<pll>> q;
+    dists[start] = 0;
+    q.push(pll({0, start}));
 
-	while (!q.empty()) {
-		auto c = q.top().s;
-		q.pop();
+    while (!q.empty()) {
+        auto curr = q.top();
+        q.pop();
 
-		if (visited[c]) continue;
-		visited[c] = true;
+        if (visited[curr.s]) continue;
+        visited[curr.s] = true;
 
-		for (auto i: adj[c]) {
-			dists[i.s] = min(dists[c] + i.f, dists[i.s]);
-			q.push(pdl({dists[i.s], i.s}));
-		} 
-	}
+        for (auto j: adj[curr.s]) {
+            ll newdist = dists[curr.s] + j.f;
+            dists[j.s] = min(dists[j.s], newdist);
+            q.push(pll({dists[j.s], j.s}));
+        }
+    }
+
+    return dists[end];
 }
 
 int main() {
@@ -39,22 +45,18 @@ int main() {
 	freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
 	
-	cin >> N >> M;
+    cin >> N >> M;
 
-	for (ll i = 0; i < M; i++) {
-		ll A, B, C;
-		cin >> A >> B >> C;
-		adj[A].push_back(pdl({C, B}));
-		adj[B].push_back(pdl({C, A}));
-	}
+    ll A, B, C;
+    for (ll i = 0; i < M; i++) {
+        cin >> A >> B >> C;
+        A--;
+        B--;
+        adj[A].push_back(pll({C, B}));
+        adj[B].push_back(pll({C, A}));
+    }
 
-	for (ll i = 1; i <= N; i++) {
-		dists[i] = 1000 * 50000;
-	}
-
-	solve();
-
-	cout << dists[N] << "\n";
-
+    cout << dijkstra(0, N - 1) << "\n";
+	
 	return 0;
 }

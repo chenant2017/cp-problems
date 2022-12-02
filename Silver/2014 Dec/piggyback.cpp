@@ -6,7 +6,7 @@
 using namespace std;
 
 vector<ll> adj[MAXN];
-ll B, E, P, N, M;
+ll B, M, P, N, M;
 
 vector<ll> bfs(ll start) {
 	queue<ll> q;
@@ -49,7 +49,7 @@ int main() {
 	freopen((fname + ".in").c_str(), "r", stdin);
 	freopen((fname + ".out").c_str(), "w", stdout);
 
-	cin >> B >> E >> P >> N >> M;
+	cin >> B >> M >> P >> N >> M;
 	
 	for (ll i = 0; i < M; i++) {
 		ll a, b;
@@ -63,9 +63,9 @@ int main() {
 	vector<ll> distsN = bfs(N);
 
 
-	ll ans = N * E + N * B + 10;
+	ll ans = N * M + N * B + 10;
 	for (ll meet = 1; meet <= N; meet++) {
-		ll energy =	dists1[meet] * B + dists2[meet] * E + distsN[meet] * P;
+		ll energy =	dists1[meet] * B + dists2[meet] * M + distsN[meet] * P;
 		if (energy < ans) {
 			ans = energy;
 		}

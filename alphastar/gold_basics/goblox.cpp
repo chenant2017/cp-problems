@@ -6,12 +6,12 @@
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 
 ll N, M;
 ll dists[MAXN];
 ll from[MAXN];
-vector<pll> adj[MAXN];
+vector<pdl> adj[MAXN];
 bool visited[MAXN];
 
 pair<ll, vector<ll>> dijkstra(ll start, ll end) {
@@ -25,7 +25,7 @@ pair<ll, vector<ll>> dijkstra(ll start, ll end) {
         from[i] = 0;
     }
 
-    priority_queue<pll> q;
+    priority_queue<pdl> q;
     dists[start] = 0;
     q.push(pll({0, start}));
 

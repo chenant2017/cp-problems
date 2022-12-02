@@ -2,7 +2,7 @@
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 
 #define MAXN 110
 #define f first
@@ -12,16 +12,16 @@ deque<char> board[10];
 ll N, K;
 ll di[4] = {0, 0, 1, -1};
 ll dj[4] = {1, -1, 0, 0};
-vector<pll> v;
+vector<pdl> v;
 
-vector<pll> fill(ll i, ll j, bool visited[10][MAXN]) {
-	vector<pll> result;
-	queue<pll> q;
+vector<pdl> fill(ll i, ll j, bool visited[10][MAXN]) {
+	vector<pdl> result;
+	queue<pdl> q;
 	q.push(pll({i, j}));
 	ll count = 0;
 
 	while (!q.empty()) {
-		pll curr = q.front();
+		pdl curr = q.front();
 		q.pop();
 
 		if (visited[curr.f][curr.s]) continue;
@@ -31,7 +31,7 @@ vector<pll> fill(ll i, ll j, bool visited[10][MAXN]) {
 		count++;
 
 		for (ll d = 0; d < 4; d++) {
-			pll next;
+			pdl next;
 			next.f = curr.f + di[d];
 			next.s = curr.s + dj[d];
 			if (next.f >= 0 && next.f < 10 &&

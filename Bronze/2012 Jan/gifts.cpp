@@ -5,10 +5,10 @@
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 
 ll N, B;
-pll costs[MAXN];
+pdl costs[MAXN];
 
 int main() {
 	ios_base::sync_with_stdio(false);

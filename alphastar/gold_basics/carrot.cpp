@@ -1,77 +1,59 @@
 #include <bits/stdc++.h>
 #define MAXN 110
-
 using namespace std;
 
 typedef long long ll;
 typedef pair<ll, ll> pll;
 typedef tuple<ll, ll, ll> tll;
 
-ll N, T;
 ll sizes[MAXN][MAXN];
 ll times[MAXN][MAXN];
-ll destsi[6] = {-3, -2, -2, -1, -1, -1};
-ll destsj[6] = {-1, -1, -2, -1, -2, -3};
-bool visited[MAXN][MAXN] = {{false}};
+bool visited[MAXN][MAXN] = {false};
+ll N, T;
 
+ll di[] = {0, 0, 1, 1, 2, 3};
+ll dj[] = {1, 3, 0, 2, 1, 0};
 
-void dijkstra() {
-    priority_queue<tll, vector<tll>, greater<tll>> q;
+ll dijkstra() {
+    ll ans = pow(10, 10);
+
+    priority_queue<tll> q;
+    times[0][0] = 0;
     q.push(tll({0, 0, 0}));
-
+    
     while (!q.empty()) {
         ll t, i, j;
         tie(t, i, j) = q.top();
         q.pop();
+        t *= -1;
 
         if (visited[i][j]) continue;
         visited[i][j] = true;
         times[i][j] = t;
 
-       // cout << i << " " << j << " start\n";
+        ll dist = abs((N - 1) - i) + abs((N - 1) - j);
+        //cout << "no\n";
+        if (dist <= 2) {
+            ans = min(ans, t + dist * T);
+        }
 
-        for (ll di = 0; di <= 3; di++) {
-            ll dj = 3 - di;
-            for (ll si = -1; si <= 1; si += 2) {
-                for (ll sj = -1; sj <= 1; sj+= 2) {
-                    ll nexti = i + di * si;
-                    ll nextj = j + dj * sj;
+        for (ll d = 0; d < 6; d++) {
+             for (ll si = -1; si <= 1; si += 2) {
+                for (ll sj = -1; sj <=1; sj += 2) {
+                    ll ni = i + di[d] * si;
+                    ll nj = j + dj[d] * sj;
 
-                   // cout << nexti << " " << nextj << "\n";
-
-                    if (0 <= nexti && nexti < N &&
-                        0 <= nextj && nextj < N &&
-                        !visited[nexti][nextj]) {
-                        times[nexti][nextj] = min(times[nexti][nextj], 
-                                                  times[i][j] + sizes[nexti][nextj] + 
-                                                  3 * T);
-                        q.push(tll({times[nexti][nextj], nexti, nextj}));
+                    if (0 <= ni && ni < N &&
+                        0 <= nj && nj < N) {
+                        times[ni][nj] = min(times[ni][nj], t + 3 * T + sizes[ni][nj]);
+                        q.push(tll({-1 * times[ni][nj], ni, nj}));
+                        //cout << "yes\n";
                     }
                 }
             }
         }
-
-        for (ll di = -1; di <= 1; di++) {
-            for (ll dj = -1; dj <= 1; dj++) {
-                if (di + dj != -1 && di + dj != 1) {
-                    continue;
-                }
-                ll nexti = i + di;
-                ll nextj = j + dj;
-
-                //cout << nexti << " " << nextj << "\n";
-
-                if (0 <= nexti && nexti < N &&
-                    0 <= nextj && nextj < N &&
-                    !visited[nexti][nextj]) {
-                    times[nexti][nextj] = min(times[nexti][nextj], 
-                                                times[i][j] + sizes[nexti][nextj] + 
-                                                3 * T);
-                    q.push(tll({times[nexti][nextj], nexti, nextj}));
-                }
-            }
-        }
     }
+    return ans;
 }
 
 int main() {
@@ -86,31 +68,14 @@ int main() {
 
     for (ll i = 0; i < N; i++) {
         for (ll j = 0; j < N; j++) {
+            times[i][j] = pow(10, 10);
             cin >> sizes[i][j];
         }
     }
 
-    for (ll i = 0; i < N; i++) {
-        for (ll j = 0; j < N; j++) {
-            times[i][j] = pow(10, 7);
-        }
-    }
+    ll ans = dijkstra();
 
-    dijkstra();
-
-    ll ans = pow(10, 7);
-
-    for (ll x = 0; x < 6; x++) {
-        ll desti = N + destsi[x];
-        ll destj = N + destsj[x];
-        ll dest_dist = abs(desti - (N - 1)) + abs(destj - (N - 1));
-        //cout << desti << " " << destj << " sdaf\n";
-        //cout << times[desti][destj] << " sdlfk\n";
-        ans = min(ans, times[desti][destj] + T * dest_dist);
-    }
-    
     cout << ans << "\n";
 	
 	return 0;
 }
-

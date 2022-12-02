@@ -6,7 +6,7 @@
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 
 ll T;
 
@@ -19,7 +19,7 @@ int main() {
 	for (ll t = 0; t < T; t++) {
 
 		ll N, M;
-		pll pairs[MAXM];
+		pdl pairs[MAXM];
 		ll unhapp[MAXN];
 		ll member_of[MAXN] = {0};
 

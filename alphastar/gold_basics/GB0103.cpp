@@ -31,14 +31,13 @@ int main() {
         cout << "\n";
     }*/
 
-    if (1 < C) {
-        pies[0][1] += pies[0][0];
-        if (1 < R) {
-            pies[1][1] += pies[0][0];
-        }   
+    for (ll i = 1; i < R; i++) {
+        for (ll j = 0; j < i; j++) {
+            pies[i][j] = 0;
+        }
     }
 
-    for (ll j = 2; j < C; j++) {
+    for (ll j = 1; j < C; j++) {
         for (ll i = 0; i < R; i++) {
             ll max_coins = 0;
             for (ll di = -1; di <= 1; di++) {

@@ -5,13 +5,13 @@
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 
 ll N, M;
-pll cows[MAX];
-vector<pll> adj[MAX];
+pdl cows[MAX];
+vector<pdl> adj[MAX];
 bool v_cereal[MAX] = {false};
-pll no_start = pll({-1, -1});
+pdl no_start = pdl({-1, -1});
 
 
 //initialize big objects globally to save time
@@ -20,7 +20,7 @@ bool v_cow[MAX] = {false};
 
 vector<ll> path;
 
-pll get_start(ll i, ll prev, pll ans) {
+pdl get_start(ll i, ll prev, pdl ans) {
 	if (v_cereal[i]) {
 		return ans;
 	}
@@ -89,7 +89,7 @@ int main() {
 	}
 
 	for (ll i = 1; i <= M; i++) {
-		pll start = get_start(i, -1, no_start);
+		pdl start = get_start(i, -1, no_start);
 
 		if (start.f != -1) {
 			if (!v_cow[start.s]) {

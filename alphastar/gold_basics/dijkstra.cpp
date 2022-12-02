@@ -10,11 +10,11 @@ typedef pair<ll, ll> pll;
 ll N, M, S;
 ll dists[MAXV];
 bool visited[MAXV] = {false};
-vector<pll> adj[MAXV];
+vector<pdl> adj[MAXV];
 
 void solve() {
 	dists[S] = 0;
-	priority_queue<pll, vector<pll>, greater<pll>> q;
+	priority_queue<pdl, vector<pdl>, greater<pdl>> q;
 	q.push(pll({0, S})); 
 
 	while (!q.empty()) {

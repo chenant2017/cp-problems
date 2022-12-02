@@ -1,60 +1,28 @@
 #include <bits/stdc++.h>
-#define MAXN 1000
-#define f first 
-#define s second
+#define MAXN 
 using namespace std;
 
-typedef int ll;
-typedef pair<ll, ll> pll;
+typedef long long ll;
 
-pll intervals[MAXN];
-ll N;
-ll ans[MAXN] = {0};
-int memo[MAXN][MAXN][MAXN];
-
-void solve(ll i, ll right, ll complexity) {
-    if (i == N) {
-        ans[complexity]++; 
-        return;
-    }
-    //taking
-    if (intervals[i].f > right) {
-        solve(i + 1, intervals[i].s, complexity + 1);
-    }
-    else { 
-        solve(i + 1, max(right, intervals[i].s), complexity);
-    }
-
-    //not taking
-    solve(i + 1, right, complexity);
-}
+ll ans[MAXN][MAXN];
 
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	
-	string fname = "intervals";
+	string fname = "GA1102";
 	freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
 	
-	cin >> N;
+	cin >> M >> N;
 
-    for (ll i = 0; i < N; i++) {
-        cin >> intervals[i].f >> intervals[i].s;
-    }
-
-    sort(intervals, intervals + N);
-
-    solve(0, 0, 0);
-
-    ll sum = 0;
-    for (ll i = 1; i <= N; i++) {
-        //cout << ans[i] << " ";
-        sum += i * ans[i];
-    }
-    //cout << "\n";
-
-    cout << sum << "\n";
+	for (ll i = 0; i < M; i++) {
+		for (ll j = 0; j < N; j++) {
+			
+		}
+	}
+    
+    
 	
 	return 0;
 }

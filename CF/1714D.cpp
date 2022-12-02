@@ -4,7 +4,7 @@
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 
 ll Q, N;
 string t;
@@ -23,8 +23,8 @@ int main() {
 		cin >> t;
 		t = " " + t;
 		ll ts = t.size();
-		vector<pll> reach (ts); //index it can reach, index of string
-		vector<pll> ans;
+		vector<pdl> reach (ts); //index it can reach, index of string
+		vector<pdl> ans;
 
 		for (ll i = 1; i < ts; i++) {
 			reach[i].f = -1;
@@ -73,7 +73,7 @@ int main() {
 				break;
 			}
 			else {
-				pll p = pll({reach[curr].s, next - s[reach[curr].s].size() + 1});
+				pdl p = pll({reach[curr].s, next - s[reach[curr].s].size() + 1});
 				ans.push_back(p);
 				curr = next;
 			}

@@ -3,22 +3,22 @@
 using namespace std;
 
 vector<vector<int>> flowers; //number of flowers
-vector<pair<int, int>> firsts;
+vector<pair<int, int>> firsts; //possible first cells
 vector<vector<double>> a; //average attractiveness of flowers
 vector<vector<double>> A; //attractiveness FORCE
 vector<vector<int>> visited; //how many times visited
 vector<vector<int>> pollinated; //how many times pollinated
 vector<vector<vector<int>>> C; //crowdedness; how many bees (at each point in time)
 
-int hivei = 45;
-int hivej = 50;
+int hivei = 2;
+int hivej = 2;
 
-int N, M, F; //rows, columns, number of flowers
-int B, T = 3000, Ft = 100; //bees, time, max flowers per trip 
-int Pmax = 50; //max times one flower can be pollinated
-int Pt = 10; //units of time to pollinate flowers flower
-double SD = 50; //standard deviation
-double K_BPF = 500, MEAN_BPF = 1; //for p_prob
+int N, M, F; 
+int B, T = 3000, Ft = 100; 
+int Pmax = 2; 
+int Pt = 10; 
+double SD = 30; 
+double K_BPF = 500, MEAN_BPF = 1; 
 double poll_rate = 0.3;
 int di[] = {0, 0, 0, -1, 1}; 
 int dj[] = {0, -1, 1, 0, 0};
@@ -31,7 +31,7 @@ int manhattan(int i1, int j1, int i2, int j2) {
     return abs(i1 - i2) + abs(j1 - j2);
 }
 
-double random_double(double min, double max) { //USE UNIFORM_REAL_DISTRIBUTION INSTEAD
+double random_double(double min, double max) { 
     uniform_real_distribution<> distr(min, max);
     return distr(gen);
 }
@@ -41,29 +41,23 @@ int random_int(int min, int max) {
     return distr(gen);
 }
 
-double density_control(int t, int i, int j) { //USE UNIFORM_INT_DISTRIBUTION INSTEAD
+double density_control(int t, int i, int j) { 
     assert(flowers[i][j] != 0);
-    double bpf = C[t][i][j]/flowers[i][j]; //bees per flower
+    double bpf = C[t][i][j]/flowers[i][j]; 
     return 1 - 1/(1 + exp(-K_BPF * (bpf - MEAN_BPF)));
 }
 
-double v_index(int t, int i, int j) { //visiting probability index
-    //if (flowers[i][j] == 0) return 
-    //return A[i][j] * density_control(t, i, j);
-    //return A[i][j] / (C[t][i][j] + 1);
-    //double r = sqrt(pow(i, 2) + pow(j, 2));
+double v_index(int t, int i, int j) { 
     return A[i][j];
 }
 
-double p_prob(int t, int i, int j) { //pollination probability
+double p_prob(int t, int i, int j) { 
     if (flowers[i][j] == 0) return 0;
     return poll_rate * density_control(t, i, j);
-    //return 0.3 / (C[t][i][j] + 1);
 }
 
-double A_force(int i, int j, double dist) { //attractiveness force
+double A_force(int i, int j, double dist) { 
     return a[i][j] * flowers[i][j] * exp(-0.5 * pow(dist / SD, 2));
-    //return flowers[i][j] / pow(dist + 1, P);
 }
 
 void fill_A(int i, int j) {
@@ -115,7 +109,7 @@ void simulate() {
     int firsti, firstj;
     tie(firsti, firstj) = firsts[random_int(1, firsts.size()) - 1];
 
-    int poll = 0; //number of flowers pollinated
+    int poll = 0; 
     vector<double> v_probs;
     vector<double> p_probs;
     int poll_time = 0;
@@ -138,8 +132,11 @@ void simulate() {
     }  
 
     assert(i == firsti && j == firstj);
-    poll++;
-    pollinated[i][j]++;
+
+    if (pollinated[i][j] < Pmax * flowers[i][j]) {
+        poll++;
+        pollinated[i][j]++;
+    }
 
     for (int t = 0; t < T; t++) {
         poll_time--;
@@ -153,7 +150,7 @@ void simulate() {
         j += dj[v_choice];
         
         visited[i][j]++; 
-        C[t][i][j]++; // should be put under if statement or not??
+        C[t][i][j]++;
 
         if (flowers[i][j] != 0 && pollinated[i][j] < Pmax * flowers[i][j]) {
             p_probs.clear();
@@ -188,7 +185,6 @@ int main() {
     pollinated.resize(N, vector<int>(M, 0));
     C.resize(T, vector<vector<int>>(N, vector<int>(M, 0)));
 
-    //initialize matrix A
 	int i, j, f_ij;
     double a_ij;
 	for (int f = 0; f < F; f++) {
@@ -202,7 +198,6 @@ int main() {
         }
 	}
 
-    //simulate each bee's route
     for (int s = 0; s < B; s++) {
         simulate();
     }

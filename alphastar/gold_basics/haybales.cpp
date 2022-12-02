@@ -1,11 +1,11 @@
 #include <bits/stdc++.h>
 #define f first 
 #define s second 
-#define MAXN 1005
+#define MAXN 1001
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 typedef tuple<ll, ll, ll> tll;
 
 ll N, X, Y;
@@ -16,7 +16,7 @@ ll dy[] = {1, -1, 0, 0};
 queue<tll> bales;
 
 void dfs(ll i, ll j, ll b) {
-    stack<pll> q;
+    stack<pdl> q;
     q.push(pll({i, j}));
 
     while (!q.empty()) {
@@ -58,20 +58,20 @@ void bfs() {
         bales.pop();
 
         //cout << i << " " << j << " " << b << " ijb\n";
-
+        if (barn[i][j] != -1 && b >= barn[i][j]) continue;
         barn[i][j] = b;
 
         for (ll d = 0; d < 4; d++) {
             ll nexti = i + dx[d];
             ll nextj = j + dy[d];
-
             if (nexti >= 0 && nexti <= MAXN &&
-                nextj >= 0 && nextj <= MAXN &&
-                barn[nexti][nextj] != -1 &&
-                barn[nexti][nextj] > b
-                ) {
-                    //cout << nexti << " " << nextj << "\n";
-                    dfs(nexti, nextj, b);   
+                nextj >= 0 && nextj <= MAXN) {
+                if (barn[nexti][nextj] == -1) {
+                    bales.push(tll({nexti, nextj, b + 1}));
+                }
+                else if (barn[nexti][nextj] > b) {
+                    dfs(nexti, nextj, b);
+                }
             }
         }
     }

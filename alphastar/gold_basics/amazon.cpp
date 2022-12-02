@@ -5,17 +5,17 @@
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
+typedef pair<ll, ll> pdl;
 
 ll N, M;
 ll dists[MAXN];
 bool visited[MAXN] = {false};
-vector<pll> adj[MAXN];
+vector<pdl> adj[MAXN];
 
 void solve() {
 	dists[1] = 0;
-	priority_queue<pll, vector<pll>, greater<pll>> q;
-	q.push(pll({0, 1})); 
+	priority_queue<pdl, vector<pdl>, greater<pdl>> q;
+	q.push(pdl({0, 1})); 
 
 	while (!q.empty()) {
 		auto c = q.top().s;
@@ -26,7 +26,7 @@ void solve() {
 
 		for (auto i: adj[c]) {
 			dists[i.s] = min(dists[c] + i.f, dists[i.s]);
-			q.push(pll({dists[i.s], i.s}));
+			q.push(pdl({dists[i.s], i.s}));
 		} 
 	}
 }
@@ -44,8 +44,8 @@ int main() {
 	for (ll i = 0; i < M; i++) {
 		ll A, B, C;
 		cin >> A >> B >> C;
-		adj[A].push_back(pll({C, B}));
-		adj[B].push_back(pll({C, A}));
+		adj[A].push_back(pdl({C, B}));
+		adj[B].push_back(pdl({C, A}));
 	}
 
 	for (ll i = 1; i <= N; i++) {
