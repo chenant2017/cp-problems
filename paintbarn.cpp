@@ -21,7 +21,7 @@ int main() {
 	
 	string fname = "paintbarn";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
+	freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N >> K;
 
@@ -38,19 +38,20 @@ int main() {
     }
 
     for (ll j = 0; j < MAX; j++) {
-        for (ll i = 0; i < MAX; i++) {
+        for (ll i = 1; i < MAX; i++) {
             barn[i][j] += barn[i - 1][j];
         }
     }
 
     ll ans = 0;
 
-    for (ll i = 0; i < 30; i++) {
-        for (ll j = 0; j < 30; j++) {
-            cout << barn[i][j];
-            if (barn[i][j] == K) ans++;
+    for (ll i = 0; i < MAX; i++) {
+        for (ll j = 0; j < MAX; j++) {
+            if (barn[i][j] == K) {
+                //cout << i << " " << j << "\n";                
+                ans++;
+            }
         }
-        cout << "\n";
     }
 
     cout << ans << "\n";
