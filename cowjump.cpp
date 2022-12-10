@@ -1,38 +1,50 @@
 #include <bits/stdc++.h>
 #define MAXN 100010
-#define x first 
-#define y second
+#define f first 
+#define s second
+
 using namespace std;
 
 typedef long long ll;
 typedef pair<ll, ll> pll;
 
-ll N;
-
 struct Segment {
-    pll p1;
-    pll p2;
+    pll p1, p2;
 };
 
+struct Point {
+    ll x, y, se, i;
+    bool operator<(const Point& p) {
+        return tuple<ll, ll, ll, ll>({x, y, se, i}) < tuple<ll, ll, ll, ll>({p.x, p.y, p.se, p.i});
+    } 
+};
+
+ll N;
 Segment segs[MAXN];
-vector<ll> intersects1;
+vector<Point> points;
 
-pll diff(pll p1, pll p2) {
-    return pll({p1.x - p2.x, p1.y - p2.y});
+ll xp(pll a, pll b) {
+    return a.f * b.s - a.s * b.f;
 }
 
-ll x_product(pll p1, pll p2) {
-    return p1.x * p2.y - p1.y * p2.x;
+pll diff(pll a, pll b) {
+    return pll({a.f - b.f, a.s - b.s});
 }
 
-bool intersect(Segment s1, Segment s2) {
-    ll xp1 = x_product(diff(s2.p1, s1.p1), diff(s2.p1, s1.p2));
-    ll xp2 = x_product(diff(s2.p2, s1.p1), diff(s2.p2, s1.p2));
+bool diff_side(Segment a, Segment b) {
+    if (xp(diff(a.p1, b.p1), diff(a.p1, b.p2)) > 0 
+        != xp(diff(a.p2, b.p1), diff(a.p2, b.p2)) > 0) {
+        return true;
+    }
+    if (xp(diff(a.p1, b.p1), diff(a.p1, b.p2)) * 
+        xp(diff(a.p2, b.p1), diff(a.p2, b.p2)) == 0) {
+        return true;
+    }
+    return false;
+}
 
-    ll xp3 = x_product(diff(s1.p1, s2.p1), diff(s1.p1, s2.p2));
-    ll xp4 = x_product(diff(s1.p2, s2.p1), diff(s1.p2, s2.p2));
-
-    return (xp1 * xp2 <= 0 && xp3 * xp4 < 0) || (xp1 * xp2 < 0 && xp3 * xp4 <= 0);
+bool intersect(Segment a, Segment b) {
+    return (diff_side(a, b) && diff_side(b, a));
 }
 
 int main() {
@@ -46,22 +58,20 @@ int main() {
 	cin >> N;
 
     for (ll i = 0; i < N; i++) {
-        cin >> segs[i].p1.x >> segs[i].p1.y
-            >> segs[i].p2.x >> segs[i].p2.y;
-        if (segs[i].p1 > segs[i].p2) swap(segs[i].p1, segs[i].p2); 
+        Segment s;
+        ll x1, y1, x2, y2;
+        cin >> x1 >> y1 >> x2 >> y2;
+        s.p1 = pll({x1, y1});
+        s.p2 = pll({x2, y2});
+
+        if (s.p1 > s.p2) swap(s.p1, s.p2);
+
+        segs[i] = s;
     }
 
-    /*Segment s1, s2;
-    s1.p1 = pll({0, 0});
-    s1.p2 = pll({1, 1});
-    s2.p1 = pll({2, 2});
-    s2.p2 = pll({3, 3});
+    ll ans;
 
-    if (intersect(s1, s2)) cout << "yes\n";
-
-    return 0;*/
-
-    for (ll i = 0; i < N; i++) {
+    for (ll i = N - 1; i >= 0; i--) {
         ll intersects = 0;
         for (ll j = 0; j < N; j++) {
             if (i == j) continue;
@@ -69,16 +79,37 @@ int main() {
                 intersects++;
             }
         }
-        if (intersects > 1) {
+        if (intersects >= 2) {
             cout << i + 1 << "\n";
             return 0;
         }
-        else if (intersects == 1) {
-            intersects1.push_back(i);
+        if (intersects == 1) {
+            ans = i + 1;
         }
     }
 
-    cout << intersects1[0] + 1 << "\n";
+    cout << ans << "\n";
+
+    /*sort(segs, segs + N, [](auto& a, auto& b)) {
+        return a.p1 < b.p1;
+    }
+
+    for (ll i = 0; i < N; i++) {
+        Point p;
+        p.x = segs[i].p1.f;
+        p.y = segs[i].p1.s;
+        p.se = 1;
+        points.push_back(p);
+        p.x = segs[i].p2.f;
+        p.y = segs[i].p2.s;
+        p.se = 0;
+        points.push_back(p);
+    }
+
+    sort(points.begin(), points.end());
+
+    set<ll> active; 
+    for (auto points.)*/
 	
 	return 0;
 }
