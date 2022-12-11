@@ -53,8 +53,8 @@ bool intersect(Segment a, Segment b) {
 
 double y(Segment a) {
     if (a.p2.f == a.p1.f) return a.p1.s; //for vertical line
-    double m = (a.p2.s - a.p1.s) / (a.p2.f - a.p1.f);
-    return a.p1.s + (x - a.p1.f) * m;
+    double m = (double)(a.p2.s - a.p1.s) / (a.p2.f - a.p1.f);
+    return (double) a.p1.s + (x - a.p1.f) * m;
 
 }
 
@@ -82,14 +82,14 @@ void update(ll& ans1, ll& ans2, ll a, ll b) {
 }
 
 int main() {
-	ios_base::sync_with_stdio(false);
-	cin.tie(NULL);
+	//ios_base::sync_with_stdio(false);
+	//cin.tie(NULL);
 	
 	string fname = "cowjump";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	freopen((fname + ".out").c_str(), "w", stdout);
+	//freopen((fname + ".out").c_str(), "w", stdout);
 	
-	cin >> N;
+	cin >> N; 
 
     for (ll i = 0; i < N; i++) {
         Segment s;
@@ -120,14 +120,20 @@ int main() {
 
     sort(points.begin(), points.end());
 
+    x = 0;
+
     set<ll, decltype(seg_cmp)> active (seg_cmp); 
 
     ll ans1 = -1, ans2 = 0;
 
+    cout << points.size() << "\n";
+
     for (auto p: points) {
         if (p.se == START) {
+            x = p.x;
             active.insert(p.i);
             auto it = active.find(p.i);
+            cout << *it << " a\n";
             auto it2 = it;
             it2++;
             if (it2 != active.end() && intersect(segs[*it], segs[*it2])) {
@@ -142,18 +148,33 @@ int main() {
             }
         }
         else {
-            auto it = active.find(p.i);
+            bool found = false;
+            auto it = active.begin();
+            for (; it != active.end(); it++) {
+                if (*it == p.i) {
+                    cout << "found\n";
+                    found = true;
+                    break;
+                }
+            }
+            assert(found);
+            cout << *it << " b\n";
             auto it2 = it;
             auto it3 = it; 
             it2++;
             it3--;
 
+            cout << "mxvbc\n";
+
             if (it2 != active.end() && it != active.begin() && intersect(segs[*it2], segs[*it3])) {
+                cout << "fdas\n";
                 update(ans1, ans2, min(*it3, *it2), max(*it3, *it2));
                 update(ans1, ans2, min(*it3, *it2), max(*it3, *it2));
             } 
+            cout << "adsf\n";
             active.erase(p.i);
         }
+        cout << "weruio\n";
     }
 
     cout << min(ans1, ans2) + 1 << "\n";
