@@ -20,6 +20,10 @@ struct Point {
 };
 
 ll N;
+ll x;
+ll ans;
+ll END = 0;
+ll START = 1;
 Segment segs[MAXN];
 vector<Point> points;
 
@@ -47,6 +51,36 @@ bool intersect(Segment a, Segment b) {
     return (diff_side(a, b) && diff_side(b, a));
 }
 
+double y(Segment a) {
+    if (a.p2.f == a.p1.f) return a.p1.s; //for vertical line
+    double m = (a.p2.s - a.p1.s) / (a.p2.f - a.p1.f);
+    return a.p1.s + (x - a.p1.f) * m;
+
+}
+
+auto seg_cmp = [](const ll& a, const ll& b) {
+    return y(segs[a]) < y(segs[b]);
+};
+
+void update(ll& ans1, ll& ans2, ll a, ll b) {
+    if (ans1 == -1) {
+        ans1 = a;
+        ans2 = b;
+    }
+    else {
+        if (a == ans1 && b == ans2) return;
+        if (ans1 == ans2) return;
+        if (a == ans1 || a == ans2) {
+            ans1 = a;
+            ans2 = a;
+        }
+        if (b == ans1 || b == ans2) {
+            ans1 = b;
+            ans2 = b;
+        }
+    }
+}
+
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
@@ -69,47 +103,60 @@ int main() {
         segs[i] = s;
     }
 
-    ll ans;
-
-    for (ll i = N - 1; i >= 0; i--) {
-        ll intersects = 0;
-        for (ll j = 0; j < N; j++) {
-            if (i == j) continue;
-            if (intersect(segs[i], segs[j])) {
-                intersects++;
-            }
-        }
-        if (intersects >= 2) {
-            cout << i + 1 << "\n";
-            return 0;
-        }
-        if (intersects == 1) {
-            ans = i + 1;
-        }
-    }
-
-    cout << ans << "\n";
-
-    /*sort(segs, segs + N, [](auto& a, auto& b)) {
-        return a.p1 < b.p1;
-    }
-
     for (ll i = 0; i < N; i++) {
         Point p;
+        p.i = i;
+
         p.x = segs[i].p1.f;
         p.y = segs[i].p1.s;
-        p.se = 1;
+        p.se = START;
         points.push_back(p);
+
         p.x = segs[i].p2.f;
         p.y = segs[i].p2.s;
-        p.se = 0;
+        p.se = END;
         points.push_back(p);
     }
 
     sort(points.begin(), points.end());
 
-    set<ll> active; 
-    for (auto points.)*/
+    set<ll, decltype(seg_cmp)> active (seg_cmp); 
+
+    ll ans1 = -1, ans2 = 0;
+
+    for (auto p: points) {
+        if (p.se == START) {
+            active.insert(p.i);
+            auto it = active.find(p.i);
+            auto it2 = it;
+            it2++;
+            if (it2 != active.end() && intersect(segs[*it], segs[*it2])) {
+                update(ans1, ans2, min(*it, *it2), max(*it, *it2));
+
+            }
+
+            it2 = it;
+            it2--;
+            if (it != active.begin() && intersect(segs[*it], segs[*it2])) {
+                update(ans1, ans2, min(*it, *it2), max(*it, *it2));
+            }
+        }
+        else {
+            auto it = active.find(p.i);
+            auto it2 = it;
+            auto it3 = it; 
+            it2++;
+            it3--;
+
+            if (it2 != active.end() && it != active.begin() && intersect(segs[*it2], segs[*it3])) {
+                update(ans1, ans2, min(*it3, *it2), max(*it3, *it2));
+                update(ans1, ans2, min(*it3, *it2), max(*it3, *it2));
+            } 
+            active.erase(p.i);
+        }
+    }
+
+    cout << min(ans1, ans2) + 1 << "\n";
 	
 	return 0;
 }
