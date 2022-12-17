@@ -1,3 +1,5 @@
+//Silver 2021 December #3
+
 #include <bits/stdc++.h>
 #define MAXN 200010
 #define MAXM 5010
@@ -9,7 +11,8 @@ typedef long long ll;
 typedef pair<ll, ll> pll;
 
 ll N, M;
-pll intervals[MAXN];
+ll a[MAXM] = {0};
+ll b[MAXM] = {0};
 ll inv_prefix[2 * MAXM] = {0};
 
 int main() {
@@ -22,17 +25,17 @@ int main() {
 	
 	cin >> N >> M;
 
-    ll ai, bi;
+    ll start, end;
     for (ll i = 0; i < N; i++) {
-        cin >> intervals[i].f >> intervals[i].s;
+        cin >> start >> end;
+        a[start]++;
+        b[end]++;
     }
 
-    for (ll i = 0; i < N; i++) {
-        for (ll j = 0; j < N; j++) {
-            ll asum = intervals[i].f + intervals[j].f;
-            ll bsum = intervals[i].s + intervals[j].s;
-            inv_prefix[asum]++;
-            inv_prefix[bsum + 1]--;
+    for (ll i = 0; i <= M; i++) {
+        for (ll j = 0; j <= M; j++) {
+            inv_prefix[i + j] += a[i] * a[j];
+            inv_prefix[i + j + 1] -= b[i] * b[j];
         }
     }
 
