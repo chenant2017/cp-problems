@@ -3,18 +3,24 @@
 using namespace std;
 
 typedef long long ll;
+typedef pair<ll, ll> pll;
 
 ll N;
 vector<ll> adj[MAXN];
+map<pll, bool> path_existed;
 
-bool path_exists(ll a, ll b, set<ll>& visited) {
-    visited.insert(a);
-    if (a == b) return true;
+bool path_exists(ll a, ll b) {
+    if (path_existed.find(pll({a, b})) != path_existed.end()) {
+        return path_existed[pll({a, b})];
+    }
+
     for (auto i: adj[a]) {
-        if (visited.find(i) == visited.end() && path_exists(i, b, visited)) {
+        if (path_exists(i, b)) {
+            path_existed[pll({i, b})] = true;
             return true;
         }
     }
+    path_existed[pll({a, b})] = false;
     return false;
 }
 
@@ -34,19 +40,17 @@ int main() {
             ll k;
             cin >> k;
             k--;
-            if (!done) adj[i].push_back(k);
             if (k == i) done = true;
+            if (!done) adj[i].push_back(k);
         }
     }
 
     for (ll i = 0; i < N; i++) {
-        for (auto j: adj[i]) {
-            set<ll> visited;
-            if (path_exists(j, i, visited)) {
-                //cout << "there is path from " << j + 1 << " to " << i + 1 << "\n";
-                cout << j + 1 << "\n";
-                break;
-            }
+        unordered_set<ll> visited;
+        if (path_exists(i, i)) {
+            //cout << "there is path from " << j + 1 << " to " << i + 1 << "\n";
+            cout << j + 1 << "\n";
+            break;
         }
     }
 	
