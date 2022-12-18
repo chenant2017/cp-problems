@@ -6,9 +6,19 @@ typedef long long ll;
 typedef pair<ll, ll> pll;
 
 ll N;
-bool adj[MAXN][MAXN];
-ll assigned[MAXN][MAXN];
-map<pll, bool> path_existed;
+vector<ll> adj[MAXN];
+bool path_exists[MAXN][MAXN];
+
+void dfs(ll start, ll curr, set<ll>& visited) {
+    if (visited.find(curr) != visited.end()) return;
+    visited.insert(curr);
+    for (auto i: adj[curr]) {
+        path_exists[start][i] = true;
+        if (visited.find(i) == visited.end()) {
+            dfs(start, i, visited);
+        }
+    }
+}
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -26,33 +36,24 @@ int main() {
             ll k;
             cin >> k;
             k--;
-            assigned[i][j] = k;
-            if (!done) adj[i][k] = true;
+            if (!done) {
+                adj[i].push_back(k);
+                path_exists[i][k] = true;
+            }
             if (k == i) done = true;
         }
     }
 
-    for (ll k = 0; k < N; k++) {
-        for (ll i = 0; i < N; i++) {
-            for (ll j = 0; j < N; j++) {
-                adj[i][j] = adj[i][j] || (adj[i][k] && adj[k][j]);
-            }
-        }
+    for (ll i = 0; i < N; i++) {
+        set<ll> visited;
+        dfs(i, i, visited);
     }
 
-    /*for (ll i = 0; i < N; i++) {
-        for (ll j = 0; j < N; j++) {
-            cout << ((adj[i][j]) ? "1" : "0") << " ";
-        }
-        cout << "\n";
-    }*/
-
     for (ll i = 0; i < N; i++) {
-        //cout << i << " i\n";
-        for (ll j = 0; j < N; j++) {
-            if (adj[i][assigned[i][j]] && adj[assigned[i][j]][i]) {
+        for (auto j: adj[i]) {
+            if (path_exists[j][i]) {
                 //cout << "there is path from " << j + 1 << " to " << i + 1 << "\n";
-                cout << assigned[i][j] + 1 << "\n";
+                cout << j + 1 << "\n";
                 break;
             }
         }
