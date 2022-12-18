@@ -6,23 +6,9 @@ typedef long long ll;
 typedef pair<ll, ll> pll;
 
 ll N;
-vector<ll> adj[MAXN];
+bool adj[MAXN][MAXN];
+ll assigned[MAXN][MAXN];
 map<pll, bool> path_existed;
-
-bool path_exists(ll a, ll b) {
-    if (path_existed.find(pll({a, b})) != path_existed.end()) {
-        return path_existed[pll({a, b})];
-    }
-
-    for (auto i: adj[a]) {
-        if (path_exists(i, b)) {
-            path_existed[pll({i, b})] = true;
-            return true;
-        }
-    }
-    path_existed[pll({a, b})] = false;
-    return false;
-}
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -40,17 +26,35 @@ int main() {
             ll k;
             cin >> k;
             k--;
+            assigned[i][j] = k;
+            if (!done) adj[i][k] = true;
             if (k == i) done = true;
-            if (!done) adj[i].push_back(k);
         }
     }
 
+    for (ll k = 0; k < N; k++) {
+        for (ll i = 0; i < N; i++) {
+            for (ll j = 0; j < N; j++) {
+                adj[i][j] = adj[i][j] || (adj[i][k] && adj[k][j]);
+            }
+        }
+    }
+
+    /*for (ll i = 0; i < N; i++) {
+        for (ll j = 0; j < N; j++) {
+            cout << ((adj[i][j]) ? "1" : "0") << " ";
+        }
+        cout << "\n";
+    }*/
+
     for (ll i = 0; i < N; i++) {
-        unordered_set<ll> visited;
-        if (path_exists(i, i)) {
-            //cout << "there is path from " << j + 1 << " to " << i + 1 << "\n";
-            cout << j + 1 << "\n";
-            break;
+        //cout << i << " i\n";
+        for (ll j = 0; j < N; j++) {
+            if (adj[i][assigned[i][j]] && adj[assigned[i][j]][i]) {
+                //cout << "there is path from " << j + 1 << " to " << i + 1 << "\n";
+                cout << assigned[i][j] + 1 << "\n";
+                break;
+            }
         }
     }
 	
