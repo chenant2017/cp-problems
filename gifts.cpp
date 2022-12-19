@@ -7,16 +7,16 @@ typedef pair<ll, ll> pll;
 
 ll N;
 vector<ll> adj[MAXN];
-bool path_exists[MAXN][MAXN];
+bool path_exists[MAXN][MAXN] = {false};
 
-void dfs(ll start, ll curr, set<ll>& visited) {
-    if (visited.find(curr) != visited.end()) return;
-    visited.insert(curr);
+void dfs(ll start, ll curr) {
+    if (path_exists[start][curr]) return;
+    path_exists[start][curr] = true;
+
     for (auto i: adj[curr]) {
-        path_exists[start][i] = true;
-        if (visited.find(i) == visited.end()) {
-            dfs(start, i, visited);
-        }
+        //if (!path_exists[start][i]) {
+            dfs(start, i);
+        //}
     }
 }
 
@@ -38,15 +38,13 @@ int main() {
             k--;
             if (!done) {
                 adj[i].push_back(k);
-                path_exists[i][k] = true;
             }
             if (k == i) done = true;
         }
     }
 
     for (ll i = 0; i < N; i++) {
-        set<ll> visited;
-        dfs(i, i, visited);
+        dfs(i, i);
     }
 
     for (ll i = 0; i < N; i++) {

@@ -26,11 +26,13 @@ void dfs(ll start) {
                 if (!taken[start]) {
                     taken[start] = true;
                     fed[edge] = true;
+                    cout << edge << " took " << start << "\n";
                 }
             }
             else {
                 taken[neighbor] = true;
                 fed[edge] = true;
+                cout << edge << " took " << neighbor << "\n";
             }
         }
         else { //endpoint
@@ -38,11 +40,13 @@ void dfs(ll start) {
                 if (!taken[neighbor]) {
                     taken[neighbor] = true;
                     fed[edge] = true;
+                    cout << edge << " took " << neighbor << "\n";
                 }
             }
             else {
                 taken[start] = true;
                 fed[edge] = true;
+                cout << edge << " took " << start << "\n";
             }
         }
 
@@ -55,7 +59,7 @@ int main() {
 	cin.tie(NULL);
 	
 	string fname = "cereal2";
-	//freopen((fname + ".in").c_str(), "r", stdin);
+	freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N >> M;

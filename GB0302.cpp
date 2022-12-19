@@ -7,19 +7,21 @@ typedef long long ll;
 
 ll C, H;
 ll volumes[MAXH];
-ll dp[MAXH][MAXC] = {{0}};
+vector<ll> dp_prev;
+vector<ll> dp_curr;
 
 void solve_dp() {
-    for (ll i = 0; i <= C; i++) {
-        dp[0][i] = 0;
-    }
+    dp_prev = vector<ll>(C + 1, 0);
+    dp_curr = vector<ll>(C + 1, 0);
+
     for (ll i = 1; i <= H; i++) {
         for (ll j = 0; j <= C; j++) {
-            dp[i][j] = dp[i - 1][j];
+            dp_curr[j] = dp_prev[j];
             if (j - volumes[i] >= 0) {
-                dp[i][j] = max(dp[i][j], volumes[i] + dp[i - 1][j - volumes[i]]);
+                dp_curr[j] = max(dp_curr[j], volumes[i] + dp_prev[j - volumes[i]]);
             }
         }
+        dp_prev = dp_curr;
     }
 }
 
@@ -39,7 +41,7 @@ int main() {
 
     solve_dp();
 
-    cout << dp[H][C] << "\n";
+    cout << dp_curr[C] << "\n";
 	
 	return 0;
 }

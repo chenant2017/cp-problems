@@ -1,81 +1,109 @@
-//Silver 2021 February #3
-
 #include <bits/stdc++.h>
 using namespace std;
 
 typedef long long ll;
-ll T, N, M, K;
+ll T, M, N, K;
+ll e1, e2, f1, f2;
+set<ll> window;
+bool hit_bottom;
+vector<ll> emails;
+vector<ll> lasts;
+vector<bool> filed;
+
+void expand() {
+    while (window.size() < K) {
+        cout << window.size() << "\n";
+        cout << e1 << " " << e2 << "\n";
+        if (hit_bottom) {
+            while (e1 >= 0) {
+                if (f1 <= emails[e1] && emails[e1] <= f2) {
+                    filed[e1] = true;
+                    e1 = *window.begin();
+                }
+                if (!filed[e1]) {
+                    window.insert(e1);
+                    break;
+                }
+                e1--;
+            }
+            if (e1 == -1) {
+                break;
+            }
+        }
+        else {
+            while (e2 < N && filed[e2]) {
+                if (f1 <= emails[e2] && emails[e2] <= f2) {
+                    filed[e2] = true;
+                }
+                if (!filed[e2]) {
+                    window.insert(e2);
+                    break;
+                }
+                e2++;
+            }
+            if (e2 == N) {
+                hit_bottom = true;
+                e2 = *window.rbegin();
+            }
+        }
+    }
+}
+
+void scroll() {
+    if (hit_bottom) return;
+    window.erase(e1);
+    expand();
+}
 
 bool solve() {
-    cin >> N >> M >> K;
-    vector<bool> skipped (N, false);
-    vector<bool> filed (N, false);
-    vector<bool> in_window(N, false);
-    vector<vector<ll>> emails_for (M + 1);
-    vector<ll> folder_for (N);
+    cin >> M >> N >> K;
+    hit_bottom = false;
+    emails = vector<ll>(N, 0);
+    lasts = vector<ll>(M, -1); // COULD BE -1
+    filed = vector<bool>(N, false);
+    window.clear();
+    e1 = 0;
+    e2 = 0;
+    f1 = 1;
+    f2 = K;
 
     for (ll i = 0; i < N; i++) {
-        ll f;
-        cin >> f;
-        folder_for[i] = f;
-        emails_for[f].push_back(i);
+        ll e; cin >> e; e--;
+        emails[i] = e;
+        lasts[e] = i;
     }
 
-    ll estart = 0, eend = 0;
-    ll size = 0;
-    for (ll ftop = 1; ftop <= N - K + 1; ftop++) {
-        ll fbottom = ftop + K - 1;
-        //cout << ftop << " " << fbottom << "\n";
-        while (eend < N && size < K) {
-            if (ftop <= folder_for[eend] && 
-                folder_for[eend] <= fbottom) {
-                filed[eend] = true;
+    expand();
+
+    return false;
+
+    while (f1 <= N - K + 1) {
+        set<ll> new_window;
+        for (auto i: window) {
+            if (f1 <= emails[i] && emails[i] <= f2) {
+                filed[i] = true;
             }
             else {
-                in_window[eend] = true;
-                size++;
-            }
-            eend++;
-        }
-
-        while (estart < N && !in_window[estart]) estart++;
-
-        //cout << estart << " " << eend << "\n";
-
-        while (eend < emails_for[ftop].back()) {
-            if (ftop <= folder_for[eend] && 
-                folder_for[eend] <= fbottom) {
-                filed[eend] = true;
-            }
-            else {
-                in_window[eend] = true;
-                in_window[estart] = false;
-                skipped[estart] = true;
-                while (estart < N && !in_window[estart]) estart++;
-            }
-            eend++;
-        }
-
-        if (eend == N) {
-            while (size < K) {
-                while (estart >= 0 && !skipped[estart]) {
-                    estart--;
-                }
-                if (estart == -1) break;
-                skipped[estart] = false;
-                if (ftop <= folder_for[estart] && 
-                    folder_for[estart] <= fbottom) {
-                    filed[estart] = true;
-                }
-                else {
-                    in_window[estart] = true;
-                    size++;
-                }
+                new_window.insert(i);
             }
         }
-        if (estart == -1) return false;
+        window = new_window;
+        expand();
+
+        if (e1 == -1) break;
+
+        while (e2 < lasts[f1]) {
+            scroll();       
+        }
+        f1++;
+        f2++;
     }
-    return true;
+
+    bool result = true;
+    for (auto i: filed) {
+        if (!i) result = false;
+    }
+    return result;
 }
 
 int main() {
@@ -89,8 +117,14 @@ int main() {
 	cin >> T;
 
     for (ll t = 0; t < T; t++) {
-        if (solve()) cout << "YES\n";
-        else cout << "NO\n";
+        cout << t << "\n";
+        bool ans = solve();
+        if (ans) {
+            cout << "YES\n";
+        }
+        else {
+            cout << "NO\n";
+        }
     }
 	
 	return 0;
