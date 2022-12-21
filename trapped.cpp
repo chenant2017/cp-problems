@@ -55,32 +55,13 @@ int main() {
     while (b1 >= 0 && b2 < N) {
         cout << b1 << " " << b2 << "\n";
         ll d = bales[b2].s - bales[b1].s;
-        if (d > bales[b1].f) {
-            if (d > bales[b2].f) {
-                b1--;
-                b2++;
-            }
-            else {
-                ll needed = d - bales[b1].f;
-                if (ans == -1 || needed < ans) {
-                    ans = needed;
-                }
-                b1--;
-            }
+        
+        if (d <= bales[b1].f && d <= bales[b2].f) {
+            cout << "0\n";
+            return 0;
         }
-        else {
-            if (d > bales[b2].f) {
-                ll needed = d - bales[b2].f;
-                if (ans == -1 || needed < ans) {
-                    ans = needed;
-                }
-                b2++;
-            }
-            else {
-                cout << "0\n";
-                return 0;
-            }
-        }
+
+        
     }
 
     cout << ans << "\n";
