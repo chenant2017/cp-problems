@@ -16,7 +16,7 @@ int main() {
 	
 	string fname = "trapped";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
+	freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N >> B;
 
@@ -33,36 +33,41 @@ int main() {
         return 0;
     }
 
-    for (ll i = 0; i < N; i++) {
-        cout << bales[i].f << " " << bales[i].s << "\n";
-    }
-
     ll b2 = 1;
     for (; b2 < N; b2++) {
         //cout << "b1 " << b1 << "\n";
         if (B < bales[b2].s) {
-            cout << "first b2 is " << b2 << "\n";
+            //cout << "first b2 is " << b2 << "\n";
             break;
         }
     }
 
-    ll b1 = b2 - 1;
-
-    cout << b1 << " " << b2 << "\n";
-
     ll ans = -1;
 
-    while (b1 >= 0 && b2 < N) {
-        cout << b1 << " " << b2 << "\n";
-        ll d = bales[b2].s - bales[b1].s;
-        
-        if (d <= bales[b1].f && d <= bales[b2].f) {
-            cout << "0\n";
-            return 0;
-        }
+    ll b1 = b2 - 1;
 
-        
+    ll p1 = b1, p2 = b2;
+    while (p1 >= 0) {
+        while (p2 < N && bales[p2].s - bales[p1].s > bales[p2].f) {
+            p2++;
+        }
+        if (p2 == N) break;
+        ll needed = max(0ll, bales[p2].s - bales[p1].s - bales[p1].f);
+        if (ans == -1 || needed < ans) ans = needed;
+        p1--;
     }
+
+    p1 = b1, p2 = b2;
+    while (p2 < N) {
+        while (p1 >= 0 && bales[p2].s - bales[p1].s > bales[p1].f) {
+            p1--;
+        }
+        if (p1 == -1) break;
+        ll needed = max(0ll, bales[p2].s - bales[p1].s - bales[p2].f);
+        if (ans == -1 || needed < ans) ans = needed;
+        p2++;
+    }
+
 
     cout << ans << "\n";
 	
