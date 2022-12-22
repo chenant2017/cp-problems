@@ -11,15 +11,23 @@ struct comp {
 };
 
 ll L, N, B;
-ll dp[MAXL][MAXB] = {{0}}; //max fun at each L and B
+ll dp[MAXL][MAXB]; //max fun at each L and B
 comp comps[MAXN];
 
 void solve_dp() {
+    for (ll i = 0; i <= L; i++) {
+        for (ll j = 0; j <= B; j++) {
+            dp[i][j] = -1;
+        }
+    }
+
+    dp[0][0] = 0;
+    
     for (ll i = 0; i < N; i++) {
         comp& cp = comps[i];
 
         for (ll j = 0; j <= B; j++) {
-            if (j + cp.c <= B) {
+            if (j + cp.c <= B && dp[cp.s][j] != -1) {
                 dp[cp.e][j + cp.c] = max(dp[cp.e][j + cp.c], dp[cp.s][j] + cp.f);
             }
         }
