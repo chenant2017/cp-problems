@@ -44,9 +44,15 @@ int main() {
 	
 	string fname = "buffet";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
+	freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N >> E;
+
+    for (ll i = 1; i <= N; i++) {
+        for (ll j = 1; j <= N; j++) {
+            dists[i][j] = (int)1e10;
+        }
+    }
     
     for (ll i = 1; i <= N; i++) {
         cin >> qualities[i];
@@ -70,10 +76,6 @@ int main() {
     sort(sorted + 1, sorted + N + 1, [](auto a, auto b) {
         return qualities[a] < qualities[b];
     });
-
-    for (ll i = 1; i <= N; i++) {
-        cout << sorted[i] << "\n";
-    }
 
     ans[1] = qualities[sorted[1]];
 
