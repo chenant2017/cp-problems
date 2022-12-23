@@ -7,46 +7,44 @@ typedef long long ll;
 
 ll N, K;
 ll moves[MAXN];
-ll dp[MAXN][MAXK][3]; //moves, switches, last
+vector<vector<ll>> prev_dp(MAXK, vector<ll>(3));
+vector<vector<ll>> curr_dp(MAXK, vector<ll>(3));
 
-void solve_dp() {
+ll solve_dp() {
     for (ll i = 0; i <= K; i++) {
         for (ll j = 0; j < 3; j++) {
-            dp[0][i][j] = 0;
+            prev_dp[i][j] = 0;
+            curr_dp[i][j] = 0;
         }
     }
 
-    ll hcount = 0, pcount = 0, scount = 0;
-
     for (ll i = 1; i <= N; i++) {
-        if (moves[i] == 0) hcount++;
-        else if (moves[i] == 1) pcount++;
-        else scount++;
-        dp[i][0][0] = hcount;
-        dp[i][0][1] = pcount;
-        dp[i][0][2] = scount;
-    }
+        if (moves[i] == 0) curr_dp[0][0]++;
+        else if (moves[i] == 1) curr_dp[0][1]++;
+        else curr_dp[0][2]++;
 
-    for (ll i = 1; i <= N; i++) {
         for (ll j = 1; j <= K; j++) {
             for (ll k = 0; k < 3; k++) {
-                if (moves[i] == k) {
-                    dp[i][j][k] = dp[i - 1][j][k] + 1;
-                    for (ll l = 0; l < 3; l++) {
-                        if (l == k) continue;
-                        dp[i][j][k] = max(dp[i][j][k], dp[i - 1][j - 1][l] + 1);
-                    }
+                curr_dp[j][k] = prev_dp[j][k];
+                for (ll l = 0; l < 3; l++) {
+                    if (l == k) continue;
+                    curr_dp[j][k] = max(curr_dp[j][k], prev_dp[j - 1][l]);
                 }
-                else {
-                    dp[i][j][k] = dp[i - 1][j][k];
-                    for (ll l = 0; l < 3; l++) {
-                        if (l == k) continue;
-                        dp[i][j][k] = max(dp[i][j][k], dp[i - 1][j - 1][l]);
-                    }
+
+                if (moves[i] == k) {
+                    curr_dp[j][k]++;
                 }
             }
         }
+        prev_dp = curr_dp;
     }
+
+    ll result = 0;
+    for (ll i = 0; i < 3; i++) {
+        result = max(result, curr_dp[K][i]);
+    }
+
+    return result;
 }
 
 int main() {
@@ -73,7 +71,7 @@ int main() {
         }
     }
 
-    solve_dp();
+    cout << solve_dp() << "\n";
 
     /*for (ll k = 0; k < 3; k++) {
         for (ll i = 0; i <= N; i++) {
@@ -84,13 +82,6 @@ int main() {
         }
         cout << "\n\n";
     }*/
-
-    ll ans = 0;
-    for (ll i = 0; i < 3; i++) {
-        ans = max(ans, dp[N][K][i]);
-    }
-    
-    cout << ans << "\n";
 
 	return 0;
 }
