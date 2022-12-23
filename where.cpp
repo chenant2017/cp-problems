@@ -13,7 +13,6 @@ ll dj[] = {1, -1, 0, 0};
 string image[MAXN];
 bool visited[MAXN][MAXN];
 map<char, ll> regions;
-set<tll> invalid;
 
 ll dmini[] = {1, 0, 0, 0};
 ll dmaxi[] = {0, -1, 0, 0};
@@ -97,7 +96,7 @@ int main() {
 	
 	string fname = "where";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
+	freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N;
 
@@ -109,13 +108,31 @@ int main() {
 
     get_pcls(0, N - 1, 0, N - 1, pcls);
 
+    set<tll> new_pcls;
+
     for (auto i: pcls) {
         ll a, b, c, d;
-        tie (a, b, c, d) = i;
-        cout << a << " " << b << " " << c << " " << d << "\n";
+        tie(a, b, c, d) = i;
+
+        bool valid = true;
+        for (auto j: pcls) {
+            if (i == j) continue;
+            ll e, f, g, h;
+            tie(e, f, g, h) = j;
+
+            if (e <= a && b <= f &&
+                g <= c && d <= h) {
+                valid = false;
+                break;
+            }
+        }
+
+        if (valid) {
+            new_pcls.insert(i);
+        }
     }
 
-    cout << pcls.size() << "\n";
+    cout << new_pcls.size() << "\n";
 	
 	return 0;
 }
