@@ -7,8 +7,6 @@ typedef long long ll;
 ll N;
 ll fields1[MAXN];
 ll fields2[MAXN];
-vector<ll> prev_maxes(MAXN);
-vector<ll> curr_maxes(MAXN);
 vector<ll> prev_dp(MAXN);
 vector<ll> curr_dp(MAXN);
 
@@ -17,23 +15,22 @@ ll solve_dp() {
 
     for (ll i = 0; i <= N; i++) {
         prev_dp[i] = 0;
-        prev_maxes[i] = 0;
     }
 
     for (ll i = 1; i <= N; i++) {
         curr_dp[0] = 0;
-        curr_maxes[0] = 0;
 
         for (ll j = 1; j <= N; j++) {
-            curr_dp[j] = prev_maxes[j - 1];
+            curr_dp[j] = prev_dp[j - 1];
 
             if (abs(fields1[i] - fields2[j]) <= 4) { 
                 curr_dp[j]++;
             }
 
+            curr_dp[j] = max(curr_dp[j], prev_dp[j]);
+            curr_dp[j] = max(curr_dp[j], curr_dp[j - 1]);
+
             result = max(result, curr_dp[j]);
-            
-            curr_maxes[j] = max(curr_dp[j], max(curr_maxes[j - 1], prev_maxes[j]));
         }   
 
         /*for (ll j = 1; j <= N; j++) {
@@ -42,7 +39,6 @@ ll solve_dp() {
         cout << "\n";*/
 
         prev_dp = curr_dp;
-        prev_maxes = curr_maxes;
     }
 
     return result;
