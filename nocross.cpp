@@ -11,6 +11,8 @@ vector<ll> prev_dp(MAXN);
 vector<ll> curr_dp(MAXN);
 
 ll solve_dp() {
+    ll result = 0;
+
     for (auto& i: prev_dp) i = 0;
 
     for (ll i = 1; i <= N; i++) {
@@ -20,6 +22,7 @@ ll solve_dp() {
             if (abs(fields1[i] - fields2[j]) <= 4) { 
                 curr_dp[j]++;
             }
+            result = max(result, curr_dp[j]);
         }   
 
         /*for (ll j = 1; j <= N; j++) {
@@ -29,7 +32,7 @@ ll solve_dp() {
         prev_dp = curr_dp;
     }
 
-    return *max_element(curr_dp.begin(), curr_dp.end());
+    return result;
 }
 
 int main() {
