@@ -30,12 +30,19 @@ void solve_dp() {
     for (ll i = 1; i <= N; i++) {
         for (ll j = 1; j <= K; j++) {
             for (ll k = 0; k < 3; k++) {
-                dp[i][j][k] = max(dp[i][j][k], dp[i - 1][j][k] + 1);
-                dp[i][j][k] = max(dp[i][j][k], dp[i - 1][j - 1][k]);
-                for (ll l = 0; l < 3; l++) {
-                    if (l == k) continue;
-                    dp[i][j][k] = max(dp[i][j][k], dp[i - 1][j][l]);
-                    dp[i][j][k] = max(dp[i][j][k], dp[i - 1][j - 1][l] + 1);
+                if (moves[i] == k) {
+                    dp[i][j][k] = dp[i - 1][j][k] + 1;
+                    for (ll l = 0; l < 3; l++) {
+                        if (l == k) continue;
+                        dp[i][j][k] = max(dp[i][j][k], dp[i - 1][j - 1][l] + 1);
+                    }
+                }
+                else {
+                    dp[i][j][k] = dp[i - 1][j][k];
+                    for (ll l = 0; l < 3; l++) {
+                        if (l == k) continue;
+                        dp[i][j][k] = max(dp[i][j][k], dp[i - 1][j - 1][l]);
+                    }
                 }
             }
         }
@@ -68,7 +75,7 @@ int main() {
 
     solve_dp();
 
-    for (ll k = 0; k < 3; k++) {
+    /*for (ll k = 0; k < 3; k++) {
         for (ll i = 0; i <= N; i++) {
             for (ll j = 0; j <= K; j++) {
                 cout << dp[i][j][k] << " ";
@@ -76,7 +83,14 @@ int main() {
             cout << "\n";
         }
         cout << "\n\n";
+    }*/
+
+    ll ans = 0;
+    for (ll i = 0; i < 3; i++) {
+        ans = max(ans, dp[N][K][i]);
     }
     
+    cout << ans << "\n";
+
 	return 0;
 }
