@@ -15,6 +15,7 @@ bool ready[MAXV][MAXK] = {false};
 
 ll get_dp(ll i, ll j) {
     if (ready[i][j]) return dp[i][j];
+    
     if (i == V) {
         dp[i][j] = 0;
         ready[i][j] = true;
@@ -26,8 +27,11 @@ ll get_dp(ll i, ll j) {
     for (auto a: adj[i]) {
         ll s = a.s + get_dp(a.f, j);
         success = max(success, s);
-        ll f = a.s + get_dp(a.f, j - 1);
-        if (fail == -1 || f < fail) fail = f;
+
+        if (j > 0) {
+            ll f = a.s + get_dp(a.f, j - 1);
+            if (fail == -1 || f < fail) fail = f;
+        }
     }
 
     if (j == 0) {
@@ -35,6 +39,7 @@ ll get_dp(ll i, ll j) {
         ready[i][j] = true;
         return dp[i][j];
     }
+
 
     dp[i][j] = min(success, fail);
     ready[i][j] = true;
