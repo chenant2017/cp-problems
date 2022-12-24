@@ -17,6 +17,7 @@ ll get_dp(ll i, ll j) {
     if (ready[i][j]) return dp[i][j];
     if (i == V) {
         dp[i][j] = 0;
+        ready[i][j] = true;
         return dp[i][j];
     }
 
@@ -31,10 +32,12 @@ ll get_dp(ll i, ll j) {
 
     if (j == 0) {
         dp[i][j] = success;
+        ready[i][j] = true;
         return dp[i][j];
     }
 
     dp[i][j] = min(success, fail);
+    ready[i][j] = true;
     return dp[i][j];
 }
 
