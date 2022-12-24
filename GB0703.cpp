@@ -1,51 +1,52 @@
 #include <bits/stdc++.h>
+#define MAXN 110
 using namespace std;
 
 typedef long long ll;
 
 ll N;
 vector<ll> original;
-vector<ll> modified;
-vector<ll> tested;
-vector<ll> best;
-vector<ll> ans;
 
-ll get_diff(vector<ll>& v1, vector<ll>& v2) {
+ll dp[MAXN][MAXN];
+
+ll get_diff(ll a, ll b) {
     ll result = 0;
-    for (ll i = 0; i < N; i++) {
-        if (v1[i] != v2[i]) result++;
+    for (ll i = a; i < b; i++) {
+        ll val = i - a + 1;
+        if (val != original[i]) {
+            result++;
+        }
     }
-
+    if (original[b] != 0) {
+        result++;
+    }
     return result;
 }
 
-void solve() {
-    ans.push_back(get_diff(original, modified));
+void solve_dp() {
+    dp[1][1] = 0;
+    if (original[1] != 0) {
+        dp[1][1]++;
+    }
 
-    for (ll i = 1; i < N; i++) {
-        ll best_diff = -1;
+    for (ll i = 2; i <= N; i++) {
+        dp[i][1] = 1000;
+        dp[1][i] = 1000;
+    }
 
-        for (ll j = 0; j < N; j++) {
-            if (modified[j] == 0) continue;
+    for (ll i = 2; i <= N; i++) {
+        for (ll breaks = 2; breaks <= N; breaks++) {
+            dp[i][breaks] = 1000;
 
-            tested = modified;
-            
-            ll k = j;
-            while (k < N && modified[k] != 0) {
-                tested[k] = k - j;
-                k++;
+            if (breaks > i) {
+                continue;
             }
 
-            ll diff = get_diff(original, tested);
-
-            if (best_diff == -1 || diff < best_diff) {
-                best_diff = diff;
-                best = tested;
+            for (ll k = 1; k <= i - 1; k++) {
+                ll poss = dp[k][breaks - 1] + get_diff(k + 1, i);
+                dp[i][breaks] = min(dp[i][breaks], poss);
             }
         }
-        
-        ans.push_back(best_diff);
-        modified = best;
     }
 }
 
@@ -59,17 +60,21 @@ int main() {
 	
 	cin >> N;
 
+    original.push_back(-1);
+
     for (ll i = 0; i < N; i++) {
-        ll a; 
+        ll a;
         cin >> a;
         original.push_back(a);
-        modified.push_back(i);
     }
 
-    solve();
+    solve_dp();
 
-    for (auto i: ans) {
-        cout << i << "\n";
+    for (ll i = 1; i <= N; i++) {
+        for (ll j = 1; j <= N; j++) {
+            cout << dp[i][j] << " ";
+        }
+        cout << "\n";
     }
 	
 	return 0;
