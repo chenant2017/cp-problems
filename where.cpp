@@ -13,13 +13,12 @@ ll dj[] = {1, -1, 0, 0};
 string image[MAXN];
 bool visited[MAXN][MAXN];
 map<char, ll> regions;
+bool tested[MAXN][MAXN][MAXN][MAXN] = {false};
 
-ll dmini[] = {-1, 0, 0, 0};
-ll dmaxi[] = {0, 1, 0, 0};
-ll dminj[] = {0, 0, -1, 0};
-ll dmaxj[] = {0, 0, 0, 1};
-
-vector<tll> pcls;
+ll dmini[] = {1, 0, 0, 0};
+ll dmaxi[] = {0, -1, 0, 0};
+ll dminj[] = {0, 0, 1, 0};
+ll dmaxj[] = {0, 0, 0, -1};
 
 void floodfill(ll i, ll j, ll mini, ll maxi, ll minj, ll maxj) {
     if (visited[i][j]) return;
@@ -72,6 +71,27 @@ bool is_pcl(ll mini, ll maxi, ll minj, ll maxj) {
     return one && multiple;
 }
 
+void get_pcls(ll mini, ll maxi, ll minj, ll maxj, set<tll>& pcls) {
+    if (tested[mini][maxi][minj][maxj]) return;
+    tested[mini][maxi][minj][maxj] = true;
+    if (is_pcl(mini, maxi, minj, maxj)) {
+        pcls.insert(tll({mini, maxi, minj, maxj}));
+        return;
+    }
+
+    for (ll d = 0; d < 4; d++) {
+        ll nextmini = mini + dmini[d];
+        ll nextmaxi = maxi + dmaxi[d];
+        ll nextminj = minj + dminj[d];
+        ll nextmaxj = maxj + dmaxj[d];
+
+        if (nextmini <= nextmaxi &&
+            nextminj <= nextmaxj) {
+            get_pcls(nextmini, nextmaxi, nextminj, nextmaxj, pcls);
+        }
+    }
+}
+
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
@@ -86,42 +106,35 @@ int main() {
         cin >> image[i];
     }
 
-    for (ll mini = 0; mini < N; mini++) {
-        for (ll minj = 0; minj < N; minj++) {
-            for (ll maxi = N - 1; maxi >= mini; maxi--) {
-                for (ll maxj = N - 1; maxj >= minj; maxj--) {
+    set<tll> pcls;
 
-                    if (is_pcl(mini, maxi, minj, maxj)) {   
-                        pcls.push_back(tll{mini, maxi, minj, maxj});
-                    }
-                }
-            }
-        }
-    }
+    get_pcls(0, N - 1, 0, N - 1, pcls);
 
-    ll ans = 0;
+    set<tll> new_pcls;
 
-    for (auto p: pcls) {
+    for (auto i: pcls) {
         ll a, b, c, d;
-        tie(a, b, c, d) = p;
+        tie(a, b, c, d) = i;
 
         bool valid = true;
-        for (auto q: pcls) {
-            if (p == q) continue;
-            ll r, s, t, u;
-            tie(r, s, t, u) = q;
+        for (auto j: pcls) {
+            if (i == j) continue;
+            ll e, f, g, h;
+            tie(e, f, g, h) = j;
 
-            if (r <= a && b <= s &&
-                t <= c && d <= u) {
+            if (e <= a && b <= f &&
+                g <= c && d <= h) {
                 valid = false;
                 break;
             }
         }
 
-        if (valid) ans++;
+        if (valid) {
+            new_pcls.insert(i);
+        }
     }
 
-    cout << ans << "\n";
+    cout << new_pcls.size() << "\n";
 	
 	return 0;
 }
