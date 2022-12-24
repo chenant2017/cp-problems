@@ -13,12 +13,13 @@ ll dj[] = {1, -1, 0, 0};
 string image[MAXN];
 bool visited[MAXN][MAXN];
 map<char, ll> regions;
-set<tll> pcls;
 
-ll dmini[] = {1, 0, 0, 0};
-ll dmaxi[] = {0, -1, 0, 0};
-ll dminj[] = {0, 0, 1, 0};
-ll dmaxj[] = {0, 0, 0, -1};
+ll dmini[] = {-1, 0, 0, 0};
+ll dmaxi[] = {0, 1, 0, 0};
+ll dminj[] = {0, 0, -1, 0};
+ll dmaxj[] = {0, 0, 0, 1};
+
+vector<tll> pcls;
 
 void floodfill(ll i, ll j, ll mini, ll maxi, ll minj, ll maxj) {
     if (visited[i][j]) return;
@@ -71,50 +72,6 @@ bool is_pcl(ll mini, ll maxi, ll minj, ll maxj) {
     return one && multiple;
 }
 
-void get_pcls(ll mini, ll maxi, ll minj, ll maxj) {
-    queue<tll> q;
-    q.push(tll({mini, maxi, minj, maxj}));
-
-    while (!q.empty()) {
-        auto curr = q.front();
-        q.pop();
-        ll w, x, y, z;
-        tie(w, x, y, z) = curr;
-
-        bool necessary = true;
-
-        for (auto p: pcls) {
-            ll r, s, t, u;
-            tie(r, s, t, u) = p;
-
-            if (r <= w && x <= s &&
-                t <= y && z <= u) {
-                necessary = false;
-                break;
-            }
-        }
-
-        if (!necessary) continue;
-        
-        if (is_pcl(w, x, y, z)) {
-            pcls.insert(tll({w, x, y, z}));
-            continue;
-        }
-
-        for (ll d = 0; d < 4; d++) {
-            ll nextmini = w + dmini[d];
-            ll nextmaxi = x + dmaxi[d];
-            ll nextminj = y + dminj[d];
-            ll nextmaxj = z + dmaxj[d];
-
-            if (nextmini <= nextmaxi &&
-                nextminj <= nextmaxj) {
-                q.push(tll({nextmini, nextmaxi, nextminj, nextmaxj}));
-            }
-        }
-    }
-}
-
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
@@ -129,9 +86,42 @@ int main() {
         cin >> image[i];
     }
 
-    get_pcls(0, N - 1, 0, N - 1);
+    for (ll mini = 0; mini < N; mini++) {
+        for (ll minj = 0; minj < N; minj++) {
+            for (ll maxi = N - 1; maxi >= mini; maxi--) {
+                for (ll maxj = N - 1; maxj >= minj; maxj--) {
 
-    cout << pcls.size() << "\n";
+                    if (is_pcl(mini, maxi, minj, maxj)) {   
+                        pcls.push_back(tll{mini, maxi, minj, maxj});
+                    }
+                }
+            }
+        }
+    }
+
+    ll ans = 0;
+
+    for (auto p: pcls) {
+        ll a, b, c, d;
+        tie(a, b, c, d) = p;
+
+        bool valid = true;
+        for (auto q: pcls) {
+            if (p == q) continue;
+            ll r, s, t, u;
+            tie(r, s, t, u) = q;
+
+            if (r <= a && b <= s &&
+                t <= c && d <= u) {
+                valid = false;
+                break;
+            }
+        }
+
+        if (valid) ans++;
+    }
+
+    cout << ans << "\n";
 	
 	return 0;
 }
