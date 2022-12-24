@@ -13,6 +13,7 @@ ll dj[] = {1, -1, 0, 0};
 string image[MAXN];
 bool visited[MAXN][MAXN];
 map<char, ll> regions;
+set<tll> pcls;
 
 ll dmini[] = {1, 0, 0, 0};
 ll dmaxi[] = {0, -1, 0, 0};
@@ -70,22 +71,46 @@ bool is_pcl(ll mini, ll maxi, ll minj, ll maxj) {
     return one && multiple;
 }
 
-void get_pcls(ll mini, ll maxi, ll minj, ll maxj, set<tll>& pcls) {
+void get_pcls(ll mini, ll maxi, ll minj, ll maxj) {
+    queue<tll> q;
+    q.push(tll({mini, maxi, minj, maxj}));
 
-    if (is_pcl(mini, maxi, minj, maxj)) {
-        pcls.insert(tll({mini, maxi, minj, maxj}));
-        return;
-    }
+    while (!q.empty()) {
+        auto curr = q.front();
+        q.pop();
+        ll w, x, y, z;
+        tie(w, x, y, z) = curr;
 
-    for (ll d = 0; d < 4; d++) {
-        ll nextmini = mini + dmini[d];
-        ll nextmaxi = maxi + dmaxi[d];
-        ll nextminj = minj + dminj[d];
-        ll nextmaxj = maxj + dmaxj[d];
+        bool necessary = true;
 
-        if (nextmini <= nextmaxi &&
-            nextminj <= nextmaxj) {
-            get_pcls(nextmini, nextmaxi, nextminj, nextmaxj, pcls);
+        for (auto p: pcls) {
+            ll r, s, t, u;
+            tie(r, s, t, u) = p;
+
+            if (r <= w && x <= s &&
+                t <= y && z <= u) {
+                necessary = false;
+                break;
+            }
+        }
+
+        if (!necessary) continue;
+        
+        if (is_pcl(w, x, y, z)) {
+            pcls.insert(tll({w, x, y, z}));
+            continue;
+        }
+
+        for (ll d = 0; d < 4; d++) {
+            ll nextmini = w + dmini[d];
+            ll nextmaxi = x + dmaxi[d];
+            ll nextminj = y + dminj[d];
+            ll nextmaxj = z + dmaxj[d];
+
+            if (nextmini <= nextmaxi &&
+                nextminj <= nextmaxj) {
+                q.push(tll({nextmini, nextmaxi, nextminj, nextmaxj}));
+            }
         }
     }
 }
@@ -104,35 +129,9 @@ int main() {
         cin >> image[i];
     }
 
-    set<tll> pcls;
+    get_pcls(0, N - 1, 0, N - 1);
 
-    get_pcls(0, N - 1, 0, N - 1, pcls);
-
-    set<tll> new_pcls;
-
-    for (auto i: pcls) {
-        ll a, b, c, d;
-        tie(a, b, c, d) = i;
-
-        bool valid = true;
-        for (auto j: pcls) {
-            if (i == j) continue;
-            ll e, f, g, h;
-            tie(e, f, g, h) = j;
-
-            if (e <= a && b <= f &&
-                g <= c && d <= h) {
-                valid = false;
-                break;
-            }
-        }
-
-        if (valid) {
-            new_pcls.insert(i);
-        }
-    }
-
-    cout << new_pcls.size() << "\n";
+    cout << pcls.size() << "\n";
 	
 	return 0;
 }
