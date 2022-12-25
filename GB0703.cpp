@@ -24,7 +24,7 @@ ll get_diff(ll a, ll b) {
 }
 
 void solve_dp() {
-    dp[1][1] = 0;
+    dp[1][1] = get_diff(2, N + 1);
     if (original[1] != 0) {
         dp[1][1]++;
     }
@@ -43,13 +43,11 @@ void solve_dp() {
             }
 
             for (ll k = 1; k <= i - 1; k++) {
-                ll poss = dp[k][breaks - 1] + get_diff(k + 1, i);
+                ll poss = dp[k][breaks - 1] - get_diff(k + 1, N + 1) + get_diff(k + 1, i) + get_diff(i + 1, N + 1);
                 dp[i][breaks] = min(dp[i][breaks], poss);
             }
-            if (i == 6 && breaks == 6) {
-                cout << get_diff(i + 1, N + 1) << " a\n";
-            }
-            dp[i][breaks] += get_diff(i + 1, N + 1);
+           
+            //dp[i][breaks] += get_diff(i + 1, N + 1);
         }
     }
 }
@@ -64,9 +62,9 @@ int main() {
 	
 	cin >> N;
 
-    original.push_back(-1);
+    original.push_back(0);
 
-    for (ll i = 0; i < N; i++) {
+    for (ll i = 1; i <= N; i++) {
         ll a;
         cin >> a;
         original.push_back(a);
@@ -76,11 +74,12 @@ int main() {
 
     solve_dp();
 
-    for (ll i = 1; i <= N; i++) {
-        for (ll j = 1; j <= N; j++) {
-            cout << dp[i][j] << " ";
+    for (ll j = 1; j <= N; j++) {
+        ll ans = 1000;
+        for (ll i = 1; i <= N; i++) {
+            ans = min(ans, dp[i][j]);
         }
-        cout << "\n";
+        cout << ans << "\n";
     }
 	
 	return 0;
