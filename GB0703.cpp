@@ -46,6 +46,10 @@ void solve_dp() {
                 ll poss = dp[k][breaks - 1] + get_diff(k + 1, i);
                 dp[i][breaks] = min(dp[i][breaks], poss);
             }
+            if (i == 6 && breaks == 6) {
+                cout << get_diff(i + 1, N + 1) << " a\n";
+            }
+            dp[i][breaks] += get_diff(i + 1, N + 1);
         }
     }
 }
@@ -67,6 +71,8 @@ int main() {
         cin >> a;
         original.push_back(a);
     }
+
+    original.push_back(0);
 
     solve_dp();
 
