@@ -22,15 +22,22 @@ int main() {
     }
 
     ll ans = 0;
+    ll min = pow(10, 10);
 
-    for (ll i = 1; i < N; i++) {
-        ll greater = 0;
-        for (ll j = 0; j < i; j++) {
-            if (A[j] > A[i]) {
-                greater++;
+    for (ll i = N - 1; i >= 0; i--) {
+        if (A[i] < min) {
+            min = A[i];
+
+            ll greater = 0;
+
+            for (ll j = 0; j < i; j++) {
+                if (A[j] > A[i]) {
+                    greater++;
+                }
             }
+
+            ans = max(ans, greater);
         }
-        ans = max(ans, greater);
     }
 
     cout << ans + 1 << "\n";
