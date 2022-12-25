@@ -26,13 +26,14 @@ ll get_dp(ll i, ll l, ll b) {
         return dp[i][l][b];
     }
 
-    if (b == 0) {
-        dp[i][l][b] = get_dp(i + 1, l, b) + (original[i] != i - l);
+    ll poss1 = get_dp(i + 1, l, b) + (original[i] != i - l);
+
+    if (b == 0 || i == 1) {
+        dp[i][l][b] = poss1;
         ready[i][l][b] = true;
         return dp[i][l][b];
     }
 
-    ll poss1 = get_dp(i + 1, l, b) + (original[i] != i - l);
     ll poss2 = get_dp(i + 1, i, b - 1) + (original[i] != 0); 
     dp[i][l][b] = min(poss1, poss2);
 
@@ -62,15 +63,5 @@ int main() {
         cout << get_dp(1, 1, i) << "\n";
     }
 
-    for (ll i = 1; i <= N; i++) {
-        for (ll j = 1; j <= N; j++) {
-            for (ll k = 0; k <= N; k++) {
-                cout << dp[i][j][k] << " ";
-            }
-            cout << "\n";
-        }
-        cout << "\n\n";
-    }
-	
 	return 0;
 }
