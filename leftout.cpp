@@ -1,41 +1,29 @@
 #include <bits/stdc++.h>
 #define MAX 1010
-#define f first  
-#define s second
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
 
 ll N;
-ll cows[MAX][MAX];
+bool photo[MAX][MAX];
 
-void rflip(ll r) {
-    for (ll i = 0; i < N; i++) {
-        cows[r][i] = 1 - cows[r][i];
-    }
-}
 
-void cflip(ll c) {
-    for (ll i = 0; i < N; i++) {
-        cows[i][c] = 1 - cows[i][c];
-    }
-}
+ll di[] = {-1, -1, 0, 0};
+ll dj[] = {-1, 0, -1, 0};
 
-ll rsum(ll r) {
-    ll result = 0;
-    for (ll i = 0; i < N; i++) {
-        result += cows[r][i];
-    }
-    return result;
-}
+bool is_31(ll i, ll j) { //use lower right corner 
+    ll rcount = 0;
+    ll lcount = 0;
 
-ll csum(ll c) {
-    ll result = 0;
-    for (ll i = 0; i < N; i++) {
-        result += cows[i][c];
+    for (ll d = 0; d < 4; d++) {
+        ll nexti = i + di[d];
+        ll nextj = j + dj[d];
+
+        if (photo[nexti][nextj]) rcount++;
+        else lcount++;
     }
-    return result;
+
+    return (rcount == 1 || lcount == 1);
 }
 
 int main() {
@@ -52,69 +40,32 @@ int main() {
         string s;
         cin >> s;
         for (ll j = 0; j < N; j++) {
-            cows[i][j] = s[j] == 'R';
+            photo[i][j] = s[j] == 'R';
         }
     }
 
-    for (ll i = 1; i < N; i++) {
-        if (cows[i][0] != cows[0][0]) {
-            rflip(i);
-        }
-        if (cows[0][i] != cows[0][0]) {
-            cflip(i);
-        }
-    }
+    pair<ll, ll> ans = pair<ll, ll>({-1, -1});
 
-    if (cows[0][0] == 1) {
-        for (ll i = 0; i < N; i++) {
-            rflip(i);
-        }
-    }
-
-    ll total = 0;
     for (ll i = 0; i < N; i++) {
         for (ll j = 0; j < N; j++) {
-            total += cows[i][j];
-        }
-    }
-    if (total == pow(N - 1, 2)) {
-        cout << "1 1" << "\n";
-        return 0;
-    }
+            bool works = true;
+            for (ll d = 0; d < 4; d++) {
+                ll testi = i + 1 + di[d];
+                ll testj = j + 1 + dj[d];
 
-    pll ans = pll({-1, -1});
-    
-    for (ll i = 1; i < N; i++) {
-        if (rsum(i) == N - 1) {
-            if (ans == pll({-1, -1})) {
-                ans = pll({i, 0});
+                if (1 <= testi && testi < N &&
+                    1 <= testj && testj < N) {
+                    
+                    if (!is_31(testi, testj)) {
+                        works = false;
+                        break;
+                    }
+                }
             }
-            else {
-                cout << "-1\n";
-                return 0;
-            }
-        }
-        if (csum(i) == N - 1) {
-            if (ans == pll({-1, -1})) {
-                ans = pll({0, i});
-            }
-            else {
-                cout << "-1\n";
-                return 0;
-            }
-        }
-    }
 
-    if (ans != pll({-1, -1})) {
-        cout << ans.f + 1 << " " << ans.s + 1 << "\n";
-        return 0;
-    }
-
-    for (ll i = 1; i < N; i++) {
-        for (ll j = 1; j < N; j++) {
-            if (cows[i][j] == 1) {
-                if (ans == pll({-1, -1})) {
-                    ans = pll(i, j);
+            if (works) {
+                if (ans.first == -1) {
+                    ans = pair<ll, ll>({i, j});
                 }
                 else {
                     cout << "-1\n";
@@ -124,12 +75,12 @@ int main() {
         }
     }
 
-    if (ans == pll({-1, -1})) {
+    if (ans.first == -1) {
         cout << "-1\n";
     }
     else {
-        cout << ans.f + 1 << " " << ans.s + 1 << "\n";
-    }
+        cout << ans.first + 1 << " " << ans.second + 1 << "\n";
+    }   
 	
 	return 0;
 }
