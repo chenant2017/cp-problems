@@ -1,55 +1,43 @@
 #include <bits/stdc++.h>
-#define MAXN 110
+#define MAX 110
 using namespace std;
 
 typedef long long ll;
 
 ll N;
 vector<ll> original;
+ll dp[MAX][MAX][MAX]; // curr, last breakout, # breakouts left
+bool ready[MAX][MAX][MAX] = {false};
 
-ll dp[MAXN][MAXN];
+ll get_dp(ll i, ll l, ll b) {
+    if (ready[i][l][b]) return dp[i][l][b];
 
-ll get_diff(ll a, ll b) {
-    ll result = 0;
-    for (ll i = a; i < b; i++) {
-        ll val = i - a + 1;
-        if (val != original[i]) {
-            result++;
+    if (i == N) {
+        if (b > 1) {
+            dp[i][l][b] = 1000;
         }
-    }
-    if (original[b] != 0) {
-        result++;
-    }
-    return result;
-}
-
-void solve_dp() {
-    dp[1][1] = get_diff(2, N + 1);
-    if (original[1] != 0) {
-        dp[1][1]++;
-    }
-
-    for (ll i = 2; i <= N; i++) {
-        dp[i][1] = 1000;
-        dp[1][i] = 1000;
-    }
-
-    for (ll i = 2; i <= N; i++) {
-        for (ll breaks = 2; breaks <= N; breaks++) {
-            dp[i][breaks] = 1000;
-
-            if (breaks > i) {
-                continue;
-            }
-
-            for (ll k = 1; k <= i - 1; k++) {
-                ll poss = dp[k][breaks - 1] - get_diff(k + 1, N + 1) + get_diff(k + 1, i) + get_diff(i + 1, N + 1);
-                dp[i][breaks] = min(dp[i][breaks], poss);
-            }
-           
-            //dp[i][breaks] += get_diff(i + 1, N + 1);
+        else if (b == 1) {
+            dp[i][l][b] = (original[N] != 0);
         }
+        else {
+            dp[i][l][b] = (original[N] != N - l);
+        }
+        ready[i][l][b] = true;
+        return dp[i][l][b];
     }
+
+    if (b == 0) {
+        dp[i][l][b] = get_dp(i + 1, l, b) + (original[i] != i - l);
+        ready[i][l][b] = true;
+        return dp[i][l][b];
+    }
+
+    ll poss1 = get_dp(i + 1, l, b) + (original[i] != i - l);
+    ll poss2 = get_dp(i + 1, i, b - 1) + (original[i] != 0); 
+    dp[i][l][b] = min(poss1, poss2);
+
+    ready[i][l][b] = true;
+    return dp[i][l][b];
 }
 
 int main() {
@@ -64,22 +52,24 @@ int main() {
 
     original.push_back(0);
 
-    for (ll i = 1; i <= N; i++) {
+    for (ll i = 0; i < N; i++) {
         ll a;
         cin >> a;
         original.push_back(a);
     }
 
-    original.push_back(0);
+    for (ll i = 0; i < N; i++) {
+        cout << get_dp(1, 1, i) << "\n";
+    }
 
-    solve_dp();
-
-    for (ll j = 1; j <= N; j++) {
-        ll ans = 1000;
-        for (ll i = 1; i <= N; i++) {
-            ans = min(ans, dp[i][j]);
+    for (ll i = 1; i <= N; i++) {
+        for (ll j = 1; j <= N; j++) {
+            for (ll k = 0; k <= N; k++) {
+                cout << dp[i][j][k] << " ";
+            }
+            cout << "\n";
         }
-        cout << ans << "\n";
+        cout << "\n\n";
     }
 	
 	return 0;
