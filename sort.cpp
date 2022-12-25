@@ -6,6 +6,7 @@ typedef long long ll;
 
 ll N;
 ll A[MAXN];
+ll sorted[MAXN];
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -18,7 +19,25 @@ int main() {
     cin >> N;
 
     for (ll i = 0; i < N; i++) {
-        cin >> A[i];
+        ll a;
+        cin >> a;
+        A[i] = a;
+        sorted[i] = a;
+    }
+
+    sort(sorted, sorted + N);
+
+    bool same = true;
+    for (ll i = 0; i < N; i++) {
+        if (sorted[i] != A[i]) {
+            same = false;
+            break;
+        }
+    }
+
+    if (same) {
+        cout << "1\n";
+        return 0;
     }
 
     ll ans = 0;
