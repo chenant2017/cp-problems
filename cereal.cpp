@@ -1,28 +1,46 @@
 #include <bits/stdc++.h>
 #define MAX 100010
-#define f first 
+#define f first
 #define s second
+
 using namespace std;
 
 typedef long long ll;
 typedef pair<ll, ll> pll;
 
-pll choices[MAX];
-list<ll> cows[MAX];
-bool taken[MAX] = {false};
 ll N, M;
+pll choices[MAX]; // of each cow
+vector<ll> chosen[MAX]; // by which cows
+ll ptr[MAX] = {0};
 
-int give(ll cereal) {
-    if (cows[cereal].empty()) return -1;
+bool give(ll cow, ll cereal) { // was cereal successfully given?
 
-    ll next = cows[cereal].front();
-    if (choices[next].f == cereal) { //is first choice
-        cows[choices[next].s].remove(next);
-        return give(choices[next].s);
+    ptr[cereal]++;
+
+    while (ptr[cereal] < chosen[cereal].size() - 1) {
+        ll cow2 = chosen[cereal][ptr[cereal]];
+        ll choice1, choice2;
+        tie(choice1, choice2) = choices[cow2];
+
+        if (choice1 == cereal) {
+            if (chosen[choice2][ptr[choice2]] == cow2) {
+                return give(cow2, choice2);
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            if (chosen[choice1][ptr[choice1]] == cow2) {
+                ptr[cereal]++;
+            }
+            else {
+                return true;
+            }
+        }
     }
-    else {
-        return 0;
-    }
+    if (ptr[cereal] == chosen[cereal].size() - 1) return false;
+    return true;
 }
 
 int main() {
@@ -35,37 +53,51 @@ int main() {
 	
 	cin >> N >> M;
 
-    for (ll i = 0; i < N; i++) {
-        ll c1, c2;
-        cin >> c1 >> c2;
-        choices[i].f = c1;
-        choices[i].s = c2;
-        cows[c1].push_back(i);
-        cows[c2].push_back(i);
+    for (ll i = 1; i <= M; i++) {
+        chosen[i].push_back(-1);
     }
 
-    ll fed = 0;
     for (ll i = 0; i < N; i++) {
-        if (taken[choices[i].f]) {
-            if (!taken[choices[i].s]) {
-                taken[choices[i].s] = true;
-                fed++;
+        ll a, b;
+        cin >> a >> b;
+        choices[i] = {a, b};
+        chosen[a].push_back(i);
+        chosen[b].push_back(i);
+    }
+
+    for (ll i = 1; i <= M; i++) {
+        chosen[i].push_back(-1);
+    }
+    
+    ll ans = 0;
+
+    for (ll i = 0; i < N; i++) {
+        ll choice1, choice2;
+        tie(choice1, choice2) = choices[i];
+        if (ptr[choice1] == 0) {
+            while (chosen[choice1][ptr[choice1]] != i) {
+                ptr[choice1]++;
             }
+            ans++;
         }
         else {
-            taken[choices[i].f] = true;
-            fed++;
+            if (ptr[choice2] == 0) {
+                while (chosen[choice2][ptr[choice2]] != i) {
+                    ptr[choice2]++;
+                }
+                ans++;
+            }
         }
     }
 
-    cout << fed << "\n";
-
-    //return 0;
+    cout << ans << "\n";
 
     for (ll i = 0; i < N - 1; i++) {
-        cows[choices[i].f].pop_front();
-        cows[choices[i].s].remove(i);
-        cout << fed + give(choices[i].f) << "\n";
+        //cout << i << " i\n";
+        if (!give(i, choices[i].f)) {
+            ans--;
+        }
+        cout << ans << "\n";
     }
 	
 	return 0;
