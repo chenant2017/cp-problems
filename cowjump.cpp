@@ -50,7 +50,9 @@ double gety(Segment s) {
 }
 
 bool cmp(const ll& a, const ll& b) {
-    return gety(segs[a]) < gety(segs[b]);
+    ll ya = gety(segs[a]);
+    ll yb = gety(segs[b]);
+    return ya < yb || (ya == yb && a < b);
 }
 
 bool update_ans(ll a, ll b) {
@@ -80,7 +82,7 @@ int main() {
 	
 	string fname = "cowjump";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	freopen((fname + ".out").c_str(), "w", stdout);
+	//freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N;
 
@@ -90,10 +92,6 @@ int main() {
         if (seg.p1 > seg.p2) {
             swap(seg.p1, seg.p2);
         }
-    }
-
-    for (ll i = 0; i < N; i++) {
-
     }
 
     for (ll i = 0; i < N; i++) {
@@ -107,13 +105,17 @@ int main() {
     sort(endpoints.begin(), endpoints.end());
 
     set<ll, decltype(&cmp)> active(cmp);
-
     
     for (auto e: endpoints) {
-        if (active.find(e.second) == active.end()) {
+        currx = e.first.x;
+
+        auto it = active.find(e.second);
+
+        if (it == active.end()) {
 
             active.insert(e.second);
-            auto it = active.find(e.second);
+
+            it = active.find(e.second);
 
             auto it2 = it;
             it2++;
@@ -137,21 +139,24 @@ int main() {
 
         }
         else {
+            // active.insert(e.second);
 
-            auto it = active.find(e.second);
             auto it2 = it;
             auto it3 = it;
 
             it2++;
             it3--;
 
-            if (it2 != active.end() && it != active.begin()) {
+            if (it!= active.end() && it2 != active.end() && it != active.begin()) {
                 if (intersect(segs[*it2], segs[*it3])) {
+                    cout << "asdf\n";
                     if (update_ans(*it2, *it3)) {
                         return 0;
                     }
                 }
             }
+
+            active.erase(e.second);
 
         }
     }
