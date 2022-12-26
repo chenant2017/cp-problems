@@ -5,6 +5,8 @@ typedef long long ll;
 
 ll N, K;
 
+vector<ll> centers;
+
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
@@ -13,33 +15,23 @@ int main() {
 	freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
 	
-	cin >> N >> K;
-
-    ll tcorrect = N;
-    ll fcorrect = N;
-    ll halfcorrect1 = N; // N / 2 true
-    ll halfcorrect2 = N; // N / 2 + 1 true
+    cin >> N >> K;
 
     for (ll i = 0; i < K; i++) {
         ll t;
         cin >> t;
-
-        tcorrect = min(tcorrect, t);
-        fcorrect = min(fcorrect, N - t);
-        if (N % 2 == 0) {
-            halfcorrect1 = min(halfcorrect1, abs(t - (N / 2)));
-            halfcorrect2 = halfcorrect1;
-        }
-        else {
-            halfcorrect1 = min(halfcorrect1, abs(t - (N / 2 + 1)));
-            halfcorrect2 = min(halfcorrect2, abs(t - (N / 2 - 1)));
-        }
-        
+        centers.push_back(N - t);
     }
 
-    vector<ll> v = {tcorrect, fcorrect, halfcorrect1, halfcorrect2};
+    sort(centers.begin(), centers.end());
 
-    cout << *max_element(v.begin(), v.end()) << "\n";
+    ll ans = max(centers[0], N - centers[K - 1]);
+
+    for (ll i = 0; i < K - 1; i++) {
+        ans = max(ans, (centers[i + 1] - centers[i]) / 2);
+    }
+
+    cout << ans << "\n";
 	
 	return 0;
 }
