@@ -10,7 +10,7 @@ typedef pair<ll, ll> pll;
 ll N;
 pll points[MAXN];
 vector<ll> adj[MAXN];
-bool visited[MAXN];
+bool visited[MAXN] = {false};
 
 void floodfill(ll i) {
     if (visited[i]) return;
@@ -35,18 +35,28 @@ int main() {
         cin >> points[i].x >> points[i].y;
     }
 
-    for (ll i = 0; i < N; i++) {
-        for (ll j = 0; j < N; j++) {
-            if (i == j) continue;
+    sort(points, points + N);
 
-            if (points[i].x <= points[j].x &&
-                points[i].y <= points[j].y) {
-                adj[i].push_back(j);
-                adj[j].push_back(i);
+    stack<ll> mono;
+    for (ll i = 0; i < N; i++) {
+        if (!mono.empty() && points[mono.top()].y <= points[i].y) {
+            ll put_back = mono.top();
+            
+            while (!mono.empty() && points[mono.top()].y <= points[i].y) {
+                adj[mono.top()].push_back(i);
+                adj[i].push_back(mono.top());
+                //cout << mono.top() << " " << i << "\n";
+                mono.pop();
             }
+
+            mono.push(i);
+            mono.push(put_back);
+        }
+        else {
+            mono.push(i);
         }
     }
-
+    
     ll ans = 0;
 
     for (ll i = 0; i < N; i++) {
