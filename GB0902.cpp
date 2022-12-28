@@ -1,28 +1,30 @@
 #include <bits/stdc++.h>
-#define MAXK 15
-#define MAXD 30
 using namespace std;
 
 typedef long long ll;
 
 ll N, K;
-ll dp[MAXK][MAXD]; 
+ll term;
+vector<ll> ans;
 
-void solve_dp() {
-    for (ll i = 0; i <= K; i++) {
-        dp[i][0] = 0;
-    }
-    for (ll i = 0; i < MAXD; i++) {
-        dp[0][i] = 0;
-    }
-    dp[0][0] = 1;
+void counter(ll zeros, ll start, vector<ll>& history) {
+    if (zeros == 0) {
+        term++;
 
-    for (ll i = 1; i <= K; i++) {
-        for (ll j = 1; j < MAXD; j++) {
-            dp[i][j] = dp[i][j - 1] + dp[i - 1][j - 1];
-        }   
+        if (term == N) {
+            ans = history;
+        }
+
+        return;
+    }
+
+    for (ll i = start; i < K; i++) {
+        history.push_back(i);
+        counter(zeros - 1, i, history);
+        history.pop_back();
     }
 }
+
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -34,16 +36,26 @@ int main() {
 	
 	cin >> N >> K;
 
-    solve_dp();
+    term = 0;
+    
+    vector<ll> history;
+    for (ll zeros = 0; zeros < 30; zeros++) {
+        history.clear();
+        counter(zeros, 0, history);
+        //cout << term << " term\n";
+        if (term >= N) break;
+    }
 
-    ll sum = 0;
-    for (ll i = 0; i < MAXD; i++) {
-        sum += dp[K][i];
-        if (sum >= N) {
-            cout << i << "\n";
-            break;
+    ll ptr = 0;
+    for (ll i = 0; i < K; i++) {
+        cout << 1;
+        while (ptr < N && ans[ptr] == i) {
+            cout << 0;
+            ptr++;
         }
     }
+
+    cout << "\n";
 	
 	return 0;
 }
