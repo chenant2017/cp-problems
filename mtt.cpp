@@ -23,10 +23,11 @@ vector<ll> to_v(ll board) {
     
     for (ll i = 8; i >= 0; i--) {
         ll digit = board / ((ll) pow(3, i));
+        cout << digit << endl;
         v.push_back(digit);
         board -= digit * pow(3, i);
     }
-
+    assert(v.size()==9);
     reverse(v.begin(), v.end());
 
     return v;
@@ -46,11 +47,11 @@ bool wins(ll board) {
     return result;   
 }
 
-ll move(ll board, string s) {
+ll move(ll board, string& s) {
     ll index = 3 * (s[1] - '1') + s[2] - '1';
 
     vector<ll> v = to_v(board);
-    if (v[index] != 0) return board;
+    if (index <9 && v[index] != 0) return board;
     
     if (s[0] == 'M') {
         board += pow(3, index) * 1;
@@ -89,11 +90,11 @@ void dfs(ll board, ll i, ll j) {
 
 
 int main() {
-	ios_base::sync_with_stdio(false);
-	cin.tie(NULL);
+	//ios_base::sync_with_stdio(false);
+	//cin.tie(NULL);
 	
 	string fname = "mtt";
-	//freopen((fname + ".in").c_str(), "r", stdin);
+	freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
 	
     cin >> N;
