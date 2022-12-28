@@ -21,6 +21,7 @@ void counter(ll zeros, ll start, vector<ll>& history) {
     for (ll i = start; i < K; i++) {
         history.push_back(i);
         counter(zeros - 1, i, history);
+        if (term >= N) break;
         history.pop_back();
     }
 }
@@ -39,8 +40,9 @@ int main() {
     term = 0;
     
     vector<ll> history;
-    for (ll zeros = 0; zeros < 30; zeros++) {
+    for (ll zeros = 0; zeros <= pow(10, 7); zeros++) {
         history.clear();
+
         counter(zeros, 0, history);
         //cout << term << " term\n";
         if (term >= N) break;
@@ -49,7 +51,7 @@ int main() {
     ll ptr = 0;
     for (ll i = 0; i < K; i++) {
         cout << 1;
-        while (ptr < N && ans[ptr] == i) {
+        while (ptr < ans.size() && ans[ptr] == i) {
             cout << 0;
             ptr++;
         }
