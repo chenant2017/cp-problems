@@ -1,35 +1,47 @@
 #include <bits/stdc++.h>
+#define MAXD 5000
+#define MAXK 15
 using namespace std;
 
 typedef long long ll;
 
 ll N, K;
-ll term;
-vector<ll> ans;
+ll dp[MAXK][MAXD];
+string ans = "";
 
-void counter(ll zeros, ll start, vector<ll>& history) {
-    if (zeros == 0) {
-        term++;
-
-        if (term == N) {
-            ans = history;
-        }
-
-        return;
+void solve_dp() {
+    for (ll d = 0; d < MAXD; d++) {
+        dp[0][d] = 1;
     }
 
-    for (ll i = start; i < K; i++) {
-        history.push_back(i);
-        counter(zeros - 1, i, history);
-        if (term >= N) break;
-        history.pop_back();
+    for (ll i = 1; i <= K; i++) {
+        dp[i][0] = 0;
+    }
+
+    for (ll i = 1; i <= K; i++) {
+        for (ll d = 1; d < MAXD; d++) {
+            dp[i][d] = dp[i - 1][d - 1] + dp[i][d - 1];
+        }
+    }
+}
+
+void get_string(ll n, ll i, ll d) {
+    //cout << n << " " << i << " " << d << "\n";
+    if (d == 0) return;
+    if (n > dp[i][d - 1]) {
+        ans += "1";
+        get_string(n - dp[i][d - 1], i - 1, d - 1);
+    }
+    else {
+        ans += "0";
+        get_string(n, i, d - 1);
     }
 }
 
 
 int main() {
-	ios_base::sync_with_stdio(false);
-	cin.tie(NULL);
+	//ios_base::sync_with_stdio(false);
+	//cin.tie(NULL);
 	
 	string fname = "GB0902";
 	freopen((fname + ".in").c_str(), "r", stdin);
@@ -47,27 +59,16 @@ int main() {
         return 0;
     }
 
-    term = 0;
-    
-    vector<ll> history;
-    for (ll zeros = 0; zeros <= pow(10, 7); zeros++) {
-        history.clear();
+    solve_dp();
 
-        counter(zeros, 0, history);
-        //cout << term << " term\n";
-        if (term >= N) break;
-    }
-
-    ll ptr = 0;
-    for (ll i = 0; i < K; i++) {
-        cout << 1;
-        while (ptr < ans.size() && ans[ptr] == i) {
-            cout << 0;
-            ptr++;
+    for (ll d = K; d < MAXD; d++) {
+        if (dp[K][d] >= N) {
+            get_string(N, K, d);
+            break;
         }
     }
 
-    cout << "\n";
+    cout << ans << "\n";
 	
 	return 0;
 }
