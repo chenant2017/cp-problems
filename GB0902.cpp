@@ -37,6 +37,16 @@ int main() {
 	
 	cin >> N >> K;
 
+    if (K == 1) {
+        cout << 1;
+        for (ll i = 0; i < N - 1; i++) {
+            cout << 0;
+        }
+        cout << "\n";
+
+        return 0;
+    }
+
     term = 0;
     
     vector<ll> history;
