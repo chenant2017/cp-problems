@@ -6,18 +6,23 @@ typedef long long ll;
 
 ll a[MAXN];
 ll v[MAXN];
-bool visited[MAXN] = {false};
+ll visited[MAXN] = {0};
+bool taken[MAXN] = {false};
 ll N;
 
-void floodfill(ll i) {
-    visited[i] = true;
-    while (!visited[a[i]]) {
+bool floodfill(ll i, ll comp) {
+    visited[i] = comp;
+    while (visited[a[i]] == 0) {
         i = a[i];
-        visited[i] = true;
+        visited[i] = comp;
     }   
+    if (visited[a[i]] != comp) return false;
+    return true;
 }
 
 ll get_shortest(ll i) {
+    ll result;
+
     ll p1 = i;
     ll p2 = a[i];
 
@@ -27,15 +32,19 @@ ll get_shortest(ll i) {
     }
 
     ll shortest = v[p1];
+    result = p1;
     p2 = a[p1];
     //cout << p2 << " p2\n";
     while (p1 != p2) {
-        shortest = min(shortest, v[p2]);
+        if (v[p2] < shortest) {
+            shortest = v[p2];
+            result = p2;
+        }
         p2 = a[p2];
         //cout << p2 << " p2\n";
     }
 
-    return shortest;
+    return result;
 }
 
 int main() {
@@ -55,12 +64,23 @@ int main() {
         total += v[i];
     }
 
+    ll comp = 0;
+
     for (ll i = 1; i <= N; i++) {
         if (!visited[i]) {
-            floodfill(i);
-            total -= get_shortest(i);
+            comp++;
+            bool ff = floodfill(i, comp);
+            if (ff) {
+                total -= v[get_shortest(i)];
+            }
+            //ll take = get_shortest(i);
+            //taken[take] = true;
         }
     }
+
+    /*for (ll i = 1; i <= N; i++) {
+        if (taken[i]) total -= v[i];
+    }*/
 
     cout << total << "\n";
 
