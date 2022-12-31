@@ -13,7 +13,7 @@ int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	
-	string fname = "GAA1001";
+	string fname = "GAA0101";
 	freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
 	
