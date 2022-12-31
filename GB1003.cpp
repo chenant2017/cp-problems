@@ -45,7 +45,7 @@ void solve_dp() {
                 dp2 += sizes[i - 1][nets] - snakes[i];
             }
 
-            if (dp1 > dp2) {
+            if (dp1 >= dp2) {
                 dp[i][nets] = dp2;
                 groups[i][nets] = groups2;
                 sizes[i][nets] = sizes2;
