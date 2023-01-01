@@ -10,28 +10,37 @@ typedef pair<ll, ll> pll;
 ll N, D;
 vector<ll> B(MAXN);
 vector<ll> E(MAXN);
-vector<ll> ans(2 * MAXN);
+vector<ll> ans(2 * MAXN, -1);
 set<pll> unvisited_B;
 set<pll> unvisited_E;
-queue<pll> q;
-queue<pll> q2;
+queue<ll> q;
+queue<ll> q2;
 ll moves = 1;
 
 
-void bfs(pll& c, set<pll>& unvisited1, set<pll>& unvisited2) {
-	if (unvisited1.find(c) == unvisited1.end()) {
-		return;
+bool bfs(ll c, set<pll>& unvisited1, set<pll>& unvisited2, vector<ll>& BE1, vector<ll>& BE2) {
+	if (unvisited1.find(pll({BE2[c], c})) == unvisited1.end()) {
+		return false;
 	}
-	unvisited1.erase(c);
+	unvisited1.erase({BE2[c], c});
 
-	ans[c.s] = moves;
+	ans[c] = moves;
 
-	auto it1 = unvisited2.lower_bound({c.f - D, -1});
-	auto it2 = unvisited2.upper_bound({c.f, 2 * N + 5});
+	ll t = BE1[c];
+                                                                                                
+	//cout << "t "<< t << "\n";
+
+	auto it1 = unvisited2.lower_bound({t - D, -1});
+	auto it2 = unvisited2.upper_bound({t, 2 * N + 5});
+
+	//cout << "distance " << distance(it1, it2) << "\n";
 
 	for (auto it = it1; it != it2; it++) {
-		q2.push(*it);
+		//cout << "pushed " << it->s << "\n";
+		q2.push(it->s);
 	}
+
+	return true;
 }
 
 int main() {
@@ -48,7 +57,7 @@ int main() {
         cin >> B[i] >> E[i];
         unvisited_B.insert({E[i], i});  
 		if (E[i] == 0) {
-			q.push({E[i], i});
+			q.push(i);
 		}
     }
 
@@ -56,24 +65,32 @@ int main() {
 		cin >> B[i] >> E[i];
         unvisited_E.insert({B[i], i});
 		if (B[i] == 0) {
-			q.push({B[i], i});
+			q.push(i);
 		}
 	}
 
 	while (!q.empty()) {
 		auto c = q.front();
+
+		//cout << c << " at\n";
+
 		q.pop();
 
-		if (c.s < N) {
-			bfs(c, unvisited_B, unvisited_E);
+		if (c < N) {
+			if (!bfs(c, unvisited_B, unvisited_E, B, E)) {
+				continue;
+			}
 		}
 		else {
-			bfs(c, unvisited_E, unvisited_B);
+			if (!bfs(c, unvisited_E, unvisited_B, E, B)) {
+				continue;
+			}
 		}
 
 		if (q.empty()) {
 			swap(q2, q);
 			moves++;
+			//cout << "new move\n";
 		}
 	}
 
