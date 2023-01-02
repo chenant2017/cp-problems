@@ -11,9 +11,25 @@ typedef pair<ll, pll> ppll;
 ll A, B, N, M;
 vector<ll> a;
 vector<ll> b;
+vector<ppll> adj;
 
 bool visited[MAX][MAX];
-pll adj[MAX][MAX]; // to the right, and down
+
+void get_adj(ll i, ll j) {
+    adj.clear();
+    if (i + 1 <= N) {
+        adj.push_back({b[j + 1] - b[j], {i + 1, j}});
+    }
+    if (j + 1 <= M) {
+         adj.push_back({a[i + 1] - a[i], {i, j + 1}});
+    }
+    if (i - 1 >= 0) {
+        adj.push_back({b[j + 1] - b[j], {i - 1, j}});
+    }
+    if (j - 1 >= 0) {
+        adj.push_back({a[i + 1] - a[i], {i, j - 1}});
+    }
+}
 
 ll prims() {
     ll total = 0;
@@ -30,13 +46,15 @@ ll prims() {
 
         //cout << curr.f << " " << curr.s << "\n";
         visited[curr.f][curr.s] = true;
+       // cout << dist << "\n";
         total += dist;
 
-        if (curr.s + 1 <= M && !visited[curr.f][curr.s + 1]) {
-            pq.push({adj[curr.f][curr.s].f, {curr.f, curr.s + 1}});
-        }
-        if (curr.f + 1 <= N && !visited[curr.f + 1][curr.s]) {
-            pq.push({adj[curr.f][curr.s].s, {curr.f + 1, curr.s}});
+        get_adj(curr.f, curr.s);
+
+        for (auto i: adj) {
+            if (!visited[i.s.f][i.s.s]) {
+                pq.push(i);
+            }
         }
     }
 
@@ -73,20 +91,6 @@ int main() {
 
     sort(a.begin(), a.end());
     sort(b.begin(), b.end());
-
-    for (ll i = 0; i <= N; i++) {
-        for (ll j = 0; j <= M; j++) {
-            adj[i][j] = {a[i + 1] - a[i], b[j + 1] - b[j]};
-            if (i == N) {
-                adj[i][j].s = 1e15;
-            }
-            if (j == M) {
-                adj[i][j].f = 1e15;
-            }
-            //cout << adj[i][j].f << " " << adj[i][j].s << "   ";
-        }
-        //cout << "\n";
-    }
 
     cout << prims() << "\n";
 	
