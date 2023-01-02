@@ -31,7 +31,7 @@ bool bfs(ll c, set<pll>& unvisited1, set<pll>& unvisited2, vector<ll>& BE1, vect
 	//cout << "t "<< t << "\n";
 
 	auto it1 = unvisited2.lower_bound({t - D, -1});
-	auto it2 = unvisited2.upper_bound({t, 2 * N + 5});
+	auto it2 = unvisited2.lower_bound({t + 1, -1});
 
 	//cout << "distance " << distance(it1, it2) << "\n";
 
