@@ -11,7 +11,7 @@ ll N, M, T;
 ll c[MAXN];
 ll shortest[MAXN];
 ll parent[MAXN];
-ll pass[MAXN];
+ll pass[MAXN] = {0};
 vector<pll> adj[MAXN];
 
 void dijkstra(ll start) {
@@ -43,7 +43,7 @@ void dijkstra(ll start) {
 }
 
 void trace(ll end) {
-    pass[end] = c[end];
+    pass[end] += c[end];
     ll e = end;
     while (parent[e] != 1) {
         e = parent[e];
