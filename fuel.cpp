@@ -3,13 +3,12 @@
 using namespace std;
 
 typedef long long ll;
-struct Station {
-    ll loc, cost;
-};
 
+ll x[MAXN];
+ll y[MAXN];
+ll ind[MAXN];
+ll nexts[MAXN]; //next cheaper
 ll N, G, B, D;
-Station stations[MAXN];
-ll next_cheaper[MAXN];
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -21,61 +20,72 @@ int main() {
 	
     cin >> N >> G >> B >> D;
 
-    for (ll i = 0; i < N; i++) {
-        cin >> stations[i].loc >> stations[i].cost;
-    }
-
-    sort(stations, stations + N, [](auto& a, auto& b) {
-        return a.loc < b.loc;
-    });
-
-    stations[N].cost = 0;
-    stations[N].loc = D;
-
     stack<ll> mono;
 
+    for (ll i = 0; i < N; i++) {
+        cin >> x[i] >> y[i];
+        ind[i] = i;
+    }
+    ind[N] = N;
+    x[N] = D;
+    y[N] = 0;
+
+
+    sort(ind, ind + N + 1, [](auto a, auto b) {
+        return x[a] < x[b];
+    });
+
     for (ll i = 0; i <= N; i++) {
-        while (!mono.empty() && stations[mono.top()].cost > stations[i].cost) {
-            next_cheaper[mono.top()] = i;
+        if (ind[i] < i) {
+            swap(x[i], x[ind[i]]);
+            swap(y[i], y[ind[i]]);
+        }
+    }
+
+    for (ll i = 0; i <= N; i++) {
+        while (!mono.empty() && y[mono.top()] >= y[i]) {
+            nexts[mono.top()] = i;
             mono.pop();
         }
         mono.push(i);
     }
 
-    /*for (ll i = 0; i < N; i++) {
-        cout << next_cheaper[i] << "\n";
-    }*/
-
-    ll gas = B;
+    ll fuel = B - x[0];
     ll ans = 0;
-    ll curr_loc = 0;
-    for (ll i = 0; i < N; i++) {
-        ll dist = stations[i].loc - curr_loc;
-        gas -= dist;
-        if (gas < 0) {
+    ll ptr = 0;
+
+    while(ptr < N) {
+        if (fuel < 0) {
             cout << "-1\n";
             return 0;
         }
 
-        curr_loc = stations[i].loc;
-        ll to_next = stations[next_cheaper[i]].loc - curr_loc;
+        //cout << ptr << " " << fuel << "\n";
 
-        if (to_next > G) {
-            ans += (G - gas) * stations[i].cost;
-            gas = G;
+        ll need = x[nexts[ptr]] - x[ptr];
+        if (need > G) {
+            ans += (G - fuel) * y[ptr];
+            fuel = G - (x[ptr + 1] - x[ptr]);
+            ptr++;
         }
         else {
-            ans += max(0ll, to_next - gas) * stations[i].cost;
-            if (gas < to_next) gas = to_next;
+            if (fuel < need) {
+                ans += (need - fuel) * y[ptr];
+                fuel = 0;
+            }
+            else {
+                fuel -= need;
+            }
+            ptr = nexts[ptr];
         }
     }
 
-    if (gas >= D - curr_loc)  {
-        cout << ans << "\n";
-    }
-    else {
+    if (fuel < 0) {
         cout << "-1\n";
+        return 0;
     }
-    
+
+    cout << ans << "\n";
+	
 	return 0;
 }
