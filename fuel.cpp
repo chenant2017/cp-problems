@@ -6,6 +6,8 @@ typedef long long ll;
 
 ll x[MAXN];
 ll y[MAXN];
+ll x2[MAXN];
+ll y2[MAXN];
 ll ind[MAXN];
 ll nexts[MAXN]; //next cheaper
 ll N, G, B, D;
@@ -23,23 +25,25 @@ int main() {
     stack<ll> mono;
 
     for (ll i = 0; i < N; i++) {
-        cin >> x[i] >> y[i];
+        cin >> x2[i] >> y2[i];
         ind[i] = i;
     }
     ind[N] = N;
-    x[N] = D;
-    y[N] = 0;
+    x2[N] = D;
+    y2[N] = 0;
 
 
     sort(ind, ind + N + 1, [](auto a, auto b) {
-        return x[a] < x[b];
+        return x2[a] < x2[b];
     });
 
     for (ll i = 0; i <= N; i++) {
-        if (ind[i] < i) {
-            swap(x[i], x[ind[i]]);
-            swap(y[i], y[ind[i]]);
-        }
+        x[i] = x2[ind[i]];
+        y[i] = y2[ind[i]];
+    }
+
+    for (ll i = 0; i < N; i++) {
+        assert(x[i] <= x[i + 1]);
     }
 
     for (ll i = 0; i <= N; i++) {
@@ -63,7 +67,7 @@ int main() {
         //cout << ptr << " " << fuel << "\n";
 
         ll need = x[nexts[ptr]] - x[ptr];
-        if (need > G) {
+        if (need > G) {  // fill up at current ??
             ans += (G - fuel) * y[ptr];
             fuel = G - (x[ptr + 1] - x[ptr]);
             ptr++;
