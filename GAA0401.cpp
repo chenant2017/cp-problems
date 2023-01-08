@@ -12,7 +12,7 @@ typedef pair<pll, ll> ppll;
 ll N, xl, yl, xb, yb;
 
 auto cmpy = [](const pll& a, const pll& b) {
-    return a.y < b.y || (a.y == b.y && a.x < b.y);
+    return a.y < b.y || (a.y == b.y && a.x < b.x);
 };
 
 set<pll> uvx;
@@ -23,13 +23,14 @@ int main() {
 	cin.tie(NULL);
 	
 	string fname = "GAA0401";
-	freopen((fname + ".in").c_str(), "r", stdin);
+	//freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N >> xl >> yl >> xb >> yb;
 
     uvx.insert({xl, yl});
     uvy.insert({xl, yl});
+
     uvx.insert({xb, yb});
     uvy.insert({xb, yb});
 
@@ -40,6 +41,8 @@ int main() {
         uvy.insert({x_, y_});
     }
 
+    assert(uvx.size() == uvy.size());
+
     ll ans = -1;
 
     queue<ppll> q;
@@ -47,12 +50,8 @@ int main() {
     while (!q.empty()) {
         auto curr = q.front();
         q.pop();
-        if (uvx.find(curr.f) == uvx.end()) {
-            continue;
-        }
 
-        uvx.erase(curr.f);
-        uvy.erase(curr.f);
+        //cout << curr.f.f << " " << curr.f.s << "\n"
 
         if (curr.f == pll({xb, yb})) {
             ans = curr.s - 1;
@@ -64,11 +63,20 @@ int main() {
         auto yit1 = uvy.lower_bound({-1, curr.f.y});
         auto yit2 = uvy.upper_bound({1e10, curr.f.y});
 
+        set<pll> to_remove;
+
         for (auto it = xit1; it != xit2; it++) {
             q.push({*it, curr.s + 1});
+            to_remove.insert(*it);
         }
         for (auto it = yit1; it != yit2; it++) {
             q.push({*it, curr.s + 1});
+            to_remove.insert(*it);
+        }
+
+        for (auto i: to_remove) {
+            uvx.erase(i);
+            uvy.erase(i);
         }
     }
 
