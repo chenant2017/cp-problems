@@ -10,7 +10,6 @@ typedef pair<ll, pll> ppll;
 
 ll N, A, B;
 string farm[MAXN];
-ll shortest[MAXN][MAXN];
 ll di[] = {0, 0, -1, 1};
 ll dj[] = {1, -1, 0, 0};
 
@@ -24,11 +23,14 @@ ll dist(ll a1, ll b1, ll a2, ll b2) {
 }
 
 ll test(ll a, ll b) {
-    fill(shortest[0], shortest[0] + MAXN * MAXN, (ll)1e15);
+    vector<vector<ll>> shortest (N, vector<ll>(N, 1e15));
+    vector<vector<bool>> visited (N, vector<bool>(N, false));
 
-    priority_queue<ppll> pq;
+    priority_queue<ppll, vector<ppll>, greater<ppll>> pq;
     shortest[a][b] = 0;
     pq.push({0, {a, b}});
+
+    ll result = -1;
 
     while (!pq.empty()) {
         auto curr = pq.top();
@@ -36,25 +38,24 @@ ll test(ll a, ll b) {
         tie(i, j) = curr.s;
         pq.pop();
 
+        if (visited[i][j]) continue;
+        visited[i][j] = true;
+
+        result = max(result, curr.f);
+
         for (ll d = 0; d < 4; d++) {
             ll ni = i + di[d];
             ll nj = j + dj[d];
 
             if (ni >= 0 && ni < N &&
                 nj >= 0 && nj < N) {
-                if (shortest[ni][nj] > shortest[i][j] + dist(i, j, ni, nj)) {
-                    shortest[ni][nj] = shortest[i][j] + dist(i, j, ni, nj);
+                if (visited[ni][nj]) continue;
+                ll ab = dist(i, j, ni, nj);
+                if (shortest[ni][nj] > shortest[i][j] + ab) {
+                    shortest[ni][nj] = shortest[i][j] + ab;
                     pq.push({shortest[ni][nj], {ni, nj}});
                 }
             }
-        }
-    }
-
-    ll result = -1;
-
-    for (ll i = 0; i < N; i++) {
-        for (ll j = 0; j < N; j++) {
-            result = max(result, shortest[i][j]);
         }
     }
 
