@@ -1,12 +1,18 @@
 #include <bits/stdc++.h>
 #define MAXN 75
+#define f first 
+#define s second
 using namespace std;
 
 typedef long long ll;
+typedef pair<ll, ll> pll;
+typedef pair<ll, pll> ppll;
 
 ll N, A, B;
 string farm[MAXN];
 ll shortest[MAXN][MAXN];
+ll di[] = {0, 0, -1, 1};
+ll dj[] = {1, -1, 0, 0};
 
 ll dist(ll a1, ll b1, ll a2, ll b2) {
     if (farm[a1][b1] == farm[a2][b2]) {
@@ -18,28 +24,36 @@ ll dist(ll a1, ll b1, ll a2, ll b2) {
 }
 
 ll test(ll a, ll b) {
-    fill(shortest[0], shortest[0] + N * N, (ll)1e15);
+    fill(shortest[0], shortest[0] + MAXN * MAXN, (ll)1e15);
+
+    priority_queue<ppll> pq;
+    shortest[a][b] = 0;
+    pq.push({0, {a, b}});
+
+    while (!pq.empty()) {
+        auto curr = pq.top();
+        ll i, j;
+        tie(i, j) = curr.s;
+        pq.pop();
+
+        for (ll d = 0; d < 4; d++) {
+            ll ni = i + di[d];
+            ll nj = j + dj[d];
+
+            if (ni >= 0 && ni < N &&
+                nj >= 0 && nj < N) {
+                if (shortest[ni][nj] > shortest[i][j] + dist(i, j, ni, nj)) {
+                    shortest[ni][nj] = shortest[i][j] + dist(i, j, ni, nj);
+                    pq.push({shortest[ni][nj], {ni, nj}});
+                }
+            }
+        }
+    }
 
     ll result = -1;
 
-    for (ll i = a; i < N; i++) {
-        for (ll j = b; j < N; j++) {
-            if (i == a) {
-                if (j == b) {
-                    shortest[i][j] = 0;
-                }
-                else {
-                    shortest[i][j] = shortest[i][j - 1] + dist(i, j - 1, i, j);
-                }
-            }
-            else if (j == b) {
-               shortest[i][j] = shortest[i - 1][j] + dist(i, j, i - 1, j);
-            }
-            else {
-               shortest[i][j] = min(shortest[i][j - 1] + dist(i, j - 1, i, j), 
-                                    shortest[i - 1][j] + dist(i, j, i - 1, j));
-            }
-
+    for (ll i = 0; i < N; i++) {
+        for (ll j = 0; j < N; j++) {
             result = max(result, shortest[i][j]);
         }
     }
