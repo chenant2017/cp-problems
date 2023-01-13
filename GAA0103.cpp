@@ -8,8 +8,8 @@ typedef long long ll;
 typedef pair<ll, ll> pll;
 
 ll N, D;
-vector<ll> B(MAXN);
-vector<ll> E(MAXN);
+vector<ll> B(2 * MAXN);
+vector<ll> E(2 * MAXN);
 vector<ll> ans(2 * MAXN, -1);
 set<pll> unvisited_B;
 set<pll> unvisited_E;
@@ -18,9 +18,9 @@ queue<ll> q2;
 ll moves = 1;
 
 
-bool bfs(ll c, set<pll>& unvisited1, set<pll>& unvisited2, vector<ll>& BE1, vector<ll>& BE2) {
+void bfs(ll c, set<pll>& unvisited1, set<pll>& unvisited2, vector<ll>& BE1, vector<ll>& BE2) {
 	if (unvisited1.find(pll({BE2[c], c})) == unvisited1.end()) {
-		return false;
+		return;
 	}
 	unvisited1.erase({BE2[c], c});
 
@@ -40,7 +40,7 @@ bool bfs(ll c, set<pll>& unvisited1, set<pll>& unvisited2, vector<ll>& BE1, vect
 		q2.push(it->s);
 	}
 
-	return true;
+	return;
 }
 
 int main() {
@@ -77,14 +77,10 @@ int main() {
 		q.pop();
 
 		if (c < N) {
-			if (!bfs(c, unvisited_B, unvisited_E, B, E)) {
-				continue;
-			}
+			bfs(c, unvisited_B, unvisited_E, B, E);
 		}
 		else {
-			if (!bfs(c, unvisited_E, unvisited_B, E, B)) {
-				continue;
-			}
+			bfs(c, unvisited_E, unvisited_B, E, B);
 		}
 
 		if (q.empty()) {
