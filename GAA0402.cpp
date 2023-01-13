@@ -12,6 +12,8 @@ ll N, A, B;
 string farm[MAXN];
 ll di[] = {0, 0, -1, 1};
 ll dj[] = {1, -1, 0, 0};
+ll shortest[MAXN][MAXN];
+bool visited[MAXN][MAXN];
 
 ll dist(ll a1, ll b1, ll a2, ll b2) {
     if (farm[a1][b1] == farm[a2][b2]) {
@@ -23,8 +25,12 @@ ll dist(ll a1, ll b1, ll a2, ll b2) {
 }
 
 ll test(ll a, ll b) {
-    vector<vector<ll>> shortest (N, vector<ll>(N, 1e15));
-    vector<vector<bool>> visited (N, vector<bool>(N, false));
+    for (ll i = 0; i < N; i++) {
+        for (ll j = 0; j < N; j++) {
+            shortest[i][j] = 1e15;
+            visited[i][j] = false;
+        }
+    }
 
     priority_queue<ppll, vector<ppll>, greater<ppll>> pq;
     shortest[a][b] = 0;
