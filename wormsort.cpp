@@ -40,7 +40,7 @@ int main() {
 	
 	string fname = "wormsort";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
+	freopen((fname + ".out").c_str(), "w", stdout);
 	
     cin >> N >> M;
 
@@ -75,19 +75,14 @@ int main() {
             tie(a, b) = edges[i].s;
             merge(a, b);
             
+            vector<ll> v;
+            for (auto j: rem) {
+                if (get_rep(j) == get_rep(p[j])) {
+                    v.push_back(j);
+                }
+            }
 
-            if (get_rep(a) == get_rep(p[a])) {
-                rem.erase(a);
-            }
-            if (get_rep(q[a]) == get_rep(a)) {
-                rem.erase(q[a]);
-            }
-            if (get_rep(b) == get_rep(p[b])) {
-                rem.erase(b);
-            }
-            if (get_rep(q[b]) == get_rep(b)) {
-                rem.erase(q[b]);
-            }
+            for (auto j: v) rem.erase(j);
 
             if (rem.empty()) {
                 ans = edges[i].f;
