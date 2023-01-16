@@ -25,8 +25,12 @@ struct Edge {
 
     bool operator<(const Edge& e) {
         if (w < e.w) return true;
-        if (p < e.p) return true;
-        if (q < e.q) return true;
+        if (w == e.w) {
+            if (p < e.p) return true;
+            if (p == e.p) {
+                if (q < e.q) return true;
+            }
+        }
         return false;
     }
 };
@@ -56,18 +60,19 @@ void merge(pll p, pll q, ll w) {
     p = rep(p).f;
     q = rep(q).f;
 
-    cout << ans[p.f][p.s] << "\n";
+    //cout << ans[p.f][p.s] << "\n";
 
     if (sizes[p.f][p.s] < sizes[q.f][q.s]) swap(p, q);
     sizes[p.f][p.s] += sizes[q.f][q.s];
     if (sizes[p.f][p.s] >= T) {
         if (ans[p.f][p.s] == -1) ans[p.f][p.s] = w;
+        if (ans[q.f][q.s] == -1) ans[q.f][q.s] = w;
     }
     parent[q.f][q.s] = p;
 }
 
 bool same(pll p, pll q) {
-    return rep(p) == rep(q);
+    return rep(p).f == rep(q).f;
 }
 
 int main() {
@@ -76,7 +81,7 @@ int main() {
 	
 	string fname = "skilevel";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
+	freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> M >> N >> T;
 
@@ -108,6 +113,7 @@ int main() {
     }
 
     for (auto i: edges) {
+        //cout << i.w << " " << i.p.f << " " << i.p.s << " " << i.q.f << " " << i.q.s << "\n";
         if (!same(i.p, i.q)) {
             merge(i.p, i.q, i.w);
         }
@@ -115,17 +121,18 @@ int main() {
 
     ll total = 0;
 
-    for (ll i = 0; i < M; i++) {
+    /*for (ll i = 0; i < M; i++) {
         for (ll j = 0; j < N; j++) {
             cout << ans[i][j] << " ";
         }
         cout << "\n";
-    }
+    }*/
 
     for (ll i = 0; i < M; i++) {
         for (ll j = 0; j < N; j++) {
             bool b;
             cin >> b;
+            rep({i, j});
             if (b) total += ans[i][j];
         }
     }
