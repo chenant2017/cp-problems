@@ -69,29 +69,23 @@ int main() {
 
     ll ans = -1;
 
+    ll e = 0;
+
     if (!rem.empty()) {
-        for (ll i = 0; i < M; i++) {
-            ll a, b;
-            tie(a, b) = edges[i].s;
-            merge(a, b);
-            
-            vector<ll> v;
-            for (auto j: rem) {
-                if (get_rep(j) == get_rep(p[j])) {
-                    v.push_back(j);
-                }
-            }
-
-            for (auto j: v) rem.erase(j);
-
-            if (rem.empty()) {
-                ans = edges[i].f;
-                break;
+        for (auto j: rem) {
+            while (get_rep(j) != get_rep(p[j])) {
+                ll a, b;
+                tie(a, b) = edges[e].s;
+                merge(a, b);
+                e++;
             }
         }
+        cout << edges[e - 1].f << "\n";
     }
-    
-    cout << ans << "\n";
+    else {
+        cout << "-1\n";
+    }
+
 	
 	return 0;
 }
