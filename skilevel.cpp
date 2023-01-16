@@ -93,10 +93,12 @@ int main() {
     }
 
     for (ll i = 0; i < M; i++) {
-        for (ll j = 0; j < N - 1; j++) {
-            Edge e = Edge({i, j}, {i, j + 1});
-            edges.push_back(e);
-            if (i < M - 1) {
+        for (ll j = 0; j < N; j++) {
+            if (j + 1 < N) {
+                Edge e = Edge({i, j}, {i, j + 1});
+                edges.push_back(e);
+            }
+            if (i + 1 < M) {
                 Edge e = Edge({i, j}, {i + 1, j});
                 edges.push_back(e);
             }
