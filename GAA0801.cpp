@@ -2,13 +2,15 @@
 #define MAXN 100010
 #define f first 
 #define s second
-using namespace std;
 
+using namespace std;
 typedef long long ll;
 typedef pair<ll, ll> pll;
 
 ll L, N;
-pll turns[MAXN];
+ll loc[MAXN];
+ll speed[MAXN];
+bool visited[MAXN];
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -20,35 +22,49 @@ int main() {
 	
 	cin >> L >> N;
 
-    for (ll i = 0; i < N; i++) {
-        ll t, s;
-        cin >> t >> s;
-        turns[i] = {t, s};
+    priority_queue<pll, vector<pll>, greater<pll>> pq;
+
+    loc[0] = 0;
+    speed[0] = 1;
+
+    for (ll i = 1; i <= N; i++) {
+        cin >> loc[i] >> speed[i];
+
+        pq.push({speed[i], i});
     }
 
-    sort(turns, turns + N);
+    while (!pq.empty()) {
+        auto c = pq.top().s;
+        pq.pop();
+
+        if (visited[c]) continue;
+        visited[c] = true;
+
+        if (c - 1 >= 0) {
+            ll s2 = speed[c] + loc[c] - loc[c - 1];
+            if (speed[c - 1] > s2) {
+                speed[c - 1] = s2;
+                pq.push({speed[c - 1], c - 1});
+            }
+        }
+        if (c + 1 <= N) {
+            ll s2 = speed[c] + loc[c + 1] - loc[c];
+            if (speed[c + 1] > s2) {
+                speed[c + 1] = s2;
+                pq.push({speed[c + 1], c + 1});
+            }
+        }
+    }
 
     ll ans = 1;
-    ll speed = 1;
-    ll pos = 0;
 
     for (ll i = 0; i < N; i++) {
-        ll speed2 = speed + (turns[i].f - pos);
-        if (speed2 <= turns[i].s) {
-            ans = max(ans, speed2);
-        } 
-        else {
-            speed2 = turns[i].s;
-            ans = max(ans, 
-                      (turns[i].s + speed + turns[i].f - pos) / 2);
-        } 
-        speed = speed2;
-        pos = turns[i].f;
+        ans = max(ans, (speed[i] + speed[i + 1] + loc[i + 1] - loc[i]) / 2);
     }
 
-    ans = max(ans, speed + L - pos);
+    ans = max(ans, speed[N] + L - loc[N]);
 
     cout << ans << "\n";
-	
+    
 	return 0;
 }
