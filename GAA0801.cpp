@@ -8,8 +8,7 @@ typedef long long ll;
 typedef pair<ll, ll> pll;
 
 ll L, N;
-ll loc[MAXN];
-ll speed[MAXN];
+pll turns[MAXN];
 bool visited[MAXN];
 
 int main() {
@@ -24,13 +23,16 @@ int main() {
 
     priority_queue<pll, vector<pll>, greater<pll>> pq;
 
-    loc[0] = 0;
-    speed[0] = 1;
+    turns[0] = {0, 1};
 
     for (ll i = 1; i <= N; i++) {
-        cin >> loc[i] >> speed[i];
+        cin >> turns[i].f >> turns[i].s; // loc, speed
+    }
 
-        pq.push({speed[i], i});
+    sort(turns, turns + N + 1);
+
+    for (ll i = 0; i <= N; i++) {
+        pq.push({turns[i].s, i});
     }
 
     while (!pq.empty()) {
@@ -41,17 +43,17 @@ int main() {
         visited[c] = true;
 
         if (c - 1 >= 0) {
-            ll s2 = speed[c] + loc[c] - loc[c - 1];
-            if (speed[c - 1] > s2) {
-                speed[c - 1] = s2;
-                pq.push({speed[c - 1], c - 1});
+            ll s2 = turns[c].s + turns[c].f - turns[c - 1].f;
+            if (turns[c - 1].s > s2) {
+                turns[c - 1].s = s2;
+                pq.push({turns[c - 1].s, c - 1});
             }
         }
         if (c + 1 <= N) {
-            ll s2 = speed[c] + loc[c + 1] - loc[c];
-            if (speed[c + 1] > s2) {
-                speed[c + 1] = s2;
-                pq.push({speed[c + 1], c + 1});
+            ll s2 = turns[c].s + turns[c + 1].f - turns[c].f;
+            if (turns[c + 1].s > s2) {
+                turns[c + 1].s = s2;
+                pq.push({turns[c + 1].s, c + 1});
             }
         }
     }
@@ -59,10 +61,11 @@ int main() {
     ll ans = 1;
 
     for (ll i = 0; i < N; i++) {
-        ans = max(ans, (speed[i] + speed[i + 1] + loc[i + 1] - loc[i]) / 2);
+        ans = max(ans, (turns[i].s + turns[i + 1].s + 
+                        turns[i + 1].f - turns[i].f) / 2);
     }
 
-    ans = max(ans, speed[N] + L - loc[N]);
+    ans = max(ans, turns[N].s + L - turns[N].f);
 
     cout << ans << "\n";
     
