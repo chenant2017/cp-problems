@@ -9,9 +9,10 @@ ll daily[MAXN];
 
 bool works(ll maxe) {
     ll sum = 0;
-    ll count = 0;
+    ll count = 1;
 
     for (ll i = 0; i < N; i++) {
+        if (daily[i] > maxe) return false;
         if (sum + daily[i] <= maxe) {
             sum += daily[i];
         }
@@ -20,8 +21,6 @@ bool works(ll maxe) {
             sum = daily[i];
         }
     }
-
-    if (sum > 0) count++;
 
     return count <= M;
 }
