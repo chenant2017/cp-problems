@@ -100,8 +100,9 @@ int main() {
     for (ll i = 0; i < hull.size() - 1; i++) {
         ans += dist(hull[i], hull[i + 1]);
     }
+    ans += dist(*hull.rbegin(), hull[0]);
 
-    cout << ans + 1 << "\n";
+    cout << ans << "\n";
 	
 	return 0;
 }
