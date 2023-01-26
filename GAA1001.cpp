@@ -1,101 +1,55 @@
 #include <bits/stdc++.h>
 #define MAX 1010
-#define f first 
-#define s second
-
 using namespace std;
 
 typedef long long ll;
-typedef pair<ll, ll> pll;
-typedef tuple<ll, bool, ll, ll> tp;
+typedef tuple<ll, ll, ll, bool> tlb;
 
 ll N, M;
-ll sol[MAX][MAX][2]; // i, j, orange
-bool v[MAX][MAX][2];
-ll maze[MAX][MAX]; 
+ll maze[MAX][MAX];
+ll dist[MAX][MAX][2];
 ll di[] = {0, 0, -1, 1};
 ll dj[] = {1, -1, 0, 0};
+bool visited[MAX][MAX][2];
 
-pair<bool, tp> slide(ll d, ll i, ll j, ll did, ll djd) {
-    while (0 <= i && i < N &&
-           0 <= j && j < M &&
-           maze[i][j] == 4) {
-        d++;
+pair<ll, ll> slide(ll i, ll j, ll did, ll djd) {
+    while (0 <= i + did && i + did < N && 
+           0 <= j + djd && j + djd < M &&
+           maze[i + did][j + djd] == 4) {
+        
         i += did;
         j += djd;
     }
 
-    //cout << "slide " << i << " " << j << "\n";
+    if (0 <= i + did && i + did < N && 
+        0 <= j + djd && j + djd < M &&
+        maze[i + did][j + djd] != 0) {
+        i += did;
+        j += djd;
+    }
 
-    if (0 <= i && i < N &&
-        0 <= j && j < M) {
-        return {true, tp({d, false, i, j})};
-    }
-    else {
-        return {false, tp({0, 0, 0, 0})};
-    }
+    return {i, j};
 }
 
-bool valid(tp& n) {
-    ll d, o, i, j;
-    tie(d, o, i, j) = n;
-    switch (maze[i][j]) {
-        case 0:
-            return false;
-        case 3:
-            if (!o) {
-                return false;
-            }
-        case 1: 
-            if (d < sol[i][j][o]) {
-                sol[i][j][o] = d;
-                return true;
-            }
-            return false;
-        case 2:
-            n = {d, true, i, j};
-            if (d < sol[i][j][true]) {
-                sol[i][j][true] = d;
-                return true;
-            }
-            return false;
-    }
-    return false;
-}
-
-void bfs() {
-    for (ll i = 0; i < N; i++) {
-        for (ll j = 0; j < M; j++) {
-            for (ll k = 0; k < 2; k++) {
-                sol[i][j][k] = 1e18;
-            }
-        }
-    }
-
-    priority_queue<tp, vector<tp>, greater<tp>> pq;
-    if (maze[0][0] == 1) {
-        sol[0][0][false] = 0;
-        pq.push({0, false, 0, 0});
-    }
-    else if (maze[0][0] == 2) {
-        sol[0][0][true] = 0;
-        pq.push({0, true, 0, 0});
-    }
-    else {
-        return;
-    }
+void solve() {
+    priority_queue<tlb, vector<tlb>, greater<tlb>> pq;
+    pq.push({0, 0, 0, false});
+    dist[0][0][false] = 0;
 
     while (!pq.empty()) {
-        auto c = pq.top();
-        pq.pop();
         ll d, i, j;
         bool o;
-        tie(d, o, i, j) = c;
 
-        if (v[i][j][o]) continue;
-        v[i][j][o] = true;
+        tie(d, i, j, o) = pq.top();
+        pq.pop();
 
-        //cout << d << " " << o << " " << i << " " << j << " here\n";
+        if (visited[i][j][o]) continue;
+        visited[i][j][o] = true;
+    
+
+        if (maze[i][j] == 2) {
+            o = true;
+        }
 
         for (ll dd = 0; dd < 4; dd++) {
             ll ni = i + di[dd];
@@ -103,28 +57,28 @@ void bfs() {
 
             if (0 <= ni && ni < N &&
                 0 <= nj && nj < M) {
-
-                if (maze[ni][nj] == 4) {
-                    auto sl = slide(d + 1, ni, nj, di[dd], dj[dd]);
-                    if (sl.f) {
-                        if (valid(sl.s)) {
-                            pq.push(sl.s);
-                            //cout << "aasdfsdaf\n";
-                            //cout << "pushed\n";
-                        }
-                    }
-                    else {
+                
+                switch (maze[ni][nj]) {
+                    case 0:
                         break;
-                    }
-                }
-                else {
-                    //cout << d + 1 << " " << o << " " << ni << " " << nj << "\n";
-                    tp n = {d + 1, o, ni, nj};
-                    if (valid(n)) {
-                        pq.push(n);
-                        //cout << d + 1 << " " << o << " " << ni << " " << nj << "\n";
-                        //cout << "pushed\n";
-                    }
+                    case 3:
+                        if (!o) break;
+                    case 1:
+                    case 2:
+                        //cout << d + 1 << " " << dist[i][j][o] << "\n";
+                        if (d + 1 < dist[ni][nj][o]) {
+                            dist[ni][nj][o] = d + 1;
+                            pq.push({d + 1, ni, nj, o});
+                            
+                        }
+                        break;
+                    case 4:
+                        tie(ni, nj) = slide(i, j, di[dd], dj[dd]);
+                        ll trav = ni - i + nj - j;
+                        if (d + trav < dist[ni][nj][false]) {
+                            dist[ni][nj][false] = d + trav;
+                            pq.push({d + trav, ni, nj, false});
+                        }
                 }
             }
         }
@@ -147,16 +101,25 @@ int main() {
         }
     }
 
-    bfs();
+    for (ll i = 0; i < N; i++) {
+        for (ll j = 0; j < M; j++) {
+            for (ll k = 0; k < 2; k++) {
+                dist[i][j][k] = 1e18;
+            }
+        }
+    }
 
-    ll ans = min(sol[N - 1][M - 1][false], sol[N - 1][M - 1][true]);
+    solve();
+
+    ll ans = min(dist[N - 1][M - 1][false],  dist[N - 1][M - 1][true]);
 
     if (ans == 1e18) {
-        cout << "-1\n";
+        cout << -1 << "\n";
     }
     else {
         cout << ans << "\n";
     }
+
 	
 	return 0;
 }
