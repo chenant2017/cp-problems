@@ -23,7 +23,8 @@ pair<ll, ll> slide(ll i, ll j, ll did, ll djd) {
 
     if (0 <= i + did && i + did < N && 
         0 <= j + djd && j + djd < M &&
-        maze[i + did][j + djd] != 0) {
+        maze[i + did][j + djd] != 0 &&
+        maze[i + did][j + djd] != 3) {
         i += did;
         j += djd;
     }
@@ -74,7 +75,7 @@ void solve() {
                         break;
                     case 4:
                         tie(ni, nj) = slide(i, j, di[dd], dj[dd]);
-                        ll trav = ni - i + nj - j;
+                        ll trav = abs(ni - i) + abs(nj - j);
                         if (d + trav < dist[ni][nj][false]) {
                             dist[ni][nj][false] = d + trav;
                             pq.push({d + trav, ni, nj, false});
