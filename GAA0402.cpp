@@ -12,7 +12,6 @@ ll N, A, B;
 string farm[MAXN];
 ll di[] = {0, 0, -1, 1};
 ll dj[] = {1, -1, 0, 0};
-ll shortest[MAXN][MAXN];
 bool visited[MAXN][MAXN];
 
 ll dist(ll a1, ll b1, ll a2, ll b2) {

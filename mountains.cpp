@@ -1,13 +1,14 @@
 #include <bits/stdc++.h>
-#define f first  
-#define s second 
+#define MAX 100010
+#define f first 
+#define s second
 using namespace std;
 
 typedef long long ll;
 typedef pair<ll, ll> pll;
 
 ll N;
-vector<pll> v;
+pll ranges[MAX];
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -20,28 +21,29 @@ int main() {
 	cin >> N;
 
     for (ll i = 0; i < N; i++) {
-        pll p;
-        cin >> p.f >> p.s;
-        v.push_back(p);
+        ll x, y;
+        cin >> x >> y;
+        ranges[i].f = x - y;
+        ranges[i].s = x + y;
     }
-    v.push_back(pll({-pow(10, 10), 0}));
 
-    sort(v.begin(), v.end(), [](auto& a, auto& b) {
-        return a.f - a.s < b.f - b.s;
-    });
+    sort(ranges, ranges + N);
+
+    ll mst = -1e18;
+    ll med = -1e18;
 
     ll ans = 0;
-    ll prev = 0;
 
-    for (ll i = 1; i <= N; i++) {
-        ll yprev = v[prev].f + v[prev].s - v[i].f;
-        ll xprev = v[prev].f - v[prev].s;
-        //cout << v[i].f << " " << v[i].s << " " << xprev << " " << yprev << "\n";
-        if (v[i].s > yprev) {
-            if (v[i].f - v[i].s > xprev) {
+    for (ll i = 0; i < N; i++) {
+        ll st, ed;
+        tie(st, ed) = ranges[i];
+
+        if (ed > med) {
+            if (st > mst) {
                 ans++;
             }
-            prev = i;
+            med = ed;
+            mst = st;
         }
     }
 
