@@ -37,7 +37,7 @@ void get_comps(pll p, ll c) {
 	}
 }
 
-ll cp(pll a, pll b) {
+double cp(pll a, pll b) {
 	return a.f * b.s - b.f * a.s;
 }
 
@@ -116,8 +116,6 @@ int main() {
 	ll max_count = 0;
 
 	for (auto i: ans) {
-		//for (auto j: i.f) cout << j << " ";
-		//cout << "   " << i.s << "\n";
 		max_count = max(max_count, i.s);
 	}
 
