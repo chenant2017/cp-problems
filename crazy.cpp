@@ -12,7 +12,7 @@ set<ll> xs;
 map<ll, ll> xc; //compressed
 set<ll> ys;
 map<ll, ll> yc;
-ll field[2 * MAX][2 * MAX];
+ll field[4 * MAX][4 * MAX];
 pll cows[MAX];
 ll di[] = {0, 0, 1, -1};
 ll dj[] = {1, -1, 0, 0};
@@ -33,32 +33,41 @@ struct Seg {
 };
 Seg segs[MAX];
 
-void dfs(ll i, ll j, ll& c) {
-    if (field[i][j] == 3) return;
+ll dfs(ll i, ll j) {
+    ll result = 0;
+    stack<pll> q;
+    q.push({i, j});
 
-    if (field[i][j] == 2) {
-        c++;
-    }
+    while (!q.empty()) {
+        auto c = q.top(); q.pop();
 
-    field[i][j] = 3;
+        if (field[c.f][c.s] == 3) continue;
 
-    for (ll d = 0; d < 4; d++) {
-        ll ni = i + di[d];
-        ll nj = j + dj[d];
+        if (field[c.f][c.s] == 2) {
+            result++;
+        }
 
-        if (0 <= ni && ni <= 2 * (N + C + 1) &&
-            0 <= nj && nj <= 2 * (N + C + 1)) {
-            if (field[ni][nj] == 0 || field[ni][nj] == 2) {
-                dfs(ni, nj, c);
+        field[c.f][c.s] = 3;
+
+        for (ll d = 0; d < 4; d++) {
+            ll ni = c.f + di[d];
+            ll nj = c.s + dj[d];
+
+            if (0 <= ni && ni <= 2 * (N + C + 1) &&
+                0 <= nj && nj <= 2 * (N + C + 1)) {
+                if (field[ni][nj] == 0 || field[ni][nj] == 2) {
+                    q.push({ni, nj});
+                }
             }
         }
     }
+    return result;
 }
 
 
 int main() {
-	ios_base::sync_with_stdio(false);
-	cin.tie(NULL);
+	//ios_base::sync_with_stdio(false);
+	//cin.tie(NULL);
 	
 	string fname = "crazy";
 	freopen((fname + ".in").c_str(), "r", stdin);
@@ -115,9 +124,7 @@ int main() {
     for (ll i = 0; i <= 2 * (N + C + 1); i++) {
         for (ll j = 0; j <= 2 * (N + C + 1); j++) {
             if (field[i][j] == 0 || field[i][j] == 2) {
-                ll c = 0;
-                dfs(i, j, c);
-                ans = max(ans, c);
+                ans = max(ans, dfs(i, j));
             }
         }
     }
