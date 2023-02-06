@@ -34,6 +34,7 @@ ll solve() {
     c.clear();
     p.clear();
     visited.clear();
+    set<char> letters;
 
     N = s1.size();
 
@@ -43,27 +44,34 @@ ll solve() {
         if (c.find(s1[i]) == c.end()) {
             c[s1[i]] = s2[i];
             p[s2[i]].push_back(s1[i]);
+            letters.insert(s2[i]);
 
             if (s1[i] != s2[i]) {
                 ans++;
             }
         }
-        else {
+        else if (c[s1[i]] != s2[i]) {
             return -1;
         }
     }
 
-    ll noncycles = 0;
     ll cycles = 0;
 
     for (auto i: s1) {
         if (visited.find(i) == visited.end() && cycle(i)) {
-            //cout << i << "\n";
             cycles++;
         }
     }
-
-    return ans + cycles;
+  
+    if (cycles) {
+        if (letters.size() == 52) {
+            return -1;
+        }
+        return ans + cycles;
+    }
+    else {
+        return ans;
+    }
 }
 
 int main() {
