@@ -24,36 +24,48 @@ ll get_prev(ll a, ll zeros) {
 
     for (ll i = 1; i <= a; i++) {
         for (ll j = i - 1; j >= 0 && j + a - i >= zeros; j--) {
+            cout << i << " " << j << " " << dp[i][j] << "ij\n";
             result += dp[i][j];
         }
     }
     
-    return result;
+    return result + 1;
 }
 
 ll get_round(ll a) {
-    cout << a << " a\n";
+    if (a == 1) return 0;
+    //cout << a << " a\n";
 
     ll len = floor(log2(a)) + 1;
 
     ll i = len - 2;
 
-    cout << i << " starti\n";
-
     while (i >= 0) {
-        if ((a & (ll)pow(2, i)) != 0) {
+        if ((a & (1 << i)) != 0) {
             break;
         }
         i--;
     }
 
-    cout << i << " i\n";
+    //cout << i << " i\n";
 
     if (i == -1) return 1;
 
-    ll zeros = max(0ll, (ll) ceil((double) len / 2.0 ) - (len - 2 - i));
+    ll zeros = max(0ll, (ll) ceil((double) len / 2.0 ) - (len - 1 - i));
 
-    return get_round(a % ((ll)pow(2, i + 1))) + get_prev(i, zeros);
+    cout << zeros << "\n";
+ 
+    //cout << get_round(a % (1 << (i + 1))) << " " << get_prev(i, zeros) << "result\n";
+
+    return get_round(a % (1 << (i + 1))) 
+    + get_prev(i, zeros);
+}
+
+ll get_sol(ll a) {
+    ll len = floor(log2(a)) + 1;
+    ll z = ceil((double) len / 2.0);
+
+    return get_round(a) + get_prev(len - 1, z);
 }
 
 int main() {
@@ -68,7 +80,12 @@ int main() {
 
     solve_dp();
 
-    cout << get_round(12) << "\n";
+    cout << get_sol(8) << " sol\n";
+    cout << get_prev(2, 1) << " p\n";
+
+    return 0;
+
+    cout << get_sol(B) - get_sol(A - 1) << "\n";
 	
 	return 0;
 }
