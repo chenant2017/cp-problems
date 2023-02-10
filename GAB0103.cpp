@@ -66,12 +66,19 @@ int main() {
         ans = min(ans, (double) max(rdp[i], ldp[i]));
     }
 
-    for (ll i = 0; i < N - 1; i++) {
-        //cout << (double) bales1[i + 1] - bales1[i] / 2 << " " << (double) max(ldp[i], rdp[i + 1]) + 1 << "\n";
-        double poss = max((double) (bales1[i + 1] - bales1[i]) / 2.0, (double) max(ldp[i], rdp[i + 1]) + 1.0);
-        ans = min(ans, poss);
-    }
+    ll ptr1 = 0;
+    ll ptr2 = N - 1;
 
+    while (ptr2 >= ptr1) {
+        double poss = max((double) (bales1[ptr2] - bales1[ptr1]) / 2.0, (double) max(ldp[ptr1], rdp[ptr2]) + 1.0);
+        ans = min(ans, poss);
+        if (max(rdp[ptr2], ldp[ptr1 + 1]) > max(rdp[ptr2 - 1], ldp[ptr1])) {
+            ptr2--;
+        }
+        else {
+            ptr1++;
+        }
+    }
 
     cout << fixed;
     cout << setprecision(1) <<ans << "\n";
