@@ -12,7 +12,9 @@ ll dp[MAXN];
 
 ll get_dp(ll i) {
     for (auto c: choices) {
-        dp[i] = max(dp[i], dp[i + c] + c);
+        if (i + c <= N + M && dp[i + c] != -1) {
+            dp[i] = max(dp[i], dp[i + c] + c);
+        }
     }
     return dp[i];
 }
@@ -44,17 +46,18 @@ int main() {
     }
 
     ll i = N;
+    dp[N] = 0;
     ll visits = 0;
 
-    while (visits <= F * F && i >= 0) {
-        cout << i << "\n";
-
+    while (visits <= (F + 1) * F && i >= 0) {
         get_dp(i);
+
+        //cout << i << " " << dp[i] << "\n";
         
         if (faves.find(i) != faves.end()) {
             visits++;
 
-            cout << dp[i] << " " << dp[i + M] << "\n";
+            //cout << dp[i] << " " << dp[i + M] << " a\n";
             if (dp[i] > dp[i + M]) {
                 dp[i + M] = dp[i];
                 i += M;
@@ -64,7 +67,7 @@ int main() {
         i--;
     }
 
-    if (visits > F * F) {
+    if (visits > (F + 1) * F) {
         cout << "-1\n";
     }
     else {
