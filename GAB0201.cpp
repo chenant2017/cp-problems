@@ -25,7 +25,6 @@ int main() {
 	
 	string fname = "GAB0201";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N >> O >> F >> M;
 
@@ -52,12 +51,8 @@ int main() {
     while (visits <= (F + 1) * F && i >= 0) {
         get_dp(i);
 
-        //cout << i << " " << dp[i] << "\n";
-        
-        if (faves.find(i) != faves.end()) {
+        if (i!=N && faves.find(i) != faves.end()) {
             visits++;
-
-            //cout << dp[i] << " " << dp[i + M] << " a\n";
             if (dp[i] > dp[i + M]) {
                 dp[i + M] = dp[i];
                 i += M;
