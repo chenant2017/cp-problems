@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 #define MAXN 25
-#define MAXB 2005
+#define MAXB 1000
 
 using namespace std;
 
@@ -52,7 +52,9 @@ int main() {
     ll a = ceil((double) sum / 3);
 
     for (; a < MAXB; a++) {
-        for (ll b = 0; b < MAXB; b++) {
+        for (ll b = 0; b <= a; b++) {
+            if (sum - a - b > a) continue;
+
             if (dp[N - 1][a][b]) {
                 cout << a << "\n";
                 return 0;
