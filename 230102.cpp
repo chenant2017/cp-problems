@@ -52,13 +52,19 @@ int main() {
 
     for (ll i = 1; i <= N; i++) {
         for (ll j = 1; j <= N; j++) {
-            dfs(i, j, 1);
-            
-            if (i == N && dir[i][j] == 'D') {
-                ans += counts[i][j] * b[j];
+            counts[i][j]++;
+
+            if (dir[i][j] == 'D') {
+                if (i == N) {
+                    ans += counts[i][j] * b[j];
+                }
+                counts[i + 1][j] += counts[i][j];
             }
-            if (j == N && dir[i][j] == 'R') {
-                ans += counts[i][j] * r[i];
+            if (dir[i][j] == 'R') {
+                if (j == N) {
+                    ans += counts[i][j] * r[i];
+                }
+                counts[i][j + 1] += counts[i][j];
             }
         }
     }
