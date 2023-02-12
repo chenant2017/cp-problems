@@ -74,11 +74,14 @@ int main() {
         for (ll j = 0; patches[j].f < patches[i].f; j++) {
             ll pis = patches[i].s;
             ll pjs = patches[j].s;
+            
+            if (dists[pis][pjs] == 1e18) continue;
+
             ll poss = dp[j] - E * dists[pis][pjs] + patches[i].f;
             dp[i] = max(dp[i], poss);
         } 
     }
-    
+
     cout << *max_element(dp, dp + N) <<"\n";
 	
 	return 0;
