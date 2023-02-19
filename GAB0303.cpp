@@ -49,6 +49,8 @@ int main() {
 
     q.push(State(N - 1, 0, N - 1, 0, 0, 1, 0));
 
+    ll count = 0;
+
     while (!q.empty()) {
         State c = q.front();
         q.pop();
@@ -58,28 +60,40 @@ int main() {
             continue;
         }
 
-        if (c.x1 == c.x2 && c.x2 == 0 && c.y1 == c.y2 && c.y2 == N - 1) {
-            cout << c.s << " a\n";
+        //cout << q.size() << "\n";
+
+        v = true;
+        count++;
+
+        bool arrived1 = false, arrived2 = false;
+
+        if (c.x1 == 0 && c.y1 == N - 1) arrived1 = true;
+        if (c.x2 == 0 && c.y2 == N - 1) arrived2 = true;
+
+        if (arrived1 && arrived2) {
+            cout << c.s << "\n";
             break;
         }
 
-        cout << q.size() << "\n";
+        //cout << count << " count\n";
 
-        v = true;
+        //cout << q.size() << " a\n";
+
+        //cout << c.x1 << " " << c.y1 << " " << c.x2 << " " << c.y2 << " " << c.d1 << " " << c.d2 << "\n";
 
         // forward
         ll nx1 = c.x1, ny1 = c.y1, nx2 = c.x2, ny2 = c.y2;
-        if (in_bounds(c.x1 + dx[c.d1], c.y1 + dy[c.d1])) {
+        if (!arrived1 && in_bounds(c.x1 + dx[c.d1], c.y1 + dy[c.d1])) {
             nx1 = c.x1 + dx[c.d1];
             ny1 = c.y1 + dy[c.d1];
         }
-        if (in_bounds(c.x2 + dx[c.d2], c.y2 + dy[c.d2])) {
+        if (!arrived2 && in_bounds(c.x2 + dx[c.d2], c.y2 + dy[c.d2])) {
             nx2 = c.x2 + dx[c.d2];
             ny2 = c.y2 + dy[c.d2];
         }
         q.push(State(nx1, ny1, nx2, ny2, c.d1, c.d2, c.s + 1));
 
-        for (ll r = -1; r <= 1; r++) {
+        for (ll r = -1; r <= 1; r += 2) {
             ll nd1 = (4 + c.d1 + r) % 4;
             ll nd2 = (4 + c.d2 + r) % 4;
 
@@ -90,6 +104,8 @@ int main() {
 
             q.push(nc);
         }
+
+        //cout << q.size() << " b\n";
     }
     
 	
