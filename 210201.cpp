@@ -6,8 +6,13 @@ using namespace std;
 typedef long long ll;
 typedef pair<ll, ll> pll;
 
-set<pll> active;
-set<pll> to_add;
+struct pair_hash {
+    auto operator()(const pll& p) const -> size_t {
+        return (p.f + 600) * 3000 + p.s + 600;
+    }
+};
+
+unordered_set<pll, pair_hash> active;
 
 ll N;
 
@@ -15,8 +20,7 @@ ll dx[] = {0, 0, 0, -1, 1};
 ll dy[] = {0, 1, -1, 0, 0};
 
 pll is_comfy(ll x, ll y) {
-    if (active.find({x, y}) == active.end() &&
-        to_add.find({x, y}) == to_add.end()) {
+    if (active.find({x, y}) == active.end()) {
         return {1e18, 1e18};
     }
 
@@ -26,8 +30,7 @@ pll is_comfy(ll x, ll y) {
     for (ll d = 1; d < 5; d++) {
         ll x2 = x + dx[d];
         ll y2 = y + dy[d];
-        if (active.find({x2, y2}) == active.end() &&
-            to_add.find({x2, y2}) == to_add.end()) {
+        if (active.find({x2, y2}) == active.end()) {
             result = {x2, y2};
         }
         else {
@@ -39,8 +42,8 @@ pll is_comfy(ll x, ll y) {
     else return {1e18, 1e18};
 }
 
-void add(ll x, ll y, set<pll>& st) {
-    st.insert({x, y});
+void add(ll x, ll y) {
+    active.insert({x, y});
 
     for (ll d = 0; d < 5; d++) {
         ll x2 = x + dx[d];
@@ -48,7 +51,7 @@ void add(ll x, ll y, set<pll>& st) {
 
         pll c = is_comfy(x2, y2);
         if (c != pll({1e18, 1e18})) {
-            add(c.f, c.s, to_add);
+            add(c.f, c.s);
         }
     }
 }
@@ -63,19 +66,15 @@ int main() {
 
     cin >> N;
 
-    for (ll i = 0; i < N; i++) {
+    for (ll i = 1; i <= N; i++) {
         ll x, y;
         cin >> x >> y;
 
-        if (to_add.find({x, y}) != to_add.end()) {
-            to_add.erase({x, y});
-            active.insert({x, y});
-        }
-        else {
-            add(x, y, active);
+        if (active.find({x, y}) == active.end()) {
+            add(x, y);
         }
 
-        cout<< to_add.size() << "\n";
+        cout<< active.size() - i << "\n";
     }
 	
 	return 0;
