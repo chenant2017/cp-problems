@@ -1,12 +1,33 @@
 #include <bits/stdc++.h>
-#define MAXN 1005
+#define MAX 1010
 using namespace std;
 
 typedef long long ll;
 
 ll N, L;
-ll grass[MAXN];
-ll dp[MAXN][MAXN][2];
+ll grass[MAX];
+ll dp[MAX][MAX][2];
+
+void reset_dp() {
+    for (ll i = 0; i < N; i++) {
+        for (ll j = 0; j < N; j++) {
+            dp[i][j][0] = 1e18;
+            dp[i][j][1] = 1e18;
+        }
+    }
+}
+
+void get_dp() {
+    for (ll i = N - 1; i >= 0; i--) {
+        for (ll j = i + 1; j < N; j++) {
+            ll to_eat = N + i - j;
+            dp[i][j][0] = min(dp[i + 1][j][0] + to_eat * (grass[i + 1] - grass[i]),
+                                dp[i + 1][j][1] + to_eat * (grass[j] - grass[i]));
+            dp[i][j][1] = min(dp[i][j - 1][0] + to_eat * (grass[j] - grass[i]),
+                                dp[i][j - 1][1] + to_eat * (grass[j] - grass[j - 1]));
+        }
+    }
+}   
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -24,74 +45,40 @@ int main() {
 
     sort(grass, grass + N);
 
-    dp[0][N - 1][0] = grass[N - 1] - grass[0];
-    dp[0][N - 1][1] = grass[N - 1] - grass[0];
+    ll ans = 1e18;
 
-    for (ll i = 0; i < N; i++) {
-        for (ll j = N - 1; j > i; j--) { 
-            if (i == 0 && j == N - 1) continue;
-
-            ll to_eat = i + N - j;
-
-            dp[i][j][0] = 1e18;
-            dp[i][j][1] = 1e18;
-
-            if (i > 0) {
-                dp[i][j][0] = min(dp[i - 1][j][0] + to_eat * (grass[i] - grass[i - 1]), dp[i][j][0]);
-                dp[i][j][1] = min(dp[i - 1][j][0] + to_eat * (grass[j] - grass[i]), dp[i][j][1]);
-            }
-            if (j < N - 1) {
-                dp[i][j][0] = min(dp[i][j + 1][1] + to_eat * (grass[j] - grass[i]), dp[i][j][0]);
-                dp[i][j][1] = min(dp[i][j + 1][1] + to_eat * (grass[j + 1] - grass[j]), dp[i][j][1]);
-            }
+    if (L <= grass[N - 1]) {
+        reset_dp();
+        
+        ll start;
+        for (start = 0; start < N; start++) {
+            if (grass[start] >= L) break;
         }
-    }
 
-    /*for (ll i = 0; i < N; i++) {
-        for (ll j = 0; j < N; j++) {
-            cout << dp[i][j][0] << " ";
+        dp[start][start][0] = N * (grass[start] - L);
+        dp[start][start][1] = N * (grass[start] - L);
+
+        get_dp();
+
+        ans = min(ans, min(dp[0][N - 1][0], dp[0][N - 1][1]));
+    }
+    if (L >= grass[0]) {
+        reset_dp();
+        
+        ll start;
+        for (start = N - 1; start >= 0; start--) {
+            if (grass[start] <= L) break;
         }
-        cout << "\n";
+
+        dp[start][start][0] = N * (L - grass[start]);
+        dp[start][start][1] = N * (L - grass[start]);
+
+        get_dp();
+
+        ans = min(ans, min(dp[0][N - 1][0], dp[0][N - 1][1]));
     }
 
-    cout << "\n\n";
-
-    for (ll i = 0; i < N; i++) {
-        for (ll j = 0; j < N; j++) {
-            cout << dp[i][j][1] << " ";
-        }
-        cout << "\n";
-    }*/
-
-    if (L < grass[0]) {
-        cout << N * (grass[0] - L) + dp[0][1][0] << "\n";
-        return 0;
-    }
-    if (L > grass[N - 1]) {
-        cout << N * (grass[N - 1] - L) + dp[N - 2][N - 1][1] << "\n";
-        return 0;
-    }
-
-    for (ll i = 0; i < N - 1; i++) {
-        if (grass[i] <= L && L <= grass[i + 1]) {
-            //cout << i << " i\n";
-            ll dist1 = L - grass[i];
-            ll dist2 = grass[i + 1] - L;
-
-            ll ans = min(dist1 * N + dp[i][i + 1][0], 
-                        dist2 * N + dp[i][i + 1][1]);
-
-            if (i > 0) {
-                ans = min(ans, dist1 * N + dp[i - 1][i][1]);
-            }
-            if (i + 2 < N) {
-                ans = min(ans, dist2 * N + dp[i + 1][i + 2][0]);
-            }
-
-            cout << ans << "\n";
-            break;
-        }
-    }
+    cout << ans << "\n";
 	
 	return 0;
 }
