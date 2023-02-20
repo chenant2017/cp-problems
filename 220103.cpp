@@ -75,6 +75,8 @@ int main() {
         edge_ignore = -1;
         start = -1;
 
+        if (dfs_visited[i]) continue;
+
         get_start(i);
 
         if (start == -1) {
