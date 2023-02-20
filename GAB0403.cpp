@@ -34,14 +34,20 @@ int main() {
 
     ll moves = S - def[N - 1];
 
-    for (ll j = 0; j <= moves; j++) {
+    for (ll i = 0; i < N; i++) {
+        for (ll j = 0; j <= moves; j++) {
+            dp[i][j] = 1e18; 
+        }
+    }
+
+    for (ll j = 0; j <= min(1ll, moves); j++) {
         dp[1][j] = abs(def[1] + j - P[1]);
     }
 
     for (ll i = 2; i < N; i++) {
         dp[i][0] = abs(def[i] - P[i]) + dp[i - 1][0];
 
-        for (ll j = 1; j <= moves; j++) {
+        for (ll j = 1; j <= min(i, moves); j++) {
             dp[i][j] = min(dp[i - 1][j], dp[i - 1][j - 1]) + abs(def[i] + j - P[i]);
         }
     }
