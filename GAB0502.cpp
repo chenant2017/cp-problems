@@ -14,7 +14,7 @@ int main() {
 	cin.tie(NULL);
 	
 	string fname = "GAB0502";
-	freopen((fname + ".in").c_str(), "r", stdin);
+	//freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N >> M;
@@ -36,7 +36,7 @@ int main() {
         for (ll i2 = i1; i2 <= N; i2++) {
             
             vector<ll> cols = {0};
-            for (ll j = 1; j <= N; j++) {
+            for (ll j = 1; j <= M; j++) {
                 if (land[i1][j] == 'X' || land[i2][j] == 'X') {
                     cols.push_back(j);
                 }
