@@ -20,24 +20,6 @@ void dfs(ll i, vector<ll>& comp) {
     }
 }
 
-ll min_diff(vector<ll>& v1, vector<ll>& v2) {
-    ll result = 1e18;
-    ll i1 = 0;
-    ll i2 = 0;
-
-    while (i1 < v1.size() && i2 < v2.size()) {
-        result = min(result, abs(v1[i1] - v2[i2]));
-        if (v1[i1] < v2[i2]) {
-            i1++;
-        }
-        else {
-            i2++;
-        }
-    }
-
-    return result;
-}
-
 ll get_cost(vector<ll>& ref, ll i) {
     ll cost = 1e18;
 
@@ -55,6 +37,22 @@ ll get_cost(vector<ll>& ref, ll i) {
     return cost;
 }
 
+ll min_diff(vector<ll>& v1, vector<ll>& v2) {
+    if (v1.size() > v2.size()) {
+        return min_diff(v2, v1);
+    }
+
+    ll result = 1e18;
+
+    for (auto i: v1) {
+        result = min(result, get_cost(v2, i));
+    }
+
+    return result;
+}
+
+
+
 ll solve() {
     vector<ll> comp1;
     dfs(1, comp1);
@@ -70,11 +68,18 @@ ll solve() {
 
     ll ans = pow(min_diff(comp1, compN), 2);
 
-    for (ll i = 2; i < N; i++) {
+    for (ll i = 1; i <= N; i++) {
         if (!visited[i]) {
-            cout << i << " " << get_cost(comp1, i) << " " << get_cost(compN, i) << "\n";
-            ans = min(ans, get_cost(comp1, i) + get_cost(compN, i));
+            vector<ll> comp;
+            dfs(i, comp);
+            sort(comp.begin(), comp.end());
+            comps.push_back(comp);
         }
+    }
+
+    for (auto& comp: comps) {
+        ll poss = pow(min_diff(comp1, comp), 2) + pow(min_diff(compN, comp), 2);
+        ans = min(ans, poss);
     }
 
     return ans;
@@ -85,7 +90,7 @@ int main() {
 	cin.tie(NULL);
 	
 	string fname = "211202";
-	freopen((fname + ".in").c_str(), "r", stdin);
+	//freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
 
     cin >> T;
