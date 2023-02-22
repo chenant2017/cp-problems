@@ -1,60 +1,47 @@
 #include <bits/stdc++.h>
-#define MAX 2020
-#define MAXN 410
+#define MAX 410
+#define f first 
+#define s second
 using namespace std;
 
 typedef long long ll;
+typedef pair<ll, ll> pll;
 
 ll N, K;
 ll field[MAX][MAX];
-ll pdr[MAX][MAX];
-ll pdl[MAX][MAX];
-ll dp[MAXN][MAXN];
+ll prefix[MAX][MAX];
+ll dp[MAX][MAX];
 
-void get_prefix() {
-    for (ll i = 1; i < MAX; i++) {
-        for (ll j = 1; j < MAX; j++) {
-            pdr[i][j] = field[i][j] + pdr[i - 1][j - 1];
-        }
+ll first(ll i, ll j) {
+    pll start = {i + 1, j - K - 1};
+    if (start.s < 0) {
+        start.f -= (0 - start.s);
+        start.s = 0;
     }
 
-    for (ll i = 1; i < MAX; i++) {
-        for (ll j = 0; j < MAX - 1; j++) {
-            pdl[i][j] += field[i][j] + pdl[i - 1][j + 1];
-        }
+    pll end = {i - K, j};
+    if (end.f < 1) {
+        end.s -= (1 - end.f);
+        end.f = 1;
     }
+
+    return prefix[end.f][end.s] - prefix[start.f][start.s];
 }
 
-ll nw(ll i, ll j) {
-    return pdl[i][j - K] - pdl[i - K - 1][j + 1];
-}
+ll last(ll i, ll j) {
+    pll start = {i + K + 1, j - 1};
+    if (start.f > N + 1) {
+        start.s += (N + 1 - start.f);
+        start.f = N + 1;
+    }
 
-ll ne(ll i, ll j) {
-    return pdr[i][j + K] - pdr[i - K - 1][j - 1];
-}
+    pll end = {i, j + K};
+    if (end.s > N) {
+        end.f += (end.s - N);
+        end.s = N;
+    }
 
-ll se(ll i, ll j) {
-    return pdl[i + K][j] - pdl[i - 1][j + K + 1];
-}
-
-ll sw(ll i, ll j) {
-    return pdr[i + K][j] - pdr[i - 1][j - K - 1];
-}
-
-ll n(ll i,ll j) {
-    return nw(i, j) + ne(i, j) - field[i - K][j];
-}
-
-ll e(ll i, ll j) {
-    return ne(i, j) + se(i, j) - field[i][j + K];
-}
-
-ll s(ll i, ll j) {
-    return se(i, j) + sw(i, j) - field[i + K][j];
-}
-
-ll w(ll i, ll j) {
-    return nw(i, j) + sw(i, j) - field[i][j - K];
+    return prefix[end.f][end.s] - prefix[start.f][start.s];
 }
 
 int main() {
@@ -65,36 +52,64 @@ int main() {
 	freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
 	
-	cin >> N >> K;
-
-    for (ll i = 0; i < N; i++) {
-        for (ll j = 0; j < N; j++) {
-            cin >> field[i + K + 1][j + K + 1];
+    cin >> N >> K;
+	
+    for (ll i = 1; i <= N; i++) {
+        for (ll j = 1; j <= N; j++) {
+            cin >> field[i][j];
         }
     }
 
-    for (ll i = 0; i <= K; i++) {
-        for (ll j = 0; j <= K - i; j++) {
-            dp[0][0] += field[i + K + 1][j + K + 1];
+    for (ll i = N; i >= 1; i--) {
+        for (ll j = 1; j <= N; j++) {
+            prefix[i][j] = field[i][j] + prefix[i + 1][j - 1];
         }
     }
 
-    get_prefix();
-
-    for (ll i = 0; i < N; i++) {
-        if (i != 0) {
-            dp[i][0] = dp[i - 1][0] + s(i + K + 1, K + 1) - n(i + K, K + 1);
-        }   
-
-        for (ll j = 1; j < N; j++) {
-            dp[i][j] = dp[i][j - 1] + e(i + K + 1, j + K + 1) - w(i + K + 1, j + K);
+    for (ll j = 1; j <= N; j++) {
+        //cout << j << " j\n";
+        for (ll k = 1; k <= N; k++) {
+            for (ll l = 1; l <= K + 1 - abs(j - k); l++) {
+                //cout << l << " " << k << "\n";
+                dp[1][j] += field[l][k];
+            }
         }
     }
+
+
+    for (ll i = 2; i <= N; i++) {
+        for (ll k = 1; k <= N; k++) {
+            for (ll l = 1; l <= K + 1 - abs(i - k); l++) {
+                dp[i][1] += field[k][l];
+            }
+        }
+    }
+
+    /*for (ll i = 1; i <= N; i++) {
+        for (ll j = 1; j <= N; j++) {
+            cout << dp[i][j] << "\t";
+        }
+        cout << "\n";
+    }
+    cout << "\n";*/
+
+    for (ll i = 2; i <= N; i++) {
+        for (ll j = 2; j <= N; j++) {
+            dp[i][j] = dp[i - 1][j - 1] - first(i - 1, j - 1) + last(i, j);
+        }
+    }
+
+    /*for (ll i = 1; i <= N; i++) {
+        for (ll j = 1; j <= N; j++) {
+            cout << dp[i][j] << "\t";
+        }
+        cout << "\n";
+    }*/
 
     ll ans = 0;
 
-    for (ll i = 0; i < N; i++) {
-        for (ll j = 0; j < N; j++) {
+    for (ll i = 1; i <= N; i++) {
+        for (ll j = 1; j <= N; j++) {
             ans = max(ans, dp[i][j]);
         }
     }
