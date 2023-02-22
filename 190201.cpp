@@ -34,9 +34,16 @@ int main() {
         auto it = upper_bound(cows.begin(), cows.end(), cows[i] + N - 1);
         it--;
 
-        ll count = distance(cows.begin(), it) - i + 1;
+        ll j = distance(cows.begin(), it);
 
-        ans1 = min(ans1, N - count);
+        ll count = j - i + 1;
+        
+        if (count == cows[j] - cows[i] + 1 && N - j == 1) {
+            ans1 = min(ans1, N - count + 1);
+        }
+        else {
+            ans1 = min(ans1, N - count);
+        }
     }
 
     cout << ans1 << "\n";
