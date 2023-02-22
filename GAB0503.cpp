@@ -15,16 +15,15 @@ ll mod_pow(ll a, ll b) {
     v[0] = a;
 
     for (ll i = 1; i <= floor(log2(b)); i++) {
-        v[i] = (ll) pow(v[i - 1], 2) % MOD;
+        v[i] = (v[i - 1] * v[i - 1]) % MOD;
     }
 
     ll result = 1;
 
-    cout << b << "\n";
+    //cout << b << "\n";
 
     while (b > 0) {
         ll p = floor(log2(b));
-        cout << b << " " << p << "\n";
         result *= v[p];
         result %= MOD;
         b -= (1 << p);
@@ -43,7 +42,7 @@ int main() {
 	
 	cin >> N >> M >> K;
 
-    cout << mod_pow(M, N) << "\n";
+    //cout << mod_pow(M, N) << "\n";
     
     for (ll i = 1; i < K; i++) {
         dp[i] = mod_pow(M, i);
