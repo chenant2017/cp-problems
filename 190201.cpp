@@ -37,8 +37,10 @@ int main() {
         ll j = distance(cows.begin(), it);
 
         ll count = j - i + 1;
+
+        //cout << count <<" " << cows[j] - cows[i] + 1 << " " << N - j << "\n";
         
-        if (count == cows[j] - cows[i] + 1 && N - j == 1) {
+        if (count == N - 1 && count == cows[j] - cows[i] + 1 && N - 1- j == 1) {
             ans1 = min(ans1, N - count + 1);
         }
         else {
