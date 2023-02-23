@@ -1,26 +1,16 @@
 #include <bits/stdc++.h>
 #define MAXA 5000010
+#define MAXP 1250010
 using namespace std;
 
 typedef long long ll;
 
-ll N, T;
-ll turns[MAXA];
-int who[MAXA];
 bool is_prime[MAXA];
 vector<ll> primes[4];
+char winner[MAXA];
+ll visits[MAXA];
 
-void sieve() {
-    fill(is_prime, is_prime + MAXA, true);
-    is_prime[0] = false;
-    for (ll i = 2; i <= sqrt(MAXA); i++) {
-        if (is_prime[i]) {
-            for (ll j = i*i; j < MAXA; j += i) {
-                is_prime[j] = false;
-            }
-        }
-    }
-}
+ll T, N;
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -29,41 +19,71 @@ int main() {
 	string fname = "221202";
 	//freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
+	
+    fill(is_prime, is_prime + MAXA, true);
 
-    sieve();
-
-    for (ll i = 1; i < MAXA; i++) {
+    for (ll i = 2; i * i < MAXA; i++) {
         if (is_prime[i]) {
-            primes[i % 4].push_back(i);
-            turns[i] = 1;
-            who[i] = 1;
-        }
-        else if (i % 4 == 0) {
-            turns[i] = i / 4 + 1;
-            who[i] = 2;
-        }
-        else {
-            who[i] = 1;
-            turns[i] = turns[i - *primes[i % 4].rbegin()];
+            //cout << i << " i\n";
+            for (ll j = i * i; j < MAXA; j += i) {
+                is_prime[j] = false;
+            }
         }
     }
-	
-	cin >> T;
 
+    for (ll i = 2; i < MAXA; i++) {
+        if (is_prime[i]) {
+            primes[i % 4].push_back(i);
+        }
+    }
+
+    visits[0] = 1;
+    visits[1] = 1;
+    winner[0] = 'N';
+    winner[1] = 'J';
+
+    for (ll i = 2; i < MAXA; i++) {
+        if (i % 4 == 0) {
+            winner[i] = 'N';
+            visits[i] = i / 4 + 1;
+            continue;
+        }
+        
+        winner[i] = 'J';
+
+        if (i % 4 == 2) {
+            visits[i] = visits[i - 2];
+        }
+        else {
+            auto it = upper_bound(primes[i % 4].begin(), primes[i % 4].end(), i);
+            it--;
+            visits[i] = visits[i - *it];
+        }
+    }
+
+    cin >> T;
     while (T--) {
         cin >> N;
-        ll min_turns = 2 * 1e6;
-        int winner;
+
+        vector<ll> v;
+
         for (ll i = 0; i < N; i++) {
             ll a;
             cin >> a;
-            if (turns[a] < min_turns) {
-                min_turns = turns[a];
-                winner = who[a];
+            v.push_back(a);
+        }
+
+        ll min = 1e18;
+        ll ans = -1;
+
+        for (auto a: v) {
+            if (visits[a] < min) {
+                min = visits[a];
+                ans = a;
             }
         }
 
-        if (winner == 1) {
+        if (winner[ans] == 'J') {
             cout << "Farmer John\n";
         }
         else {
