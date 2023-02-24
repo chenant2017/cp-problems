@@ -10,12 +10,11 @@ vector<ll> G[MAX];
 bool visited[MAX];
 
 ll count(ll i) {
-    cout << i << " i\n";
+    //cout << i << " i\n";
     if (visited[i]) return 0;
-    //if (visited[i]) return 0;
     visited[i] = true;
 
-    ll result = 1;
+    ll result = (i != 0);
     result += count(F[i]);
 
     for (auto j: G[i]) {
@@ -30,11 +29,12 @@ bool cycle(ll i) {
     ll p2 = F[F[i]];
 
     while (p1 != p2) {
+        //cout << p1 << " " << p2 << endl;
         p1 = F[p1];
         p2 = F[F[p2]];
     }
     
-    return F[p1] != p1;
+    return p1 != 0;
 }
 
 int main() {
@@ -43,7 +43,7 @@ int main() {
 	
 	string fname = "relay";
 	freopen((fname + ".in").c_str(), "r", stdin);
-	//freopen((fname + ".out").c_str(), "w", stdout);
+	freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N;
 
@@ -53,18 +53,20 @@ int main() {
         if (F[i] != 0) {
             G[F[i]].push_back(i);
         }
-        else {
-            F[i] = i;
-        }
     }
+
+    F[0] = 0;
 
     ll ans = 0;
 
     for (ll i = 1; i <= N; i++) {
         if (!visited[i]) {
-            cout << "hey\n";
+            //cout << "start " << i << "\n";
             ll c = count(i);
-            if (!cycle(i)) ans += c;
+            if (!cycle(i)) {
+                //cout << "no cycle from " << i << "\n";
+                ans += c;
+            }
         }
     }
     
