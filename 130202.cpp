@@ -11,7 +11,7 @@ ll N;
 pll all[MAX];
 vector<ll> incr;
 vector<ll> decr;
-bool invalid[MAX]; //diff sign slopes
+bool invalid[MAX]; 
 
 void process_same(vector<ll>& v) {
     ll max_end = -1e18;
