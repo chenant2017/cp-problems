@@ -6,22 +6,21 @@ typedef long long ll;
 
 ll N;
 ll c[MAX];
-ll zeros[MAX];
 
-ll get_zeros(ll i) {
-	ll result = 0;
-	ll ptr = i;
+bool works(ll i) {
+	ll prefix = 0;
 
-	while (c[(ptr - 1 + N) % N] == 0) {
-		ptr = (ptr - 1 + N) % N;
-		result++;
+	for (ll j = 0; j < N; j++) {
+		prefix += c[(i + j) % N] - 1;
+		if (prefix < 0) return false;
 	}
 
-	return result;
+	return true;
 }
 
 ll sum_sq(ll a, ll b) {
 	ll result = 0;
+
 	for (ll i = a; i <= b; i++) {
 		result += i * i;
 	}
@@ -29,15 +28,8 @@ ll sum_sq(ll a, ll b) {
 	return result;
 }
 
-ll solve(ll start) {
-	rotate(c, c + start, c + N);
-
-	ll result = sum_sq(0, c[start] - 1);
-	ll ptr = c[start] - 1;
-
-	for (ll i = 1; i < N; i++) {
-		
-	}
+long long sumn2(long long v) {
+  return v * (v + 1) * (2 * v + 1) / 6;
 }
 
 int main() {
@@ -45,26 +37,36 @@ int main() {
 	cin.tie(NULL);
 	
 	string fname = "160201";
-	freopen((fname + ".in").c_str(), "r", stdin);
+	//freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N;
 
-    for (ll i = 0; i < N; i++) {
+	for (ll i = 0; i < N; i++) {
 		cin >> c[i];
 	}
-
-	for (ll i = 0; i < N; i++) {
-		zeros[i] = get_zeros(i);
-    }
-
-	ll start = 0;
 	
+	ll start = -1;
+
 	for (ll i = 0; i < N; i++) {
-        if (c[i] > c[start] && zeros[i] > zeros[start]) {
+		if (works(i)) {
 			start = i;
+			break;
 		}
-    }
+	}
+
+	rotate(c, c + start, c + N);
+
+
+	ll ans = 0, ans1 = 0;
+	ll extra = 0, e1 = 0;
+
+	for (ll i = 0; i < N; i++) {
+		ans += sum_sq(extra, extra + c[i] - 1);
+		extra = max(0ll, extra + c[i] - 1);
+	}
+
+	cout << ans << "\n";
 	
 	return 0;
 }
