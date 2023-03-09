@@ -12,10 +12,17 @@ ll T, N, C, M;
 
 bool works(ll m) {
     if (m < 0) return false;
+
+    ll all_lower = -1e18;
+    ll all_higher = 1e18;
+
     for (ll i = 0; i < N; i++) {
         ll r = a[i] * C + b[i] * M - c[i];
 
         if (a[i] == b[i]) {
+            all_lower = max(all_lower, 0ll);
+            all_higher = min(all_higher, C - 1);
+
             if (b[i] * m < r) return false;
         }
         else if (a[i] > b[i]) {
@@ -23,6 +30,9 @@ bool works(ll m) {
 
             lower = max(lower, max(m - M + 1, 0ll));
             ll higher = min(C - 1, m);
+
+            all_higher = min(all_higher, higher);
+            all_lower = max(all_lower, lower);
 
             if (higher < lower) return false;
         }
@@ -33,9 +43,14 @@ bool works(ll m) {
 
             ll lower = max(m - M + 1, 0ll);
 
+            all_lower = max(all_lower, lower);
+            all_higher = min(all_higher, higher);
+
             if (higher < lower) return false;
         }
     }
+
+    if (all_higher < all_lower) return false;
 
     return true;
 }
