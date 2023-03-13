@@ -5,25 +5,30 @@ using namespace std;
 typedef long long ll;
 typedef pair<ll, ll> pll;
 
-typedef tuple<ll, ll, ll> tll;
+typedef tuple<ll, ll, ll, ll> tll;
 
 
 ll N, M;
 ll ans[MAX];
+bool visited[MAX];
 ll a[MAX];
 vector<tll> adj[MAX];
 
 void dfs(ll i, ll t) {
     //cout << i << " " << t << "\n";
-    auto it = lower_bound(adj[i].begin(), adj[i].end(), tll({t, 0, 0}));
+    auto it = lower_bound(adj[i].begin(), adj[i].end(), tll({t, 0, 0, 0}));
 
     for (; it != adj[i].end(); it++) {
-        ll r, d, s;
-        tie(r, d, s) = *it;
+        ll r, d, s, e;
+        tie(r, d, s, e) = *it;
 
         if (s < ans[d]) {
             ans[d] = s;
-            dfs(d, s + a[d]);
+
+            if (!visited[e]) {
+                visited[e] = true;
+                dfs(d, s + a[d]);
+            }
         }
     }
 }
@@ -33,7 +38,7 @@ int main() {
 	cin.tie(NULL);
 	
 	string fname = "230203";
-	//freopen((fname + ".in").c_str(), "r", stdin);
+	freopen((fname + ".in").c_str(), "r", stdin);
 	//freopen((fname + ".out").c_str(), "w", stdout);
 	
 	cin >> N >> M;
@@ -43,7 +48,7 @@ int main() {
     for (ll i = 0; i < M; i++) {
         cin >> c >> r >> d >> s;
 
-        adj[c].emplace_back(r, d, s);
+        adj[c].emplace_back(r, d, s, i);
     }
 
     for (ll i = 1; i <= N; i++) {
