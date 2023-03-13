@@ -5,32 +5,65 @@ using namespace std;
 typedef long long ll;
 typedef pair<ll, ll> pll;
 
-typedef tuple<ll, ll, ll, ll> tll;
+typedef tuple<ll, ll, ll> tll;
 
 
 ll N, M;
 ll ans[MAX];
-bool visited[MAX];
+ll latest[MAX];
 ll a[MAX];
 vector<tll> adj[MAX];
 
-void dfs(ll i, ll t) {
-    //cout << i << " " << t << "\n";
-    auto it = lower_bound(adj[i].begin(), adj[i].end(), tll({t, 0, 0, 0}));
+void dfs() {
+    stack<pll> q;
+    q.push({1, 0});
+    ans[1] = 0;
 
-    for (; it != adj[i].end(); it++) {
-        ll r, d, s, e;
-        tie(r, d, s, e) = *it;
+    while (!q.empty()) {
+        ll i, t;
 
-        if (s < ans[d]) {
-            ans[d] = s;
+        tie (i, t) = q.top(); q.pop(); 
 
-            if (!visited[e]) {
-                visited[e] = true;
-                dfs(d, s + a[d]);
+        assert(t <= latest[i]);
+
+        //cout << i << " " << t << endl;
+
+        auto it = lower_bound(adj[i].begin(), adj[i].end(), tll({t, 0, 0}));
+        
+        t = get<0>(*it);
+
+        for (; it != adj[i].end(); it++) {
+            ll r, d, s;
+            tie(r, d, s) = *it;
+
+            //cout << r << " " << d << " " << s << endl;
+
+            if (r >= latest[i]) {
+                break;
+            }
+
+            //cout << r << " " << d << " " << s << endl;
+
+            if (s < ans[d]) {
+                //cout << "a\n";
+
+                ans[d] = s;
+                auto it2 = lower_bound(adj[d].begin(), adj[d].end(), 
+                            tll({s + a[d], 0, 0}));
+                if (it2 != adj[d].end()) {
+
+                    ll u = get<0>(*it2);
+                    q.push({d, u});
+                }
             }
         }
+
+        latest[i] = t;
     }
+
+
+    //cout << i << " " << t << "\n";
+    
 }
 
 int main() {
@@ -48,17 +81,17 @@ int main() {
     for (ll i = 0; i < M; i++) {
         cin >> c >> r >> d >> s;
 
-        adj[c].emplace_back(r, d, s, i);
+        adj[c].emplace_back(r, d, s);
     }
 
     for (ll i = 1; i <= N; i++) {
         cin >> a[i];
         ans[i] = 1e18;
+        latest[i] = 1e18;
         sort(adj[i].begin(), adj[i].end());
     }
 
-    ans[1] = 0;
-    dfs(1, 0);
+    dfs();
 
     for (ll i = 1; i <= N; i++) {
         if (ans[i] == 1e18) {
