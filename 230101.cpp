@@ -57,10 +57,10 @@ void dfs(char c, ll& n) {
 }
 
 ll solve() {
+    bool has_cyc =false;
     adj.clear();
     adj2.clear();
     visited.clear();
-    unlooped = false;
 
     for (ll i = 0; i < N; i++) {
         if (adj.find(s1[i]) != adj.end() && adj[s1[i]] != s2[i]) {
@@ -72,8 +72,6 @@ ll solve() {
 
     ll ans = 0;
 
-    bool extra = false;
-
     for (auto i: s1) { 
         if (visited[i]) continue;
 
@@ -81,13 +79,13 @@ ll solve() {
         dfs(i, n);
         pair<bool, bool> cyc = cycle(i);
         ans += n;
-        if (cyc.first) {
+        if (cyc.first && cyc.second) {
+            has_cyc = true;
             ans++;
-            if (cyc.second) extra = true;
         }
     }
 
-    if (adj2.size() == 52) {
+    if (has_cyc && adj2.size() == 52) {
         return -1;
     }
     
