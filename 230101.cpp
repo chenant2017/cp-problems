@@ -3,75 +3,95 @@ using namespace std;
 
 typedef long long ll;
 
-ll T;
-ll N;
-string s1;
-string s2;
+ll T, N;
+string s1, s2;
+map<char, char> adj;
+map<char, set<char>> adj2;
+map<char, bool> visited;
+bool unlooped = false;
 
+pair<bool, bool> cycle(char c) {
+    bool circle = true;
 
-map<char, char> c; //child
-map<char, vector<char>> p; // parent;
-set<char> visited;
+    char p1 = c;
+    char p2 = adj[c];
 
-bool cycle(char i) {
-    ll v = 0;
+    while (p1 != p2) {
+        p1 = adj[p1];
+        p2 = adj[adj[p2]];
+    }
 
-    char j = i;
-    while (true) {
-        if (visited.find(j) != visited.end()) {
-            return j == i && v > 1;
+    if (adj2[p1].size() > 1) circle = false;
+
+    p2 = adj[p2];
+    ll length = 1;
+    while (p1 != p2) {
+        p2 = adj[p2];
+        if (adj2[p2].size() > 1) circle = false;
+        length++;
+    }
+
+    return {length > 1, circle};
+}
+
+void dfs(char c, ll& n) {
+    if (visited[c]) return;
+    visited[c] = true;
+
+    if (adj.find(c) == adj.end()) {
+        unlooped = true;
+    }
+    else if (adj[c] != c) {
+        n++;
+    }
+
+    if (!visited[adj[c]]) {
+        dfs(adj[c], n); 
+    }
+
+    for (auto i: adj2[c]) {
+        if (!visited[i]) {
+            dfs(i, n);
         }
-
-        if (p[j].size() > 1) return false;
-        visited.insert(j);
-        v++;
-
-        j = c[j];
     }
 }
 
 ll solve() {
-    c.clear();
-    p.clear();
+    adj.clear();
+    adj2.clear();
     visited.clear();
-    set<char> letters;
+    unlooped = false;
 
-    N = s1.size();
+    for (ll i = 0; i < N; i++) {
+        if (adj.find(s1[i]) != adj.end() && adj[s1[i]] != s2[i]) {
+            return -1;
+        }
+        adj[s1[i]] = s2[i];
+        adj2[s2[i]].insert(s1[i]);
+    }
 
     ll ans = 0;
 
-    for (ll i = 0; i < N; i++) {
-        if (c.find(s1[i]) == c.end()) {
-            c[s1[i]] = s2[i];
-            p[s2[i]].push_back(s1[i]);
-            letters.insert(s2[i]);
+    bool extra = false;
 
-            if (s1[i] != s2[i]) {
-                ans++;
-            }
-        }
-        else if (c[s1[i]] != s2[i]) {
-            return -1;
+    for (auto i: s1) { 
+        if (visited[i]) continue;
+
+        ll n = 0;
+        dfs(i, n);
+        pair<bool, bool> cyc = cycle(i);
+        ans += n;
+        if (cyc.first) {
+            ans++;
+            if (cyc.second) extra = true;
         }
     }
 
-    ll cycles = 0;
-
-    for (auto i: s1) {
-        if (visited.find(i) == visited.end() && cycle(i)) {
-            cycles++;
-        }
+    if (adj2.size() == 52) {
+        return -1;
     }
-  
-    if (cycles) {
-        if (letters.size() == 52) {
-            return -1;
-        }
-        return ans + cycles;
-    }
-    else {
-        return ans;
-    }
+    
+    return ans;
 }
 
 int main() {
@@ -85,11 +105,12 @@ int main() {
 	cin >> T;
 
     while (T--) {
-        cin >> s1;
-        cin >> s2;
+        cin >> s1 >> s2;
+        N = s1.size();
 
         cout << solve() << "\n";
     }
+
 	
 	return 0;
 }
