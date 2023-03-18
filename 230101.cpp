@@ -4,39 +4,42 @@ using namespace std;
 typedef long long ll;
 
 ll T, N;
+string s1, s2;
 map<char, char> adj;
 map<char, vector<char>> adj2;
 set<char> visited;
-string s1, s2;
 
 bool cycle(char c) {
-    if (visited.find(c) != visited.end()) return false;
-    
-    bool result = true;
+    char p1 = adj[c];
+    char p2 = adj[adj[c]];
 
-    visited.insert(c);
-    if (adj2[c].size() > 1) {
-        result = false;
+    while (p1 != p2) {
+        p1 = adj[p1];
+        p2 = adj[adj[p2]];
     }
 
-    char d = c;
+    p2 = adj[p1];
+    if (adj2[p2].size() > 1) return false;
 
     ll length = 1;
-
-    while (visited.find(adj[d]) == visited.end()) {
-        d = adj[d];
-        visited.insert(d);
-        if (adj2[d].size() > 1) {
-            result = false;
-        }
+    while (p1 != p2) {
+        p2 = adj[p2];
+        if (adj2[p2].size() > 1) return false;
         length++;
     }
 
-    if (adj[d] != c || length == 1) {
-        result = false;
-    }
+    return length > 1;
+}
 
-    return result;
+void dfs(char c) {
+    if (visited.find(c) != visited.end()) return;
+    visited.insert(c);
+
+    dfs(adj[c]);
+
+    for (auto i: adj2[c]) {
+        dfs(i);
+    }
 }
 
 ll solve() {
@@ -62,17 +65,20 @@ ll solve() {
     for (auto i: s2) {
         if (adj.find(i) == adj.end()) {
             adj[i] = i;
+            //adj2[i].push_back(i);
         }
+    }
+
+    for (auto i: s1) { 
+        if (visited.find(i) != visited.end()) continue;
+        dfs(i);
+        ans += cycle(i);
     }
 
     if (adj2.size() == 52 && s1 != s2) {
         return -1;
     }
-
-    for (auto i: s1) {
-        ans += cycle(i);
-    }
-
+    
     return ans;
 }
 
@@ -92,6 +98,7 @@ int main() {
 
         cout << solve() << "\n";
     }
+
 	
 	return 0;
 }
