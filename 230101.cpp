@@ -8,84 +8,84 @@ string s1, s2;
 map<char, char> adj;
 map<char, set<char>> adj2;
 map<char, bool> visited;
-bool unlooped = false;
 
 pair<bool, bool> cycle(char c) {
     bool circle = true;
 
-    char p1 = c;
-    char p2 = adj[c];
+    char p1 = adj[c];
+    char p2 = adj[adj[c]];
 
     while (p1 != p2) {
         p1 = adj[p1];
         p2 = adj[adj[p2]];
     }
 
-    if (adj2[p1].size() > 1) circle = false;
+    if (adj2[p1].size() != 1) circle = false;
 
     p2 = adj[p2];
     ll length = 1;
     while (p1 != p2) {
         p2 = adj[p2];
-        if (adj2[p2].size() > 1) circle = false;
+        if (adj2[p2].size() != 1) circle = false;
         length++;
     }
 
     return {length > 1, circle};
 }
 
-void dfs(char c, ll& n) {
+void dfs(char c) {
     if (visited[c]) return;
     visited[c] = true;
 
-    if (adj.find(c) == adj.end()) {
-        unlooped = true;
-    }
-    else if (adj[c] != c) {
-        n++;
-    }
-
     if (!visited[adj[c]]) {
-        dfs(adj[c], n); 
+        dfs(adj[c]); 
     }
 
     for (auto i: adj2[c]) {
         if (!visited[i]) {
-            dfs(i, n);
+            dfs(i);
         }
     }
 }
 
 ll solve() {
-    bool has_cyc =false;
     adj.clear();
     adj2.clear();
     visited.clear();
 
+    ll ans = 0;
+
     for (ll i = 0; i < N; i++) {
-        if (adj.find(s1[i]) != adj.end() && adj[s1[i]] != s2[i]) {
-            return -1;
+        if (adj.find(s1[i]) != adj.end()) {
+            if (adj[s1[i]] != s2[i]) {
+                return -1;
+            }
         }
-        adj[s1[i]] = s2[i];
-        adj2[s2[i]].insert(s1[i]);
+        else {
+            adj[s1[i]] = s2[i];
+            adj2[s2[i]].insert(s1[i]);
+
+            ans += s1[i] != s2[i];
+        }
     }
 
-    ll ans = 0;
+    for (auto i: s2) {
+        if (adj.find(i) == adj.end()) {
+            adj[i] = i;
+        }
+    }
 
     for (auto i: s1) { 
         if (visited[i]) continue;
 
-        ll n = 0;
-        dfs(i, n);
+        dfs(i);
         pair<bool, bool> cyc = cycle(i);
-        ans += n;
         if (cyc.first && cyc.second) {
-            has_cyc = true;
             ans++;
         }
     }
 
-    if (has_cyc && adj2.size() == 52) {
+    if (adj2.size() == 52) {
         return -1;
     }
     
