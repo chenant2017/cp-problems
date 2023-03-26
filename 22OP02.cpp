@@ -18,6 +18,9 @@ bool valid(pc p) {
         if (p.f == s[i] || p.s == s[i]) {
             u += s[i];
         }
+    }
+
+    for (ll i = 0; i < t.size(); i++) {
         if (p.f == t[i] || p.s == t[i]) {
             v += t[i];
         }
@@ -40,11 +43,10 @@ int main() {
         for (char c2 = c1; c2 <= 'r'; c2++) {
             if (valid({c1, c2})) {
                 valids.insert({c1, c2});
+                //cout << c1 << " " << c2 << endl;
             }
         }
     }
-
-    //cout << valids.size() << endl;
 
     cin >> Q;
 
@@ -55,8 +57,8 @@ int main() {
 
         for (ll i = 0; i < q.size(); i++) {
             for (ll j = i; j < q.size(); j++) {
-                //cout << q[i] << " " << q[j] << endl;
                 if (valids.find({q[i], q[j]}) == valids.end()) {
+                    //cout << q[i] << " " << q[j] << endl;
                     result = false;
                     break;
                 }
